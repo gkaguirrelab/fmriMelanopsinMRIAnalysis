@@ -1,13 +1,8 @@
-% this script was used to convert F values to p values and then do Fisher's
-% combined probability test for subject HERO_gka1, session 031516 under
-% MaxMelPulse protocol.
-
 %% Set up
-session_dir = '/data/jag/MELA/HERO_gka1/031516';
-subject_name = 'HERO_gka1_3T';
-runNums = 1:9;
+session_dir = '/data/jag/MELA/HERO_mxs1/040616';
+subject_name = 'HERO_mxs1_MaxMel';
+runNums = 1:12;
 funcs = {...
-   'FIR_raw'...
    'FIR_5mm' ...
     };
 thresh = 0.05;
