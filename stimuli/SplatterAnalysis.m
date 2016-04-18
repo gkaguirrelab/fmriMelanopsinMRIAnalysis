@@ -289,7 +289,7 @@ ylabel('Contrast');
 box off; set(gca, 'TickDir', 'out');
 xlim([0 3]);
 ylim([-0.15 0.15]);
-title({'MaxMel validation' 'Mean\pm1SD'});
+title({'Mean\pm1SD'});
 pbaspect([1 1 1]);
 
 set(maxLMSContrastsFig, 'PaperPosition', [0 0 8 3]); %Position plot at left hand corner with width 15 and height 6.
