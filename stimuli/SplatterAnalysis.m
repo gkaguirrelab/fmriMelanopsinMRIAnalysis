@@ -43,9 +43,137 @@ end
 
 % Calculate contrast for each of the measurement pairs
 NMeasurements = size(modSpd, 2);
-for ii = 1:NMeasurements
-    contrast(:, ii) = (T_receptors*(modSpd(:, ii) - bgSpd(:, ii))) ./ (T_receptors*bgSpd(:, ii));
+for jj = 1:NMeasurements
+    contrast(:, jj) = (T_receptors*(modSpd(:, jj) - bgSpd(:, jj))) ./ (T_receptors*bgSpd(:, jj));
 end
+
+%% Calculate contrast for each of the measurement pairs
+theConeStruct1.Lshift = 0;
+theConeStruct1.Mshift = 0;
+theConeStruct1.Sshift = 0;
+theConeStruct1.Melshift = 0;
+theConeStruct1.fieldSizeDegrees = 64;
+theConeStruct1.observerAgeInYears = 32;
+theConeStruct1.pupilDiameterMm = 8;
+theConeStruct1.fractionBleached = [];
+theConeStruct1.oxygenationFraction = [];
+theConeStruct1.vesselThickness =[];
+photoreceptorClasses = {'LConeTabulatedAbsorbance' 'MConeTabulatedAbsorbance' 'SConeTabulatedAbsorbance' 'Melanopsin'};
+
+lambdaMaxRangeL = [-4 4]; % (2 nm = 1SD)
+lambdaMaxRangeM = [-3 3]; % (1.5 nm = 1SD)
+lambdaMaxRangeS = [-3 3]; % (1.3 nm = 1SD)
+ageRange = [-12 14]; %±14 yrs (7 yrs = 1SD)
+
+%%
+NMeasurements = size(modSpd, 2);
+
+for aa = 1:length(ageRange)
+    for ll = 1:length(lambdaMaxRangeL)
+        for mm = 1:length(lambdaMaxRangeM)
+            for ss = 1:length(lambdaMaxRangeS)
+                theConeStruct = theConeStruct1;
+                theConeStruct.observerAgeInYears = theConeStruct.observerAgeInYears+ageRange(aa);
+                theConeStruct.Lshift = lambdaMaxRangeL(ll);
+                theConeStruct.Mshift = lambdaMaxRangeM(mm);
+                theConeStruct.Sshift = lambdaMaxRangeS(ss);
+                aa, ll, mm, ss
+                for ii = 1:NMeasurements
+                    T_receptors1 = GetReceptorsFromStruct(S, photoreceptorClasses, theConeStruct);
+                    contrastSplatter{aa, ll, mm, ss}(:, ii) = (T_receptors1*(modSpd(:, ii) - bgSpd(:, ii))) ./ (T_receptors*bgSpd(:, ii));
+                end
+            end
+        end
+    end
+end
+
+% Obtain all contrasts and convert to 'postreceptoral' contrast
+allContrasts = [contrastSplatter{:}];
+postReceptoralContrasts = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0]' \ allContrasts;
+max(abs(postReceptoralContrasts), [], 2)
+
+%    0.0488
+%    0.0396
+%    0.1824
+
+
+%% Calculate the post-receptoral contrasts
+maxMelContrastsFig = figure;
+markerSizeIndPoint = 3;
+markerSizeGrpAvg = 5;
+xOffset = 0.1;
+theLabels = {'L+M+S', 'L-M', 'S'};
+theRGB = [189 189 189 ; 49 163 84 ; 117 107 177 ; 43 140 190]/255;
+
+
+for aa = 1:length(ageRange)
+    for ll = 1:length(lambdaMaxRangeL)
+        for mm = 1:length(lambdaMaxRangeM)
+            for ss = 1:length(lambdaMaxRangeS)   
+                contrast = contrastSplatter{aa, ll, mm, ss};
+                postReceptoralContrasts = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0]' \ contrast;
+                subplot(1, 3, 1);
+                jj = 2;
+                plot([-0.09 0.09], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
+                plot([0 0], [-0.09 0.09], '-', 'Color', [0.75 0.75 0.75]);
+                plot(contrast(1, :), contrast(2, :), 'ok', 'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                    'MarkerSize', markerSizeIndPoint);
+                xlabel('\DeltaL');
+                ylabel('\DeltaM');
+                box off; set(gca, 'TickDir', 'out');
+                xlim([-0.09 0.09]);
+                ylim([-0.09 0.09]);
+                
+                set(gca, 'XTick', [-0.08:0.04:0.08]);
+                set(gca, 'YTick', [-0.08:0.04:0.08]);
+                title('\DeltaL vs \DeltaM');
+                pbaspect([1 1 1]);
+                
+                % Plot post-receptoral contrasts
+                subplot(1, 3, 2);
+                plot([0 4], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
+                for jj = 1:3
+                    plot((rand(1, NMeasurements)-0.5)/10+jj-xOffset, postReceptoralContrasts(jj, :), 'o', ...
+                        'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                        'MarkerSize', markerSizeIndPoint); hold on;
+                end
+                set(gca, 'XTick', 1:3); set(gca, 'XTickLabels', theLabels);
+                set(gca, 'YTick', [-0.30:0.10:0.30]);
+                xlabel('Sensor');
+                ylabel('Contrast');
+                
+                box off; set(gca, 'TickDir', 'out');
+                xlim([0 4]);
+                ylim([-0.30 0.30]);
+                title({'MaxMel validation'});
+                pbaspect([1 1 1]);
+                
+                % Plot Mel
+                subplot(1, 3, 3);
+                jj = 4;
+                plot([0 4], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
+                plot((rand(1, NMeasurements)-0.5)/10+1-xOffset, contrast(jj, :), 'o', ...
+                    'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                    'MarkerSize', markerSizeIndPoint);
+                set(gca, 'XTick', 1); set(gca, 'XTickLabels', 'Melanopsin');
+                set(gca, 'YTick', [4:.1:4.8]);
+                xlabel('Sensor');
+                ylabel('Contrast');
+                
+                box off; set(gca, 'TickDir', 'out');
+                xlim([0 2]);
+                ylim([4 4.8]);
+                pbaspect([1 1 1]);
+                
+            end
+        end
+    end
+end
+set(maxMelContrastsFig, 'PaperPosition', [0 0 8 3]); %Position plot at left hand corner with width 15 and height 6.
+set(maxMelContrastsFig, 'PaperSize', [8 3]); %Set the paper to have width 15 and height 6.
+saveas(maxMelContrastsFig, fullfile(outDir, 'MaxMel_ValidationContrastSimulation.png'), 'png');
+close(maxMelContrastsFig);
+
 
 %% Plot in the spectral domain
 maxMelSpectralFig = figure;
@@ -77,8 +205,8 @@ close(maxMelSpectralFig);
 
 %%
 photopicLuminanceCdM2 = T_xyz(2,:)*bgSpd;
-for ii = 1:NMeasurements
-chromaticityXY(:, ii) = (T_xyz(1:2,:)*bgSpd(:, ii))./sum(T_xyz*bgSpd(:, ii));
+for jj = 1:NMeasurements
+chromaticityXY(:, jj) = (T_xyz(1:2,:)*bgSpd(:, jj))./sum(T_xyz*bgSpd(:, jj));
 end
 fprintf('\n');
 fprintf('\t * <strong>Mean±1SD luminance</strong> [cd/m2]: <strong>%.2f</strong> ± %.3f\n', mean(photopicLuminanceCdM2), std(photopicLuminanceCdM2));
@@ -90,15 +218,15 @@ maxMelContrastsFig = figure;
 markerSizeIndPoint = 3;
 markerSizeGrpAvg = 5;
 xOffset = 0.1;
-theLabels = {'L+M', 'L-M', 'S'};
+theLabels = {'L+M+S', 'L-M', 'S'};
 theRGB = [189 189 189 ; 49 163 84 ; 117 107 177 ; 43 140 190]/255;
-postReceptoralContrasts = [1 1 0 0 ; 1 -1 0 0 ; 0 0 1 0]' \ contrast;
+postReceptoralContrasts = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0]' \ contrast;
 
 subplot(1, 3, 1);
-ii = 2;
+jj = 2;
 plot([-0.05 0.05], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
 plot([0 0], [-0.05 0.05], '-', 'Color', [0.75 0.75 0.75]);
-plot(contrast(1, :), contrast(2, :), 'ok', 'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+plot(contrast(1, :), contrast(2, :), 'ok', 'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
     'MarkerSize', markerSizeIndPoint);
 xlabel('\DeltaL');
 ylabel('\DeltaM');
@@ -114,11 +242,11 @@ pbaspect([1 1 1]);
 % Plot post-receptoral contrasts
 subplot(1, 3, 2);
 plot([0 4], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
-for ii = 1:3
-    plot((rand(1, NMeasurements)-0.5)/10+ii-xOffset, postReceptoralContrasts(ii, :), 'o', ...
-        'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+for jj = 1:3
+    plot((rand(1, NMeasurements)-0.5)/10+jj-xOffset, postReceptoralContrasts(jj, :), 'o', ...
+        'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
         'MarkerSize', markerSizeIndPoint); hold on;
-    errorbar(ii+xOffset, mean(postReceptoralContrasts(ii, :)), std(postReceptoralContrasts(ii, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
+    errorbar(jj+xOffset, mean(postReceptoralContrasts(jj, :)), std(postReceptoralContrasts(jj, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
 end
 set(gca, 'XTick', 1:3); set(gca, 'XTickLabels', theLabels);
 set(gca, 'YTick', [-0.10:0.05:0.10]);
@@ -133,12 +261,12 @@ pbaspect([1 1 1]);
 
 % Plot Mel
 subplot(1, 3, 3);
-ii = 4;
+jj = 4;
 plot([0 4], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
-plot((rand(1, NMeasurements)-0.5)/10+1-xOffset, contrast(ii, :), 'o', ...
-    'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+plot((rand(1, NMeasurements)-0.5)/10+1-xOffset, contrast(jj, :), 'o', ...
+    'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
     'MarkerSize', markerSizeIndPoint);
-errorbar(1+xOffset, mean(contrast(ii, :)), std(contrast(ii, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
+errorbar(1+xOffset, mean(contrast(jj, :)), std(contrast(jj, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
 set(gca, 'XTick', 1); set(gca, 'XTickLabels', 'Melanopsin');
 set(gca, 'YTick', [4:.1:4.6]);
 xlabel('Sensor');
@@ -186,14 +314,14 @@ end
 
 % Calculate contrast for each of the measurement pairs
 NMeasurements = size(modSpd, 2);
-for ii = 1:NMeasurements
-    contrast(:, ii) = (T_receptors*(modSpd(:, ii) - bgSpd(:, ii))) ./ (T_receptors*bgSpd(:, ii));
+for jj = 1:NMeasurements
+    contrast(:, jj) = (T_receptors*(modSpd(:, jj) - bgSpd(:, jj))) ./ (T_receptors*bgSpd(:, jj));
 end
 
 %%
 photopicLuminanceCdM2 = T_xyz(2,:)*bgSpd;
-for ii = 1:NMeasurements
-chromaticityXY(:, ii) = (T_xyz(1:2,:)*bgSpd(:, ii))./sum(T_xyz*bgSpd(:, ii));
+for jj = 1:NMeasurements
+chromaticityXY(:, jj) = (T_xyz(1:2,:)*bgSpd(:, jj))./sum(T_xyz*bgSpd(:, jj));
 end
 fprintf('\n');
 fprintf('\t * <strong>Mean±1SD luminance</strong> [cd/m2]: <strong>%.2f</strong> ± %.3f\n', mean(photopicLuminanceCdM2), std(photopicLuminanceCdM2));
@@ -233,16 +361,16 @@ maxLMSContrastsFig = figure;
 markerSizeIndPoint = 3;
 markerSizeGrpAvg = 5;
 xOffset = 0.1;
-theLabels = {'L+M', 'L-M'};
+theLabels = {'L+M+S', 'L-M'};
 theRGB = [189 189 189 ; 49 163 84 ; 117 107 177 ; 43 140 190]/255;
-postReceptoralContrasts = [1 1 0 0 ; 1 -1 0 0 ; 0 0 1 0]' \ contrast;
+postReceptoralContrasts = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0]' \ contrast;
 axLims = [3.5 4.4];
 
 subplot(1, 3, 1);
-ii = 2;
+jj = 2;
 hold on;
 plot([axLims], [axLims], '--k');
-plot(contrast(1, :), contrast(2, :), 'ok', 'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+plot(contrast(1, :), contrast(2, :), 'ok', 'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
     'MarkerSize', markerSizeIndPoint);
 xlabel('\DeltaL');
 ylabel('\DeltaM');
@@ -253,10 +381,10 @@ title('\DeltaL vs \DeltaM');
 pbaspect([1 1 1]);
 
 subplot(1, 3, 2);
-ii = 3;
+jj = 3;
 hold on;
 plot([axLims], [axLims], '--k');
-plot(postReceptoralContrasts(1, :), postReceptoralContrasts(3, :), 'ok', 'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+plot(postReceptoralContrasts(1, :), postReceptoralContrasts(3, :), 'ok', 'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
     'MarkerSize', markerSizeIndPoint);
 xlabel('\Delta[L+M]');
 ylabel('\DeltaS');
@@ -269,11 +397,11 @@ pbaspect([1 1 1]);
 % Plot post-receptoral contrasts
 subplot(1, 3, 3);
 plot([0 4], [0 0], '-', 'Color', [0.75 0.75 0.75]); hold on;
-ii = 2; % L-M
-plot((rand(1, NMeasurements)-0.5)/10+1-xOffset, postReceptoralContrasts(ii, :), 'o', ...
-    'MarkerFaceColor', theRGB(ii, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+jj = 2; % L-M
+plot((rand(1, NMeasurements)-0.5)/10+1-xOffset, postReceptoralContrasts(jj, :), 'o', ...
+    'MarkerFaceColor', theRGB(jj, :), 'MarkerEdgeColor', [0.5 0.5 0.5], ...
     'MarkerSize', markerSizeIndPoint); hold on;
-errorbar(1+xOffset, mean(postReceptoralContrasts(ii, :)), std(postReceptoralContrasts(ii, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
+errorbar(1+xOffset, mean(postReceptoralContrasts(jj, :)), std(postReceptoralContrasts(jj, :)), 'sk', 'MarkerFaceColor', 'k', 'MarkerSize', markerSizeGrpAvg);
 
 % Mel
 plot((rand(1, NMeasurements)-0.5)/10+2-xOffset, contrast (4, :), 'o', ...
