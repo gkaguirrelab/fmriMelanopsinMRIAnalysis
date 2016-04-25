@@ -3,5 +3,7 @@ Project related to the melanopsin MRI measurements in the Aguirre/Brainard labs 
 
 Developers:
 Giulia Frazzetta
+
 Andrew Bock
+
 Manuel Spitschan
