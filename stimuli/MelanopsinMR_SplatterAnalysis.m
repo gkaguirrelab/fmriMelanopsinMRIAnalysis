@@ -25,6 +25,7 @@ valFileName = 'Cache-MelanopsinDirectedSuperMaxMel-BoxARandomizedLongCableCStubb
 
 % Iterate over the subjects
 c = 1;
+fprintf('* Loading files from ...\n');
 for s = 1:length(theSubjects)
     theDir = fullfile(basePath, theSubjects{s}, theExptDates{s}, 'StimulusFiles', ...
         'Cache-MelanopsinDirectedSuperMaxMel', 'BoxARandomizedLongCableCStubby1_ND00', ...
@@ -34,8 +35,10 @@ for s = 1:length(theSubjects)
     for f = 1:length(theFiles)
         valPath = fullfile(theDir, theFiles(f).name, valFileName);
         tmp = load(valPath);
+        fprintf('\t>> Subject <strong>%s</strong> / <strong>%s</strong>\n', theSubjects{s}, theFiles(f).name);
         bgSpd(:, c) = tmp.cals{end}.modulationBGMeas.meas.pr650.spectrum;
         modSpd(:, c) = tmp.cals{end}.modulationMaxMeas.meas.pr650.spectrum;
+        date{c} = theFiles(f).name;
         T_receptors = tmp.cals{end}.describe.cache.data(32).describe.T_receptors;
         c = c+1;
     end
@@ -47,33 +50,25 @@ for jj = 1:NMeasurements
     contrast(:, jj) = (T_receptors*(modSpd(:, jj) - bgSpd(:, jj))) ./ (T_receptors*bgSpd(:, jj));
 end
 
-%% Calculate contrast for each of the measurement pairs
-theConeStruct1.Lshift = 0;
-theConeStruct1.Mshift = 0;
-theConeStruct1.Sshift = 0;
-theConeStruct1.Melshift = 0;
-theConeStruct1.fieldSizeDegrees = 64;
-theConeStruct1.observerAgeInYears = 32;
-theConeStruct1.pupilDiameterMm = 8;
-theConeStruct1.fractionBleached = [];
-theConeStruct1.oxygenationFraction = [];
-theConeStruct1.vesselThickness =[];
-photoreceptorClasses = {'LConeTabulatedAbsorbance' 'MConeTabulatedAbsorbance' 'SConeTabulatedAbsorbance' 'Melanopsin'};
+%% Average contrast within each pre/post measurement set
+startIdx = [1:5:40]; endIdx = [5:5:40];
+for ii = 1:length(startIdx)
+    avgContrastPerSess(:, ii) = mean(contrast(:, startIdx(ii):endIdx(ii)), 2)
+end
 
-lambdaMaxRangeL = [-4 4]; % (2 nm = 1SD)
-lambdaMaxRangeM = [-3 3]; % (1.5 nm = 1SD)
-lambdaMaxRangeS = [-3 3]; % (1.3 nm = 1SD)
-ageRange = [-12 14]; %±14 yrs (7 yrs = 1SD)
 
-% Obtain all contrasts and convert to 'postreceptoral' contrast
-allContrasts = [contrastSplatter{:}];
-postReceptoralContrasts = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0]' \ allContrasts;
-max(abs(postReceptoralContrasts), [], 2)
+%% Obtain all contrasts and convert to postreceptoral contrast
+B_postreceptoral = [1 1 1 0 ; 1 -1 0 0 ; 0 0 1 0];
+postReceptoralContrasts = B_postreceptoral' \ avgContrastPerSess;
+maxAbsolutePostreceptoral = max(abs(postReceptoralContrasts), [], 2);
+fprintf('* Maximum absolute contrast (5 decimal points) on ...\n');
+fprintf('\t LMS\t <strong>%.5f</strong>\n', maxAbsolutePostreceptoral(1, :));
+fprintf('\t L-S\t <strong>%.5f</strong>\n', maxAbsolutePostreceptoral(2, :));
+fprintf('\t S\t <strong>%.5f</strong>\n', maxAbsolutePostreceptoral(3, :));
 
-%    0.0488
-%    0.0396
-%    0.1824
-
+% Save to file
+splatterContrastOutCSV = fullfile(outDir, 'MaxMel_PostreceptoralSplatter.csv');
+csvwrite(splatterContrastOutCSV, maxAbsolutePostreceptoral);
 
 %% Calculate the post-receptoral contrasts
 maxMelContrastsFig = figure;
