@@ -18,17 +18,17 @@ phaseSeq4 = Shuffle(phaseInd);
 %% Sequence 1
 theFrequencyIndices = ones(1, nTrialsWithAttentionTask);
 trialDuration = 16*ones(1, nTrialsWithAttentionTask);
-thePhaseIndices = phaseSeq1;
+thePhaseIndices = phaseSeq4;
 attnTask = randperm(nTrialsWithAttentionTask); attnTask = sort(attnTask(1:nAttentionTaskTrials));
 theDirections = ones(1, nTrialsWithAttentionTask);
 theDirections(attnTask) = 2;
 theContrastRelMaxIndices = ones(1, nTrialsWithAttentionTask);
 
-idx1 = 1:attnTask(1)-1
-idx2 = attnTask(1)+1:attnTask(2)-1
-idx3 = attnTask(2)+1:attnTask(3)-1
-idx4 = attnTask(3)+1:nTrialsWithAttentionTask
-theContrastRelMaxIndices([idx1 idx2 idx3 idx4]) = seq1;
+idx1 = 1:attnTask(1)-1;
+idx2 = attnTask(1)+1:attnTask(2)-1;
+idx3 = attnTask(2)+1:attnTask(3)-1;
+idx4 = attnTask(3)+1:nTrialsWithAttentionTask;
+theContrastRelMaxIndices([idx1 idx2 idx3 idx4]) = seq4;
 
 fprintf('theFrequencyIndices:[');
 for ii = 1:nTrialsWithAttentionTask
