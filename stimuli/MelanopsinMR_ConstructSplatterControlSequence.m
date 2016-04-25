@@ -30,27 +30,27 @@ idx3 = attnTask(2)+1:attnTask(3)-1;
 idx4 = attnTask(3)+1:nTrialsWithAttentionTask;
 theContrastRelMaxIndices([idx1 idx2 idx3 idx4]) = seq4;
 
-fprintf('theFrequencyIndices:[');
+fprintf('theFrequencyIndices:d:[');
 for ii = 1:nTrialsWithAttentionTask
    fprintf('%g ', theFrequencyIndices(ii));
 end
 fprintf(']:Sequence of indices into frequency\n');
-fprintf('thePhaseIndices:[');
+fprintf('thePhaseIndices:d:[');
 for ii = 1:nTrialsWithAttentionTask
    fprintf('%g ', thePhaseIndices(ii));
 end
 fprintf(']:Sequence of indices into phase\n');
-fprintf('theDirections:[');
+fprintf('theDirections:d:[');
 for ii = 1:nTrialsWithAttentionTask
    fprintf('%g ', theDirections(ii));
 end
 fprintf(']:Sequence of indices into direction\n');
-fprintf('theContrastRelMaxIndices:[');
+fprintf('theContrastRelMaxIndices:d:[');
 for ii = 1:nTrialsWithAttentionTask
    fprintf('%g ', theContrastRelMaxIndices(ii));
 end
 fprintf(']:Sequence of indices into contrast scalar\n');
-fprintf('trialDuration:[');
+fprintf('trialDuration:d:d:[');
 for ii = 1:nTrialsWithAttentionTask
    fprintf('%g ', trialDuration(ii));
 end
