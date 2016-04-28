@@ -4,8 +4,7 @@ Project repository related to the melanopsin fMRI measurements in the  [Aguirre]
 ## Dependencies
 
 * [MRklar](https://www.github.com/gkaguirrelab/MRklar)
-* [MRlyze](https://www.github.com/gkaguirrelab/MRlyze).
-
+* [MRlyze](https://www.github.com/gkaguirrelab/MRlyze)
 
 ## Team
 
