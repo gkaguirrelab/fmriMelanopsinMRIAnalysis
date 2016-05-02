@@ -128,6 +128,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 %% Submit FEAT stat script
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Submitting FEAT stats ~~~~~~~~~~~~~~~~~~~\n');
 
+%%%%% TEST IF THIS WORKS
 system('sh submit_first_level_feat.sh')  %must be on chead to run this!
 
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
