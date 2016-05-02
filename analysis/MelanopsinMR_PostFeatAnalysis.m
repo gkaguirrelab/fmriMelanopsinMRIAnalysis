@@ -81,18 +81,18 @@ project_template
 project_copes 
 
 
-% %% Extract Chisquare and p-values using Fisher's method, save out statistical maps in output_dir.
-% fprintf ('\n ~~~~~~~~~~~~~~~~~~~ Starting Fishers analysis ~~~~~~~~~~~~~~~~~~~\n');
-% % local inputs
-% Fisher_thresh = 0.05  % hardcoded according to preregistration document
-% % convert F values to p values
-% func = funcs{2};
-% convert_F_to_p(session_dir,subject_name,runNums,func,Fisher_thresh,SUBJECTS_DIR)
-% % Do the Fisher's combined probability test
-% func = funcs{2};
-% fisher_combined_prob_test(output_dir,session_dir,subject_name, subj_name, condition,runNums,func,Fisher_thresh,SUBJECTS_DIR,true);
-% 
-% fprintf ('\n~~~~~~~~~~~~~~~~~~~ Fishers analysis complete! ~~~~~~~~~~~~~~~~~~~\n');
+%% Extract Chisquare and p-values using Fisher's method, save out statistical maps in output_dir.
+fprintf ('\n ~~~~~~~~~~~~~~~~~~~ Starting Fishers analysis ~~~~~~~~~~~~~~~~~~~\n');
+% local inputs
+Fisher_thresh = 0.05  % hardcoded according to preregistration document
+% convert F values to p values
+func = funcs{2};
+convert_F_to_p(session_dir,subject_name,runNums,func,Fisher_thresh,SUBJECTS_DIR)
+% Do the Fisher's combined probability test
+func = funcs{2};
+fisher_combined_prob_test(output_dir,session_dir,subject_name, subj_name, condition,runNums,func,Fisher_thresh,SUBJECTS_DIR,true);
+
+fprintf ('\n~~~~~~~~~~~~~~~~~~~ Fishers analysis complete! ~~~~~~~~~~~~~~~~~~~\n');
 
 %% FIR Analysis: Project template to subject
 % Requires that the subject has been registered using:
@@ -106,7 +106,7 @@ hemis = {...
         'rh'...
         };
 %project template
-templ2subject (session_dir, subject_name, SUBJECTS_DIR, hemis)
+templ2subject (session_dir, subject_name, hemis, SUBJECTS_DIR)
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Projection to subject space complete! ~~~~~~~~~~~~~~~~~~~ \n');
 end
 
