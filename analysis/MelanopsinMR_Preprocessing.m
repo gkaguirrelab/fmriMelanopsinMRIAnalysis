@@ -36,7 +36,7 @@ function MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, subjec
 % subj_name = 'HERO_xxx1';
 % session_date = 'mmddyy';
 % condition = 'MelPulses_400pct';
-% runNums =  1:12 ;
+% nunRums =  12 ;
 % MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subj_name,session_date,numRuns)
 %
 %%%%%%%%%
