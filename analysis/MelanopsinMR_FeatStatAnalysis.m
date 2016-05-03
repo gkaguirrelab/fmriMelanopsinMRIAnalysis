@@ -1,4 +1,4 @@
-function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subj_name,session_date,numRuns)
+function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session_date,condition, numRuns, funcs, SUBJECTS_DIR)
 
 % 2nd step for MelanopsinMR data processing. Follows:
 % MelanopsinMR_Preprocessing. Preceeds: MelanopsinMR_PostFeatStatAnalysis.
@@ -30,15 +30,22 @@ function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, sub
 % 
 % results_dir =  '/some/path/ideally/on/dropbox/' ;
 % data_dir = '/data/jag/MELA/'; %Upenn cluster default path
-% SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 % subj_name = 'HERO_xxx1';
 % session_date = 'mmddyy';
 % condition = 'MelPulses_400pct';
-% runNums =  1:12 ;
+% runNums =  12 ;
+% funcs = { ...
+% 's5.wdrf.tf' ...
+% 'wdrf.tf' ...
+% };
+% SUBJECTS_DIR
 % MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subj_name,session_date,numRuns)
 %
 %%%%%%%%%
 %% Initialize analysis
+if ~exist('SUBJECTS_DIR','var')
+    SUBJECTS_DIR = getenv('SUBJECTS_DIR');
+end 
 session_dir = fullfile(data_dir, subj_name,session_date);
 output_dir = fullfile( results_dir, condition, subj_name, session_date);
 if ~exist (output_dir, 'dir')
@@ -55,11 +62,12 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ FEATstat analysis for %s , %s, %s ~~~~~~~~~~~~~~
 time = datetime
 results_dir
 data_dir
-SUBJECTS_DIR 
 subj_name 
-session_date 
+session_date
+condition
 numRuns
-
+funcs
+SUBJECTS_DIR
 
 %% Generate regressors for FEAT analysis
 fprintf ('\n ~~~~~~~~~~~~~~~~~~~ Generating regressors for FEAT analysis ~~~~~~~~~~~~~~~~~~~\n');
@@ -76,12 +84,12 @@ if ~isdir(outDirPerformance)
 end
 protocolName = 'MelanopsinMRMaxMel';
 wrapAround = 0;
-matFiles = listdir (matDir);
+matFiles = listdir (matDir, 'files');
 
 
 %generate the regressors
 for mm = 1:length(matFiles)
-    matFile = matFiles{mm};
+    matFile = fullfile(matDir,matFiles{mm});
     ol_regressors(matFile,outDir,protocolName,wrapAround)
 end
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Regressors generated! ~~~~~~~~~~~~~~~~~~~\n');
@@ -110,12 +118,31 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
 %% Create feat stat files
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Creating FEATstat fsf files ~~~~~~~~~~~~~~~~~~~\n');
-
-
-%%%%%%% function to create FSF files from template here
-
-
-
+FSF_dir = fullfile(session_dir,'first_level_stat');
+if ~isdir(FSF_dir)
+    mkdir(FSF_dir);
+end
+d = find_bold(session_dir);
+for ff = 1:length(funcs)
+        funcName = funcs{ff};
+        for j = 1:numRuns
+            clear EVs
+            % Name the output .fsf file
+            if strcmp(funcName,'s5.wdrf.tf'); % 5mm smoothing
+                outFile = fullfile(FSF_dir,sprintf('Run_%02d_5mm.fsf',j));
+            elseif strcmp(funcName,'wdrf.tf'); % raw (no smoothing)
+                outFile = fullfile(FSF_dir,sprintf('Run_%02d_raw.fsf',j));
+            else
+                error('funcName not recognized');
+            end
+            % Name the functional and anatomical files for FSL's FEAT
+            funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
+            anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
+            stimuli_dirs = listdir(outStimuli,'dirs');
+            EVs = listdir(fullfile(outStimuli,stimuli_dirs{j},'*.txt'),'files');
+            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
+        end
+end
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
 %% Create a script to submit all FEAT stat files
@@ -125,12 +152,14 @@ create_submit_first_level_feat (session_dir,subj_name,numRuns);
 
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
-%% Submit FEAT stat script
-fprintf ('\n~~~~~~~~~~~~~~~~~~~ Submitting FEAT stats ~~~~~~~~~~~~~~~~~~~\n');
+fprintf ('\n~~~~~~~~~~~~~~~~~~~ You can now submit FEAT stat using the script submit_first_level_feat.sh ~~~~~~~~~~~~~~~~~~~\n');
 
-%%%%% TEST IF THIS WORKS
-system('sh submit_first_level_feat.sh')  %must be on chead to run this!
-
-fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
+% %% Submit FEAT stat script
+% fprintf ('\n~~~~~~~~~~~~~~~~~~~ Submitting FEAT stats ~~~~~~~~~~~~~~~~~~~\n');
+% 
+% %%%%% TEST IF THIS WORKS
+% system('sh submit_first_level_feat.sh')  %must be on chead to run this!
+% 
+% fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Wait for FEATstat to end, then move to step 3: MelanopsinMR_PostFeatStatAnalysis. ~~~~~~~~~~~~~~~~~~~\n');
 

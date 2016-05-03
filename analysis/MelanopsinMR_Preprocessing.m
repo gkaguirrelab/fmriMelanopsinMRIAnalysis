@@ -65,7 +65,7 @@ condition
 numRuns
 %% Create preprocessing scripts
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Creating preprocessing scripts ~~~~~~~~~~~~~~~~~~~\n');
-outDir = fullfile(session_dir,'preprocessing_scripts', subject_name);
+outDir = fullfile(session_dir,'shell_scripts', subject_name);
 if ~exist(outDir,'dir')
     mkdir(outDir);
 end
@@ -95,8 +95,8 @@ create_preprocessing_scripts(session_dir,subject_name,outDir, ...
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
 %% Start Preprocessing
-fprintf ('\n~~~~~~~~~~~~~~~~~~~ Submit preprocessing scripts ~~~~~~~~~~~~~~~~~~~\n');
+fprintf (['\n~~~~~~~~~~~~~~~~~~~ You can now start preprocessing using the script submit_' job_name '_all.sh ~~~~~~~~~~~~~~~~~~~\n']);
 
 %%% TEST IF THIS WORKS
-system(['sh submit_' job_name '_all.sh'])  %must be on chead to run this!
+% system(['sh submit_' job_name '_all.sh'])  %must be on chead to run this!
 
