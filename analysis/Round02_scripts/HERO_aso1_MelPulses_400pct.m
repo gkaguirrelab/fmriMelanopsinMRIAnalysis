@@ -1,7 +1,7 @@
 %%%%%%%% Analysis for HERO_aso1 MelPulses_400pct %%%%%%%%%%
 
 %% inputs
-results_dir =  '/data/jag/MELA/Melanopsin_MR/Results';
+results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
 data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
 SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 subject_name = 'HERO_aso1_MaxMel'
