@@ -96,7 +96,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Regressors generated! ~~~~~~~~~~~~~~~~~~~\n');
 %% Get the performance
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Evaluating performance ~~~~~~~~~~~~~~~~~~~\n');
 for mm = 1:length(matFiles)
-    matFile = matFiles{mm};
+    matFile = fullfile(matDir,matFiles{mm});
     [hits(mm) hTotal(mm) falseAlarms(mm) fTotal(mm)] = check_performance(matFile, protocolName);
 end
 
@@ -138,8 +138,8 @@ for ff = 1:length(funcs)
             % Name the functional and anatomical files for FSL's FEAT
             funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
             anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
-            stimuli_dirs = listdir(outStimuli,'dirs');
-            EVs = listdir(fullfile(outStimuli,stimuli_dirs{j},'*.txt'),'files');
+            stimuli_dirs = listdir(outDir,'dirs');
+            EVs = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
             FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
 end
