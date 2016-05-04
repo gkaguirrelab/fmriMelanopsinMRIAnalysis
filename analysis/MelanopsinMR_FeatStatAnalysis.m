@@ -139,7 +139,8 @@ for ff = 1:length(funcs)
             funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
             anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
             stimuli_dirs = listdir(outDir,'dirs');
-            EVs = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            EVs = fullfile(outDir,stimuli_dirs{j},EVstmp);
             FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
 end
