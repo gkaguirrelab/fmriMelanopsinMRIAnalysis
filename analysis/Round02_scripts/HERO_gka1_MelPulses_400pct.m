@@ -4,7 +4,7 @@
 results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
 data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
 SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
-subject_name = 'HERO_gka1_3T'
+subject_name = 'HERO_gka1_3T';
 subj_name = 'HERO_gka1';
 session_date = '033116';
 condition = 'MelPulses_400pct';
