@@ -1,4 +1,4 @@
-%%%%%%%% Analysis for HERO_aso1 MelPulses_400pct %%%%%%%%%%
+%%%%%%%% Analysis for HERO_mxs1 MelPulses_400pct %%%%%%%%%%
 
 %% inputs
 results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
