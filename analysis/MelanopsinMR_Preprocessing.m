@@ -65,7 +65,7 @@ condition
 numRuns
 %% Create preprocessing scripts
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Creating preprocessing scripts ~~~~~~~~~~~~~~~~~~~\n');
-outDir = fullfile(session_dir,'shell_scripts', subject_name);
+outDir = fullfile(session_dir,'shell_scripts', subj_name);
 if ~exist(outDir,'dir')
     mkdir(outDir);
 end
