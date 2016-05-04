@@ -140,7 +140,9 @@ for ff = 1:length(funcs)
             anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
             stimuli_dirs = listdir(outDir,'dirs');
             EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-            EVs = fullfile(outDir,stimuli_dirs{j},EVstmp);
+            for ii =1:length(EVstmp)
+            EVs(ii) = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+            end
             FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
 end
