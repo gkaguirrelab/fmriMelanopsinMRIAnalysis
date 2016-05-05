@@ -1,4 +1,4 @@
-function MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subject_name,subj_name,session_date, condition, runNums,funcs, project_template, project_copes)
+function MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subject_name,subj_name,session_date, condition, runNums,funcs, proj_template, proj_copes)
 
 % 3rd step for MelanopsinMR data processing. Follows:
 % MelanopsinMR_Preprocessing, MelanopsinMR_FeatStatAnalysis.
@@ -77,8 +77,8 @@ session_date
 condition
 runNums
 funcs
-project_template
-project_copes
+proj_template
+proj_copes
 
 
 %% Extract Chisquare and p-values using Fisher's method, save out statistical maps in output_dir.
@@ -98,7 +98,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Fishers analysis complete! ~~~~~~~~~~~~~~~~~~~\n
 % Requires that the subject has been registered using:
 % mri_cvs_register --mov <subject_name> --template cvs_avg35_inMNI152
 
-if project_template %needs to be done just one time
+if proj_template %needs to be done just one time
     fprintf ('\n~~~~~~~~~~~~~~~~~~~ Projecting template to subject space... ~~~~~~~~~~~~~~~~~~~ \n');
     % Project Visual Cortex anatomical template to subject space
     project_template(session_dir,subject_name);
@@ -111,7 +111,7 @@ end
 
 % project copes
 
-if project_copes %needs to be run just one time
+if proj_copes %needs to be run just one time
     fprintf ('\n~~~~~~~~~~~~~~~~~~~ Projecting copes... ~~~~~~~~~~~~~~~~~~~\n');
     for ff = 1:length(funcs)
         func = funcs{ff};
