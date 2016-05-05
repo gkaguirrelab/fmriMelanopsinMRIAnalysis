@@ -100,13 +100,10 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Fishers analysis complete! ~~~~~~~~~~~~~~~~~~~\n
 
 if project_template %needs to be done just one time
     fprintf ('\n~~~~~~~~~~~~~~~~~~~ Projecting template to subject space... ~~~~~~~~~~~~~~~~~~~ \n');
-    % local inputs
-    hemis = {...
-        'lh'...
-        'rh'...
-        };
-    %project template
-    templ2subject (session_dir, subject_name, hemis, SUBJECTS_DIR)
+    % Project Visual Cortex anatomical template to subject space
+    project_template(session_dir,subject_name);
+    % Project LGN anatomical template to subject space
+    make_LGN_ROI(session_dir,subject_name)
     fprintf ('\n~~~~~~~~~~~~~~~~~~~ Projection to subject space complete! ~~~~~~~~~~~~~~~~~~~ \n');
 end
 
@@ -154,12 +151,12 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-        FIR_assemble(session_dir, subject_name, subj_name, output_dir, SUBJECTS_DIR, copeNames, runNums, hemis, ROIs, funcs, condition);
+       FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         conditionAT = [conditon '_AttentionTask'];
         startingCope = length(copeNames)+1 ;
-        FIR_assemble(session_dir, subject_name, subj_name, output_dir, SUBJECTS_DIR, copeNames, runNums, hemis, ROIs, funcs, conditionAT, startingCope),
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, conditionAT, startingCope),
         
     case 'LMSPulses_400pct'
         hemis = {...
@@ -192,12 +189,12 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-        FIR_assemble(session_dir, subject_name, subj_name, output_dir, SUBJECTS_DIR, copeNames, runNums, hemis, ROIs, funcs, condition);
+         FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         conditionAT = [conditon '_AttentionTask'];
         startingCope = length(copeNames)+1 ;
-        FIR_assemble(session_dir, subject_name, subj_name, output_dir, SUBJECTS_DIR, copeNames, runNums, hemis, ROIs, funcs, conditionAT, startingCope),
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, conditionAT, startingCope);
         
         
     case 'SplatterControl'

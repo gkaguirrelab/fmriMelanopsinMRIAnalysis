@@ -14,8 +14,8 @@ funcs = { ...
 'wdrf.tf' ...
 's5.wdrf.tf' ...
 };
-project_template = true;
-project_copes = true;
+proj_template = true;
+proj_copes = true;
 
 
 %% Step 1: preprocessing

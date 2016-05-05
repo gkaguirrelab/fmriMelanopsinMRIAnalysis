@@ -14,8 +14,8 @@ funcs = { ...
 'wdrf.tf' ...
 's5.wdrf.tf' ...
 };
-project_template = true;
-project_copes = true;
+proj_template = true;
+proj_copes = true;
 
 
 %% Step 1: preprocessing
@@ -34,6 +34,6 @@ MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session_date,con
 runNums = 1:numOfRuns;
 
 MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, ...
-    subject_name, subj_name, session_date, condition, runNums,funcs, project_template, project_copes)
+    subject_name, subj_name, session_date, condition, runNums,funcs, proj_template, proj_copes)
 
 %move the relevant results to dropbox
