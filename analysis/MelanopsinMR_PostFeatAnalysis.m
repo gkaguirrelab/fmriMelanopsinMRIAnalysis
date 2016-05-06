@@ -192,7 +192,7 @@ switch condition
          FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
-        conditionAT = [conditon '_AttentionTask'];
+        conditionAT = [condition '_AttentionTask'];
         startingCope = length(copeNames)+1 ;
         FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, conditionAT, startingCope);
         
