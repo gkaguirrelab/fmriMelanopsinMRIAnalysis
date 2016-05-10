@@ -101,7 +101,7 @@ for mm = 1:length(matFiles)
 end
 
 %% Write the performance out
-outFilePerformance = fullfile(outDirPerformance, 'performance.csv');
+outFilePerformance = fullfile(outDirPerformance, [subj_name '_' condition '_performance.csv']);
 fid = fopen(outFilePerformance, 'w');
 fprintf(fid, 'Hits,N,False alarms,N\n');
 fclose(fid);
