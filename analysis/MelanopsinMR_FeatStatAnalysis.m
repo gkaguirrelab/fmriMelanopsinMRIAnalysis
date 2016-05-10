@@ -139,11 +139,34 @@ for ff = 1:length(funcs)
             funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
             anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
             stimuli_dirs = listdir(outDir,'dirs');
-            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-            for ii =1:length(EVstmp)
-            EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+            if strcmp(condition,'SplatterControl')
+                EVtypes = {...
+                    '25Pct' ...
+                    '50Pct' ...
+                    '100Pct' ...
+                    '195Pct' ...
+                    '0Pct' ...
+                    };
+                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+                ct = 1;
+                for tt=1:length(EVtypes)
+                    EVtype = EVtypes{tt};
+                    for ii=1:length(EVstmp)
+                        tmp = strfind(EVstmp{ii},['_' EVtype '_']);
+                        if ~isempty(tmp)
+                            EVs{ct} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+                            ct = ct+1;
+                        end
+                    end
+                end
+                
+            else
+                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+                for ii =1:length(EVstmp)
+                    EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+                end
+                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
             end
-            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
 end
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
