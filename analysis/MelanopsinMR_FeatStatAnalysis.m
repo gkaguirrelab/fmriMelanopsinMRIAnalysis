@@ -159,7 +159,7 @@ for ff = 1:length(funcs)
                         end
                     end
                 end
-                
+                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
             else
                 EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
                 for ii =1:length(EVstmp)
