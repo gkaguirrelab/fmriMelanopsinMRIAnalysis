@@ -8,7 +8,7 @@ subject_name = 'HERO_aso1_MaxMel';
 subj_name = 'HERO_aso1';
 session_date = '042916';
 condition = 'SplatterControl';
-numOfRuns =  12 ;
+numOfRuns =  11 ;
 reconall = 0;  %already done
 funcs = { ...
 'wdrf.tf' ...
