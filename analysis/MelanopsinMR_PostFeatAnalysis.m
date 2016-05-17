@@ -154,7 +154,7 @@ switch condition
        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
-        currentCondition = [conditon '_AttentionTask'];
+        currentCondition = [condition '_AttentionTask'];
         startingCope = length(copeNames)+1 ;
         FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, currentCondition, startingCope),
         
@@ -238,7 +238,7 @@ switch condition
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
         startingCope =  1;
         for ss = 1:length(controls)
-            currentCondition = [conditon '_' controls{ss}];
+            currentCondition = [condition '_' controls{ss}];
             FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, currentCondition, startingCope),
             startingCope = (length(copeNames)*ss)+1 ;
         end
