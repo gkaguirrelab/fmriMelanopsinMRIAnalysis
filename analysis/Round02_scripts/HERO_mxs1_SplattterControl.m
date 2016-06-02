@@ -24,3 +24,16 @@ MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, ...
     subject_name, subj_name, session_date, condition, numOfRuns, reconall)
 
 % run the sh script and proceed to step 2
+
+%% Step 2: first level stat
+
+MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session_date,condition, numOfRuns, funcs, SUBJECTS_DIR)
+% run the sh scripts and proceed to step 3
+
+%% Step 3: post FEAT stat
+runNums = 1:numOfRuns;
+
+MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, ...
+    subject_name, subj_name, session_date, condition, runNums,funcs, proj_template, proj_copes)
+
+%move the relevant results to dropbox
