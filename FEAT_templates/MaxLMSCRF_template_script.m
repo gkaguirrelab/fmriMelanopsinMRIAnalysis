@@ -127,10 +127,10 @@ end
 % Ftests
 Ftests.ftest_real(1,(1:14)) = 1;
 Ftests.ftest_real(2,(15:28)) = 1;
-Ftests.ftest_real(1,(29:42)) = 1;
-Ftests.ftest_real(1,(43:56)) = 1;
-Ftests.ftest_real(1,(57:70)) = 1;
-Ftests.ftest_real(1,(71:84)) = 1;
+Ftests.ftest_real(3,(29:42)) = 1;
+Ftests.ftest_real(4,(43:56)) = 1;
+Ftests.ftest_real(5,(57:70)) = 1;
+Ftests.ftest_real(6,(71:84)) = 1;
 
 
 %%  save out the modified struct (this overwrites the previously blank ones)
