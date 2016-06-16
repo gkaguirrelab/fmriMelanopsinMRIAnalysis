@@ -303,7 +303,7 @@ set fmri(tempfilt_yn1) 0
 set fmri(deriv_yn1) 0
 
 # Custom EV file (EV 1)
-set fmri(custom1) "DESING_EV001"
+set fmri(custom1) "DESIGN_EV001"
 
 # Orthogonalise EV 1 wrt EV 0
 set fmri(ortho1.0) 0
@@ -592,7 +592,7 @@ set fmri(tempfilt_yn2) 0
 set fmri(deriv_yn2) 0
 
 # Custom EV file (EV 2)
-set fmri(custom2) "DESING_EV002"
+set fmri(custom2) "DESIGN_EV002"
 
 # Orthogonalise EV 2 wrt EV 0
 set fmri(ortho2.0) 0
@@ -881,7 +881,7 @@ set fmri(tempfilt_yn3) 0
 set fmri(deriv_yn3) 0
 
 # Custom EV file (EV 3)
-set fmri(custom3) "DESING_EV003"
+set fmri(custom3) "DESIGN_EV003"
 
 # Orthogonalise EV 3 wrt EV 0
 set fmri(ortho3.0) 0
@@ -1170,7 +1170,7 @@ set fmri(tempfilt_yn4) 0
 set fmri(deriv_yn4) 0
 
 # Custom EV file (EV 4)
-set fmri(custom4) "DESING_EV004"
+set fmri(custom4) "DESIGN_EV004"
 
 # Orthogonalise EV 4 wrt EV 0
 set fmri(ortho4.0) 0
@@ -1459,7 +1459,7 @@ set fmri(tempfilt_yn5) 0
 set fmri(deriv_yn5) 0
 
 # Custom EV file (EV 5)
-set fmri(custom5) "DESING_EV005"
+set fmri(custom5) "DESIGN_EV005"
 
 # Orthogonalise EV 5 wrt EV 0
 set fmri(ortho5.0) 0
@@ -1748,7 +1748,7 @@ set fmri(tempfilt_yn6) 0
 set fmri(deriv_yn6) 0
 
 # Custom EV file (EV 6)
-set fmri(custom6) "DESING_EV006"
+set fmri(custom6) "DESIGN_EV006"
 
 # Orthogonalise EV 6 wrt EV 0
 set fmri(ortho6.0) 0
@@ -2037,7 +2037,7 @@ set fmri(tempfilt_yn7) 0
 set fmri(deriv_yn7) 0
 
 # Custom EV file (EV 7)
-set fmri(custom7) "DESING_EV007"
+set fmri(custom7) "DESIGN_EV007"
 
 # Orthogonalise EV 7 wrt EV 0
 set fmri(ortho7.0) 0
@@ -2326,7 +2326,7 @@ set fmri(tempfilt_yn8) 0
 set fmri(deriv_yn8) 0
 
 # Custom EV file (EV 8)
-set fmri(custom8) "DESING_EV008"
+set fmri(custom8) "DESIGN_EV008"
 
 # Orthogonalise EV 8 wrt EV 0
 set fmri(ortho8.0) 0
@@ -2615,7 +2615,7 @@ set fmri(tempfilt_yn9) 0
 set fmri(deriv_yn9) 0
 
 # Custom EV file (EV 9)
-set fmri(custom9) "DESING_EV009"
+set fmri(custom9) "DESIGN_EV009"
 
 # Orthogonalise EV 9 wrt EV 0
 set fmri(ortho9.0) 0
@@ -2904,7 +2904,7 @@ set fmri(tempfilt_yn10) 0
 set fmri(deriv_yn10) 0
 
 # Custom EV file (EV 10)
-set fmri(custom10) "DESING_EV010"
+set fmri(custom10) "DESIGN_EV010"
 
 # Orthogonalise EV 10 wrt EV 0
 set fmri(ortho10.0) 0
@@ -3193,7 +3193,7 @@ set fmri(tempfilt_yn11) 0
 set fmri(deriv_yn11) 0
 
 # Custom EV file (EV 11)
-set fmri(custom11) "DESING_EV011"
+set fmri(custom11) "DESIGN_EV011"
 
 # Orthogonalise EV 11 wrt EV 0
 set fmri(ortho11.0) 0
@@ -3482,7 +3482,7 @@ set fmri(tempfilt_yn12) 0
 set fmri(deriv_yn12) 0
 
 # Custom EV file (EV 12)
-set fmri(custom12) "DESING_EV012"
+set fmri(custom12) "DESIGN_EV012"
 
 # Orthogonalise EV 12 wrt EV 0
 set fmri(ortho12.0) 0
@@ -3771,7 +3771,7 @@ set fmri(tempfilt_yn13) 0
 set fmri(deriv_yn13) 0
 
 # Custom EV file (EV 13)
-set fmri(custom13) "DESING_EV013"
+set fmri(custom13) "DESIGN_EV013"
 
 # Orthogonalise EV 13 wrt EV 0
 set fmri(ortho13.0) 0
@@ -4060,7 +4060,7 @@ set fmri(tempfilt_yn14) 0
 set fmri(deriv_yn14) 0
 
 # Custom EV file (EV 14)
-set fmri(custom14) "DESING_EV014"
+set fmri(custom14) "DESIGN_EV014"
 
 # Orthogonalise EV 14 wrt EV 0
 set fmri(ortho14.0) 0
@@ -4349,7 +4349,7 @@ set fmri(tempfilt_yn15) 0
 set fmri(deriv_yn15) 0
 
 # Custom EV file (EV 15)
-set fmri(custom15) "DESING_EV015"
+set fmri(custom15) "DESIGN_EV015"
 
 # Orthogonalise EV 15 wrt EV 0
 set fmri(ortho15.0) 0
@@ -4638,7 +4638,7 @@ set fmri(tempfilt_yn16) 0
 set fmri(deriv_yn16) 0
 
 # Custom EV file (EV 16)
-set fmri(custom16) "DESING_EV016"
+set fmri(custom16) "DESIGN_EV016"
 
 # Orthogonalise EV 16 wrt EV 0
 set fmri(ortho16.0) 0
@@ -4927,7 +4927,7 @@ set fmri(tempfilt_yn17) 0
 set fmri(deriv_yn17) 0
 
 # Custom EV file (EV 17)
-set fmri(custom17) "DESING_EV017"
+set fmri(custom17) "DESIGN_EV017"
 
 # Orthogonalise EV 17 wrt EV 0
 set fmri(ortho17.0) 0
@@ -5216,7 +5216,7 @@ set fmri(tempfilt_yn18) 0
 set fmri(deriv_yn18) 0
 
 # Custom EV file (EV 18)
-set fmri(custom18) "DESING_EV018"
+set fmri(custom18) "DESIGN_EV018"
 
 # Orthogonalise EV 18 wrt EV 0
 set fmri(ortho18.0) 0
@@ -5505,7 +5505,7 @@ set fmri(tempfilt_yn19) 0
 set fmri(deriv_yn19) 0
 
 # Custom EV file (EV 19)
-set fmri(custom19) "DESING_EV019"
+set fmri(custom19) "DESIGN_EV019"
 
 # Orthogonalise EV 19 wrt EV 0
 set fmri(ortho19.0) 0
@@ -5794,7 +5794,7 @@ set fmri(tempfilt_yn20) 0
 set fmri(deriv_yn20) 0
 
 # Custom EV file (EV 20)
-set fmri(custom20) "DESING_EV020"
+set fmri(custom20) "DESIGN_EV020"
 
 # Orthogonalise EV 20 wrt EV 0
 set fmri(ortho20.0) 0
@@ -6083,7 +6083,7 @@ set fmri(tempfilt_yn21) 0
 set fmri(deriv_yn21) 0
 
 # Custom EV file (EV 21)
-set fmri(custom21) "DESING_EV021"
+set fmri(custom21) "DESIGN_EV021"
 
 # Orthogonalise EV 21 wrt EV 0
 set fmri(ortho21.0) 0
@@ -6372,7 +6372,7 @@ set fmri(tempfilt_yn22) 0
 set fmri(deriv_yn22) 0
 
 # Custom EV file (EV 22)
-set fmri(custom22) "DESING_EV022"
+set fmri(custom22) "DESIGN_EV022"
 
 # Orthogonalise EV 22 wrt EV 0
 set fmri(ortho22.0) 0
@@ -6661,7 +6661,7 @@ set fmri(tempfilt_yn23) 0
 set fmri(deriv_yn23) 0
 
 # Custom EV file (EV 23)
-set fmri(custom23) "DESING_EV023"
+set fmri(custom23) "DESIGN_EV023"
 
 # Orthogonalise EV 23 wrt EV 0
 set fmri(ortho23.0) 0
@@ -6950,7 +6950,7 @@ set fmri(tempfilt_yn24) 0
 set fmri(deriv_yn24) 0
 
 # Custom EV file (EV 24)
-set fmri(custom24) "DESING_EV024"
+set fmri(custom24) "DESIGN_EV024"
 
 # Orthogonalise EV 24 wrt EV 0
 set fmri(ortho24.0) 0
@@ -7239,7 +7239,7 @@ set fmri(tempfilt_yn25) 0
 set fmri(deriv_yn25) 0
 
 # Custom EV file (EV 25)
-set fmri(custom25) "DESING_EV025"
+set fmri(custom25) "DESIGN_EV025"
 
 # Orthogonalise EV 25 wrt EV 0
 set fmri(ortho25.0) 0
@@ -7528,7 +7528,7 @@ set fmri(tempfilt_yn26) 0
 set fmri(deriv_yn26) 0
 
 # Custom EV file (EV 26)
-set fmri(custom26) "DESING_EV026"
+set fmri(custom26) "DESIGN_EV026"
 
 # Orthogonalise EV 26 wrt EV 0
 set fmri(ortho26.0) 0
@@ -7817,7 +7817,7 @@ set fmri(tempfilt_yn27) 0
 set fmri(deriv_yn27) 0
 
 # Custom EV file (EV 27)
-set fmri(custom27) "DESING_EV027"
+set fmri(custom27) "DESIGN_EV027"
 
 # Orthogonalise EV 27 wrt EV 0
 set fmri(ortho27.0) 0
@@ -8106,7 +8106,7 @@ set fmri(tempfilt_yn28) 0
 set fmri(deriv_yn28) 0
 
 # Custom EV file (EV 28)
-set fmri(custom28) "DESING_EV028"
+set fmri(custom28) "DESIGN_EV028"
 
 # Orthogonalise EV 28 wrt EV 0
 set fmri(ortho28.0) 0
@@ -8395,7 +8395,7 @@ set fmri(tempfilt_yn29) 0
 set fmri(deriv_yn29) 0
 
 # Custom EV file (EV 29)
-set fmri(custom29) "DESING_EV029"
+set fmri(custom29) "DESIGN_EV029"
 
 # Orthogonalise EV 29 wrt EV 0
 set fmri(ortho29.0) 0
@@ -8684,7 +8684,7 @@ set fmri(tempfilt_yn30) 0
 set fmri(deriv_yn30) 0
 
 # Custom EV file (EV 30)
-set fmri(custom30) "DESING_EV030"
+set fmri(custom30) "DESIGN_EV030"
 
 # Orthogonalise EV 30 wrt EV 0
 set fmri(ortho30.0) 0
@@ -8973,7 +8973,7 @@ set fmri(tempfilt_yn31) 0
 set fmri(deriv_yn31) 0
 
 # Custom EV file (EV 31)
-set fmri(custom31) "DESING_EV031"
+set fmri(custom31) "DESIGN_EV031"
 
 # Orthogonalise EV 31 wrt EV 0
 set fmri(ortho31.0) 0
@@ -9262,7 +9262,7 @@ set fmri(tempfilt_yn32) 0
 set fmri(deriv_yn32) 0
 
 # Custom EV file (EV 32)
-set fmri(custom32) "DESING_EV032"
+set fmri(custom32) "DESIGN_EV032"
 
 # Orthogonalise EV 32 wrt EV 0
 set fmri(ortho32.0) 0
@@ -9551,7 +9551,7 @@ set fmri(tempfilt_yn33) 0
 set fmri(deriv_yn33) 0
 
 # Custom EV file (EV 33)
-set fmri(custom33) "DESING_EV033"
+set fmri(custom33) "DESIGN_EV033"
 
 # Orthogonalise EV 33 wrt EV 0
 set fmri(ortho33.0) 0
@@ -9840,7 +9840,7 @@ set fmri(tempfilt_yn34) 0
 set fmri(deriv_yn34) 0
 
 # Custom EV file (EV 34)
-set fmri(custom34) "DESING_EV034"
+set fmri(custom34) "DESIGN_EV034"
 
 # Orthogonalise EV 34 wrt EV 0
 set fmri(ortho34.0) 0
@@ -10129,7 +10129,7 @@ set fmri(tempfilt_yn35) 0
 set fmri(deriv_yn35) 0
 
 # Custom EV file (EV 35)
-set fmri(custom35) "DESING_EV035"
+set fmri(custom35) "DESIGN_EV035"
 
 # Orthogonalise EV 35 wrt EV 0
 set fmri(ortho35.0) 0
@@ -10418,7 +10418,7 @@ set fmri(tempfilt_yn36) 0
 set fmri(deriv_yn36) 0
 
 # Custom EV file (EV 36)
-set fmri(custom36) "DESING_EV036"
+set fmri(custom36) "DESIGN_EV036"
 
 # Orthogonalise EV 36 wrt EV 0
 set fmri(ortho36.0) 0
@@ -10707,7 +10707,7 @@ set fmri(tempfilt_yn37) 0
 set fmri(deriv_yn37) 0
 
 # Custom EV file (EV 37)
-set fmri(custom37) "DESING_EV037"
+set fmri(custom37) "DESIGN_EV037"
 
 # Orthogonalise EV 37 wrt EV 0
 set fmri(ortho37.0) 0
@@ -10996,7 +10996,7 @@ set fmri(tempfilt_yn38) 0
 set fmri(deriv_yn38) 0
 
 # Custom EV file (EV 38)
-set fmri(custom38) "DESING_EV038"
+set fmri(custom38) "DESIGN_EV038"
 
 # Orthogonalise EV 38 wrt EV 0
 set fmri(ortho38.0) 0
@@ -11285,7 +11285,7 @@ set fmri(tempfilt_yn39) 0
 set fmri(deriv_yn39) 0
 
 # Custom EV file (EV 39)
-set fmri(custom39) "DESING_EV039"
+set fmri(custom39) "DESIGN_EV039"
 
 # Orthogonalise EV 39 wrt EV 0
 set fmri(ortho39.0) 0
@@ -11574,7 +11574,7 @@ set fmri(tempfilt_yn40) 0
 set fmri(deriv_yn40) 0
 
 # Custom EV file (EV 40)
-set fmri(custom40) "DESING_EV040"
+set fmri(custom40) "DESIGN_EV040"
 
 # Orthogonalise EV 40 wrt EV 0
 set fmri(ortho40.0) 0
@@ -11863,7 +11863,7 @@ set fmri(tempfilt_yn41) 0
 set fmri(deriv_yn41) 0
 
 # Custom EV file (EV 41)
-set fmri(custom41) "DESING_EV041"
+set fmri(custom41) "DESIGN_EV041"
 
 # Orthogonalise EV 41 wrt EV 0
 set fmri(ortho41.0) 0
@@ -12152,7 +12152,7 @@ set fmri(tempfilt_yn42) 0
 set fmri(deriv_yn42) 0
 
 # Custom EV file (EV 42)
-set fmri(custom42) "DESING_EV042"
+set fmri(custom42) "DESIGN_EV042"
 
 # Orthogonalise EV 42 wrt EV 0
 set fmri(ortho42.0) 0
@@ -12441,7 +12441,7 @@ set fmri(tempfilt_yn43) 0
 set fmri(deriv_yn43) 0
 
 # Custom EV file (EV 43)
-set fmri(custom43) "DESING_EV043"
+set fmri(custom43) "DESIGN_EV043"
 
 # Orthogonalise EV 43 wrt EV 0
 set fmri(ortho43.0) 0
@@ -12730,7 +12730,7 @@ set fmri(tempfilt_yn44) 0
 set fmri(deriv_yn44) 0
 
 # Custom EV file (EV 44)
-set fmri(custom44) "DESING_EV044"
+set fmri(custom44) "DESIGN_EV044"
 
 # Orthogonalise EV 44 wrt EV 0
 set fmri(ortho44.0) 0
@@ -13019,7 +13019,7 @@ set fmri(tempfilt_yn45) 0
 set fmri(deriv_yn45) 0
 
 # Custom EV file (EV 45)
-set fmri(custom45) "DESING_EV045"
+set fmri(custom45) "DESIGN_EV045"
 
 # Orthogonalise EV 45 wrt EV 0
 set fmri(ortho45.0) 0
@@ -13308,7 +13308,7 @@ set fmri(tempfilt_yn46) 0
 set fmri(deriv_yn46) 0
 
 # Custom EV file (EV 46)
-set fmri(custom46) "DESING_EV046"
+set fmri(custom46) "DESIGN_EV046"
 
 # Orthogonalise EV 46 wrt EV 0
 set fmri(ortho46.0) 0
@@ -13597,7 +13597,7 @@ set fmri(tempfilt_yn47) 0
 set fmri(deriv_yn47) 0
 
 # Custom EV file (EV 47)
-set fmri(custom47) "DESING_EV047"
+set fmri(custom47) "DESIGN_EV047"
 
 # Orthogonalise EV 47 wrt EV 0
 set fmri(ortho47.0) 0
@@ -13886,7 +13886,7 @@ set fmri(tempfilt_yn48) 0
 set fmri(deriv_yn48) 0
 
 # Custom EV file (EV 48)
-set fmri(custom48) "DESING_EV048"
+set fmri(custom48) "DESIGN_EV048"
 
 # Orthogonalise EV 48 wrt EV 0
 set fmri(ortho48.0) 0
@@ -14175,7 +14175,7 @@ set fmri(tempfilt_yn49) 0
 set fmri(deriv_yn49) 0
 
 # Custom EV file (EV 49)
-set fmri(custom49) "DESING_EV049"
+set fmri(custom49) "DESIGN_EV049"
 
 # Orthogonalise EV 49 wrt EV 0
 set fmri(ortho49.0) 0
@@ -14464,7 +14464,7 @@ set fmri(tempfilt_yn50) 0
 set fmri(deriv_yn50) 0
 
 # Custom EV file (EV 50)
-set fmri(custom50) "DESING_EV050"
+set fmri(custom50) "DESIGN_EV050"
 
 # Orthogonalise EV 50 wrt EV 0
 set fmri(ortho50.0) 0
@@ -14753,7 +14753,7 @@ set fmri(tempfilt_yn51) 0
 set fmri(deriv_yn51) 0
 
 # Custom EV file (EV 51)
-set fmri(custom51) "DESING_EV051"
+set fmri(custom51) "DESIGN_EV051"
 
 # Orthogonalise EV 51 wrt EV 0
 set fmri(ortho51.0) 0
@@ -15042,7 +15042,7 @@ set fmri(tempfilt_yn52) 0
 set fmri(deriv_yn52) 0
 
 # Custom EV file (EV 52)
-set fmri(custom52) "DESING_EV052"
+set fmri(custom52) "DESIGN_EV052"
 
 # Orthogonalise EV 52 wrt EV 0
 set fmri(ortho52.0) 0
@@ -15331,7 +15331,7 @@ set fmri(tempfilt_yn53) 0
 set fmri(deriv_yn53) 0
 
 # Custom EV file (EV 53)
-set fmri(custom53) "DESING_EV053"
+set fmri(custom53) "DESIGN_EV053"
 
 # Orthogonalise EV 53 wrt EV 0
 set fmri(ortho53.0) 0
@@ -15620,7 +15620,7 @@ set fmri(tempfilt_yn54) 0
 set fmri(deriv_yn54) 0
 
 # Custom EV file (EV 54)
-set fmri(custom54) "DESING_EV054"
+set fmri(custom54) "DESIGN_EV054"
 
 # Orthogonalise EV 54 wrt EV 0
 set fmri(ortho54.0) 0
@@ -15909,7 +15909,7 @@ set fmri(tempfilt_yn55) 0
 set fmri(deriv_yn55) 0
 
 # Custom EV file (EV 55)
-set fmri(custom55) "DESING_EV055"
+set fmri(custom55) "DESIGN_EV055"
 
 # Orthogonalise EV 55 wrt EV 0
 set fmri(ortho55.0) 0
@@ -16198,7 +16198,7 @@ set fmri(tempfilt_yn56) 0
 set fmri(deriv_yn56) 0
 
 # Custom EV file (EV 56)
-set fmri(custom56) "DESING_EV056"
+set fmri(custom56) "DESIGN_EV056"
 
 # Orthogonalise EV 56 wrt EV 0
 set fmri(ortho56.0) 0
@@ -16487,7 +16487,7 @@ set fmri(tempfilt_yn57) 0
 set fmri(deriv_yn57) 0
 
 # Custom EV file (EV 57)
-set fmri(custom57) "DESING_EV057"
+set fmri(custom57) "DESIGN_EV057"
 
 # Orthogonalise EV 57 wrt EV 0
 set fmri(ortho57.0) 0
@@ -16776,7 +16776,7 @@ set fmri(tempfilt_yn58) 0
 set fmri(deriv_yn58) 0
 
 # Custom EV file (EV 58)
-set fmri(custom58) "DESING_EV058"
+set fmri(custom58) "DESIGN_EV058"
 
 # Orthogonalise EV 58 wrt EV 0
 set fmri(ortho58.0) 0
@@ -17065,7 +17065,7 @@ set fmri(tempfilt_yn59) 0
 set fmri(deriv_yn59) 0
 
 # Custom EV file (EV 59)
-set fmri(custom59) "DESING_EV059"
+set fmri(custom59) "DESIGN_EV059"
 
 # Orthogonalise EV 59 wrt EV 0
 set fmri(ortho59.0) 0
@@ -17354,7 +17354,7 @@ set fmri(tempfilt_yn60) 0
 set fmri(deriv_yn60) 0
 
 # Custom EV file (EV 60)
-set fmri(custom60) "DESING_EV060"
+set fmri(custom60) "DESIGN_EV060"
 
 # Orthogonalise EV 60 wrt EV 0
 set fmri(ortho60.0) 0
@@ -17643,7 +17643,7 @@ set fmri(tempfilt_yn61) 0
 set fmri(deriv_yn61) 0
 
 # Custom EV file (EV 61)
-set fmri(custom61) "DESING_EV061"
+set fmri(custom61) "DESIGN_EV061"
 
 # Orthogonalise EV 61 wrt EV 0
 set fmri(ortho61.0) 0
@@ -17932,7 +17932,7 @@ set fmri(tempfilt_yn62) 0
 set fmri(deriv_yn62) 0
 
 # Custom EV file (EV 62)
-set fmri(custom62) "DESING_EV062"
+set fmri(custom62) "DESIGN_EV062"
 
 # Orthogonalise EV 62 wrt EV 0
 set fmri(ortho62.0) 0
@@ -18221,7 +18221,7 @@ set fmri(tempfilt_yn63) 0
 set fmri(deriv_yn63) 0
 
 # Custom EV file (EV 63)
-set fmri(custom63) "DESING_EV063"
+set fmri(custom63) "DESIGN_EV063"
 
 # Orthogonalise EV 63 wrt EV 0
 set fmri(ortho63.0) 0
@@ -18510,7 +18510,7 @@ set fmri(tempfilt_yn64) 0
 set fmri(deriv_yn64) 0
 
 # Custom EV file (EV 64)
-set fmri(custom64) "DESING_EV064"
+set fmri(custom64) "DESIGN_EV064"
 
 # Orthogonalise EV 64 wrt EV 0
 set fmri(ortho64.0) 0
@@ -18799,7 +18799,7 @@ set fmri(tempfilt_yn65) 0
 set fmri(deriv_yn65) 0
 
 # Custom EV file (EV 65)
-set fmri(custom65) "DESING_EV065"
+set fmri(custom65) "DESIGN_EV065"
 
 # Orthogonalise EV 65 wrt EV 0
 set fmri(ortho65.0) 0
@@ -19088,7 +19088,7 @@ set fmri(tempfilt_yn66) 0
 set fmri(deriv_yn66) 0
 
 # Custom EV file (EV 66)
-set fmri(custom66) "DESING_EV066"
+set fmri(custom66) "DESIGN_EV066"
 
 # Orthogonalise EV 66 wrt EV 0
 set fmri(ortho66.0) 0
@@ -19377,7 +19377,7 @@ set fmri(tempfilt_yn67) 0
 set fmri(deriv_yn67) 0
 
 # Custom EV file (EV 67)
-set fmri(custom67) "DESING_EV067"
+set fmri(custom67) "DESIGN_EV067"
 
 # Orthogonalise EV 67 wrt EV 0
 set fmri(ortho67.0) 0
@@ -19666,7 +19666,7 @@ set fmri(tempfilt_yn68) 0
 set fmri(deriv_yn68) 0
 
 # Custom EV file (EV 68)
-set fmri(custom68) "DESING_EV068"
+set fmri(custom68) "DESIGN_EV068"
 
 # Orthogonalise EV 68 wrt EV 0
 set fmri(ortho68.0) 0
@@ -19955,7 +19955,7 @@ set fmri(tempfilt_yn69) 0
 set fmri(deriv_yn69) 0
 
 # Custom EV file (EV 69)
-set fmri(custom69) "DESING_EV069"
+set fmri(custom69) "DESIGN_EV069"
 
 # Orthogonalise EV 69 wrt EV 0
 set fmri(ortho69.0) 0
@@ -20244,7 +20244,7 @@ set fmri(tempfilt_yn70) 0
 set fmri(deriv_yn70) 0
 
 # Custom EV file (EV 70)
-set fmri(custom70) "DESING_EV070"
+set fmri(custom70) "DESIGN_EV070"
 
 # Orthogonalise EV 70 wrt EV 0
 set fmri(ortho70.0) 0
@@ -20533,7 +20533,7 @@ set fmri(tempfilt_yn71) 0
 set fmri(deriv_yn71) 0
 
 # Custom EV file (EV 71)
-set fmri(custom71) "DESING_EV071"
+set fmri(custom71) "DESIGN_EV071"
 
 # Orthogonalise EV 71 wrt EV 0
 set fmri(ortho71.0) 0
@@ -20822,7 +20822,7 @@ set fmri(tempfilt_yn72) 0
 set fmri(deriv_yn72) 0
 
 # Custom EV file (EV 72)
-set fmri(custom72) "DESING_EV072"
+set fmri(custom72) "DESIGN_EV072"
 
 # Orthogonalise EV 72 wrt EV 0
 set fmri(ortho72.0) 0
@@ -21111,7 +21111,7 @@ set fmri(tempfilt_yn73) 0
 set fmri(deriv_yn73) 0
 
 # Custom EV file (EV 73)
-set fmri(custom73) "DESING_EV073"
+set fmri(custom73) "DESIGN_EV073"
 
 # Orthogonalise EV 73 wrt EV 0
 set fmri(ortho73.0) 0
@@ -21400,7 +21400,7 @@ set fmri(tempfilt_yn74) 0
 set fmri(deriv_yn74) 0
 
 # Custom EV file (EV 74)
-set fmri(custom74) "DESING_EV074"
+set fmri(custom74) "DESIGN_EV074"
 
 # Orthogonalise EV 74 wrt EV 0
 set fmri(ortho74.0) 0
@@ -21689,7 +21689,7 @@ set fmri(tempfilt_yn75) 0
 set fmri(deriv_yn75) 0
 
 # Custom EV file (EV 75)
-set fmri(custom75) "DESING_EV075"
+set fmri(custom75) "DESIGN_EV075"
 
 # Orthogonalise EV 75 wrt EV 0
 set fmri(ortho75.0) 0
@@ -21978,7 +21978,7 @@ set fmri(tempfilt_yn76) 0
 set fmri(deriv_yn76) 0
 
 # Custom EV file (EV 76)
-set fmri(custom76) "DESING_EV076"
+set fmri(custom76) "DESIGN_EV076"
 
 # Orthogonalise EV 76 wrt EV 0
 set fmri(ortho76.0) 0
@@ -22267,7 +22267,7 @@ set fmri(tempfilt_yn77) 0
 set fmri(deriv_yn77) 0
 
 # Custom EV file (EV 77)
-set fmri(custom77) "DESING_EV077"
+set fmri(custom77) "DESIGN_EV077"
 
 # Orthogonalise EV 77 wrt EV 0
 set fmri(ortho77.0) 0
@@ -22556,7 +22556,7 @@ set fmri(tempfilt_yn78) 0
 set fmri(deriv_yn78) 0
 
 # Custom EV file (EV 78)
-set fmri(custom78) "DESING_EV078"
+set fmri(custom78) "DESIGN_EV078"
 
 # Orthogonalise EV 78 wrt EV 0
 set fmri(ortho78.0) 0
@@ -22845,7 +22845,7 @@ set fmri(tempfilt_yn79) 0
 set fmri(deriv_yn79) 0
 
 # Custom EV file (EV 79)
-set fmri(custom79) "DESING_EV079"
+set fmri(custom79) "DESIGN_EV079"
 
 # Orthogonalise EV 79 wrt EV 0
 set fmri(ortho79.0) 0
@@ -23134,7 +23134,7 @@ set fmri(tempfilt_yn80) 0
 set fmri(deriv_yn80) 0
 
 # Custom EV file (EV 80)
-set fmri(custom80) "DESING_EV080"
+set fmri(custom80) "DESIGN_EV080"
 
 # Orthogonalise EV 80 wrt EV 0
 set fmri(ortho80.0) 0
@@ -23423,7 +23423,7 @@ set fmri(tempfilt_yn81) 0
 set fmri(deriv_yn81) 0
 
 # Custom EV file (EV 81)
-set fmri(custom81) "DESING_EV081"
+set fmri(custom81) "DESIGN_EV081"
 
 # Orthogonalise EV 81 wrt EV 0
 set fmri(ortho81.0) 0
@@ -23712,7 +23712,7 @@ set fmri(tempfilt_yn82) 0
 set fmri(deriv_yn82) 0
 
 # Custom EV file (EV 82)
-set fmri(custom82) "DESING_EV082"
+set fmri(custom82) "DESIGN_EV082"
 
 # Orthogonalise EV 82 wrt EV 0
 set fmri(ortho82.0) 0
@@ -24001,7 +24001,7 @@ set fmri(tempfilt_yn83) 0
 set fmri(deriv_yn83) 0
 
 # Custom EV file (EV 83)
-set fmri(custom83) "DESING_EV083"
+set fmri(custom83) "DESIGN_EV083"
 
 # Orthogonalise EV 83 wrt EV 0
 set fmri(ortho83.0) 0
@@ -24290,7 +24290,7 @@ set fmri(tempfilt_yn84) 0
 set fmri(deriv_yn84) 0
 
 # Custom EV file (EV 84)
-set fmri(custom84) "DESING_EV084"
+set fmri(custom84) "DESIGN_EV084"
 
 # Orthogonalise EV 84 wrt EV 0
 set fmri(ortho84.0) 0
