@@ -1,4 +1,4 @@
-%%%%%%%% Analysis for HERO_mxs1 Mel_CFR(061016) %%%%%%%%%%
+%%%%%%%% Analysis for HERO_mxs1 Mel_CRF(061016) %%%%%%%%%%
 
 %% inputs
 results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
@@ -7,7 +7,7 @@ SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 subject_name = 'HERO_mxs1_MaxMel';
 subj_name = 'HERO_mxs1';
 session_date = '061016_Mel';
-condition = 'MaxMelCFR';
+condition = 'MaxMelCRF';
 numOfRuns =  4 ;
 reconall = 0;  %already done
 funcs = { ...

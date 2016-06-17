@@ -1,4 +1,4 @@
-%%%%%%%% Analysis for HERO_gka1 Mel_CFR %%%%%%%%%%
+%%%%%%%% Analysis for HERO_gka1 Mel_CRF %%%%%%%%%%
 
 %% inputs
 results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
@@ -7,7 +7,7 @@ SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 subject_name = 'HERO_gka1_3T';
 subj_name = 'HERO_gka1';
 session_date = '060216';
-condition = 'MaxMelCFR';
+condition = 'MaxMelCRF';
 numOfRuns =  9 ;
 reconall = 0;  %already done
 funcs = { ...
