@@ -1,4 +1,4 @@
-%%%%%%%% Analysis for HERO_asb1 Mel_CFR %%%%%%%%%%
+%%%%%%%% Analysis for HERO_asb1 Mel_CRF %%%%%%%%%%
 
 %% inputs
 results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
@@ -29,3 +29,11 @@ MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, ...
 
 MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session_date,condition, numOfRuns, funcs, SUBJECTS_DIR)
 % run the sh scripts and proceed to step 3
+
+%% Step 3: post FEAT stat
+runNums = 1:numOfRuns;
+
+MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, ...
+    subject_name, subj_name, session_date, condition, runNums,funcs, proj_template, proj_copes)
+
+%move the relevant results to dropbox
