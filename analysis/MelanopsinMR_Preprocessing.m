@@ -97,6 +97,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 %% Start Preprocessing
 fprintf (['\n~~~~~~~~~~~~~~~~~~~ You can now start preprocessing using the script submit_' job_name '_all.sh ~~~~~~~~~~~~~~~~~~~\n']);
 
+diary ('off')
 %%% TEST IF THIS WORKS
 % system(['sh submit_' job_name '_all.sh'])  %must be on chead to run this!
 

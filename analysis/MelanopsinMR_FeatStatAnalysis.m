@@ -189,3 +189,5 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ You can now submit FEAT stat using the script su
 % fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Wait for FEATstat to end, then move to step 3: MelanopsinMR_PostFeatStatAnalysis. ~~~~~~~~~~~~~~~~~~~\n');
 
+
+diary ('off')
