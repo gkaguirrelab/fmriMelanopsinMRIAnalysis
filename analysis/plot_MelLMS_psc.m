@@ -8,8 +8,8 @@
 
 %% set up variables
 projDir = '/data/jag/MELA/MelanopsinMR';
-conds = {'lmsMAX' 'melMAX' 'lmsCRF' 'melCRF'};
-copeNums = 1:14;
+condNames = {'lmsMAX' 'melMAX'};
+copeNums = 1:14; % FIR covariates (0-13 seconds)
 subjNames = {...
     'HERO_asb1' ...
     'HERO_aso1' ...
@@ -30,15 +30,52 @@ melMAX = {...
     };
 featDir = 'wdrf.tf.feat';
 ROI = 'V1';
+eccBins = [0 1 2.5 5 10 20 33 55 90];
+%% Convert copes to percent signal change (only need to do this once)
+for ss = 1:length(subjNames)
+    for cc = 1:length(condNames)
+        switch condNames{cc}
+            case 'lmsMAX'
+                sessionDir = fullfile(projDir,subjNames{ss},lmsMAX{ss});
+            case 'melMAX'
+                sessionDir = fullfile(projDir,subjNames{ss},melMAX{ss});
+        end
+        b = find_bold(sessionDir);
+        featDirs = cell(1,length(b));
+        for i = 1:length(b)
+            featDirs{i} = fullfile(sessionDir,b{i},featDir);
+        end
+        meanpsc = nan(length(copeNums),256,256,256);
+        pscCope = nan(length(featDirs),256,256,256);
+        progBar = ProgressBar(length(copeNums),'Calculating percent signal change...');
+        for j = copeNums
+            for i = 1:length(featDirs)
+                % mean functional volume in anatomical space
+                meanout = fullfile(featDirs{i},'mean_func.anat.nii.gz');
+                mtmp = load_nifti(meanout);
+                % copes in anatomical space
+                copeout = fullfile(featDirs{i},'stats',['cope' num2str(copeNums(j)) '.anat.nii.gz']);
+                % Calculate percent signal change (using copes)
+                ctmp = load_nifti(copeout);
+                psctmp = (ctmp.vol./mtmp.vol)*100; % convert to percent signal change
+                psctmp(psctmp==inf | psctmp==-inf) = nan; % set inf/-inf to nan
+                ctmp.vol = psctmp;
+                save_nifti(ctmp,fullfile(featDirs{i},'stats',...
+                    ['cope' num2str(copeNums(j)) '.anat.psc.nii.gz']));
+            end
+            progBar(j);
+        end
+    end
+end
 %% Calculate copes to percent signal change
 pscData = cell(length(subjNames),2,3);
 progBar = ProgressBar(length(subjNames)*2,'Calculating percent signal change...');
 ct = 0;
 for ss = 1:length(subjNames)
-    for cc = 1:2
+    for cc = 1:length(condNames)
         ct = ct + 1;
         % Set session directory based on condition
-        switch conds{cc}
+        switch condNames{cc}
             case 'lmsMAX'
                 sessionDir = fullfile(projDir,subjNames{ss},lmsMAX{ss});
             case 'melMAX'
@@ -76,25 +113,23 @@ for ss = 1:length(subjNames)
             end
             meanpsc(i,:) = tmpMax;
         end
-        % Save the data
         pscData{ss,cc,1} = squeeze(nanmean(meanpsc))';
         pscData{ss,cc,2} = ecc.vol(roiInd);
         pscData{ss,cc,3} = pol.vol(roiInd);
         progBar(ct);
     end
 end
+% Save the data
 save(fullfile(projDir,'pscData.mat'),'pscData');
 %% Bin data
-clear tmp LMS MEL
-%bins = round([0 10.^linspace(0,log10(axLim),10)]);
-%bins = [0 1 2.5 5 15 40 90];
-bins = [0 1 2.5 5 12 20 33 55 90];
-%binNames = {'0.0-1.0' '1.0-2.5' '2.5-5.0' '5.0-15' '15-40' '40-90'};
-binNames = {'0-1' '1-2.5' '2.5-5' '5-12' '12-20' '20-33' '33-55' '55-90'};
-for i = 1:length(bins)-1
+clear LMS MEL
+binNames = cell(1,length(eccBins)-1);
+for i = 1:length(eccBins)-1
+    binNames{i} = [num2str(eccBins(i)) '-' num2str(eccBins(i+1))];
+    tmp = nan(length(subjNames),length(condNames));
     for ss = 1:length(subjNames)
-        for cc = 1:2
-            binInd = pscData{ss,cc,2} > bins(i) & pscData{ss,cc,2} <= bins(i+1);
+        for cc = 1:length(condNames)
+            binInd = pscData{ss,cc,2} > eccBins(i) & pscData{ss,cc,2} <= eccBins(i+1);
             tmp(ss,cc) = mean(pscData{ss,cc,1}(binInd));
         end
     end
@@ -109,7 +144,7 @@ fullFigure;
 subplot(1,2,1);
 errorbar(LMS.mean,LMS.SEM);
 axis square
-set(gca,'XTick',1:length(bins)-1);
+set(gca,'XTick',1:length(eccBins)-1);
 set(gca,'XTickLabel',binNames,'FontSize',15);
 xlabel('Eccentricity bins','FontSize',20);
 ylabel('Percent signal change','FontSize',20);
@@ -119,7 +154,7 @@ title('LMS pulse: mean +/- SEM','FontSize',30);
 subplot(1,2,2);
 errorbar(MEL.mean,LMS.SEM);
 axis square
-set(gca,'XTick',1:length(bins)-1);
+set(gca,'XTick',1:length(eccBins)-1);
 set(gca,'XTickLabel',binNames,'FontSize',15);
 xlabel('Eccentricity bins','FontSize',20);
 ylabel('Percent signal change','FontSize',20);
@@ -147,7 +182,7 @@ savefigs('pdf',fullfile(projDir,'LMS_MEL_psc'));
 
 %% Plot using plotVisual
 for ss = 1:length(subjNames)
-    for cc = 1:2
+    for cc = 1:length(condNames)
         roiInd = 1:length(pscData{ss,cc,1});
         allImages(ss,cc).outImage = plotVisual(pscData{ss,cc,1},pscData{ss,cc,2},pscData{ss,cc,3},roiInd);
     end
@@ -157,7 +192,7 @@ for i = 1:length(subjNames)
     LMS(i,:,:) = allImages(i,1).outImage;
     MEL(i,:,:) = allImages(i,2).outImage;
 end
-%% take mean
+%% Get the mean
 meanLMS = squeeze(mean(LMS));
 meanMEL = squeeze(mean(MEL));
 matSize = size(meanLMS);
@@ -187,49 +222,11 @@ colormap(viridis);
 axis off
 axis square
 colorbar('EastOutside');
-%%
-xTicks = linspace(0,log10(axLim),6);
-figure;plot(logDists(:),meanLMS(:),'.')
-xlim([0 log10(axLim)]);
-ylim([-0.2 1.2]);
-axis square
-xlabel('Eccentricity','FontSize',20);
-ylabel('Percent Signal Change','FontSize',20);
-title('LMS pulse','FontSize',20);
-set(gca,'XTick',xTicks);
-set(gca,'XTickLabel',{'1' '2' '6' '15' '37' '90'});
-%%
-xTicks = linspace(0,log10(axLim),6);
-figure;plot(logDists(:),meanMEL(:),'.')
-xlim([0 log10(axLim)]);
-ylim([-0.2 1.2]);
-axis square
-xlabel('Eccentricity','FontSize',20);
-ylabel('Percent Signal Change','FontSize',20);
-title('Mel pulse','FontSize',20);
-set(gca,'XTick',xTicks);
-set(gca,'XTickLabel',{'1' '2' '6' '15' '37' '90'});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% Plot using plotVisual
 clear inVol
 for ss = 1:length(subjNames)
-    for cc = 1:2
-        switch conds{cc}
+    for cc = 1:length(condNames)
+        switch condNames{cc}
             case 'lmsMAX'
                 sessionDir = fullfile(projDir,subjNames{ss},lmsMAX{ss});
             case 'melMAX'
@@ -268,59 +265,5 @@ for ss = 1:length(subjNames)
         tmp = load_nifti(fullfile(sessionDir,'anat_templates','mh.areas.anat.vol.nii.gz'));
         roiInd = abs(tmp.vol) == 1; % V1
         [allImages(ss,cc).outImage] = plotVisual(inVol,eccVol,polVol,roiInd);
-    end
-end
-%% Get data values
-for ss = 1
-    for cc = 1
-        switch conds{cc}
-            case 'lmsMAX'
-                sessionDir = fullfile(projDir,subjNames{ss},lmsMAX{ss});
-                %                 % Get input volume(s)
-                %                 inVol = fullfile(projDir,'Results',resultsNames{cc},subjNames{ss},...
-                %                     lmsMAX{ss},[subjNames{ss} '_' resultsNames{cc} '_Fisher_Chisq.anat.nii.gz']);
-        end
-        % Get retinotopy volumes
-        eccVol = fullfile(sessionDir,'anat_templates','mh.ecc.anat.vol.nii.gz');
-        polVol = fullfile(sessionDir,'anat_templates','mh.pol.anat.vol.nii.gz');
-        % Get voxel indices for ROI
-        tmp = load_nifti(fullfile(sessionDir,'anat_templates','mh.areas.anat.vol.nii.gz'));
-        roiInd = abs(tmp.vol) == 1; % V1
-    end
-end
-%% Convert copes to percent signal change (only need to do this once)
-for ss = 1:length(subjNames)
-    for cc = 1:2
-        switch conds{cc}
-            case 'lmsMAX'
-                sessionDir = fullfile(projDir,subjNames{ss},lmsMAX{ss});
-            case 'melMAX'
-                sessionDir = fullfile(projDir,subjNames{ss},melMAX{ss});
-        end
-        b = find_bold(sessionDir);
-        featDirs = cell(1,length(b));
-        for i = 1:length(b)
-            featDirs{i} = fullfile(sessionDir,b{i},featDir);
-        end
-        meanpsc = nan(length(copeNums),256,256,256);
-        pscCope = nan(length(featDirs),256,256,256);
-        progBar = ProgressBar(length(copeNums),'Calculating percent signal change...');
-        for j = copeNums
-            for i = 1:length(featDirs)
-                % mean functional volume in anatomical space
-                meanout = fullfile(featDirs{i},'mean_func.anat.nii.gz');
-                mtmp = load_nifti(meanout);
-                % copes in anatomical space
-                copeout = fullfile(featDirs{i},'stats',['cope' num2str(copeNums(j)) '.anat.nii.gz']);
-                % Calculate percent signal change (using copes)
-                ctmp = load_nifti(copeout);
-                psctmp = (ctmp.vol./mtmp.vol)*100; % convert to percent signal change
-                psctmp(psctmp==inf | psctmp==-inf) = nan; % set inf/-inf to nan
-                ctmp.vol = psctmp;
-                save_nifti(ctmp,fullfile(featDirs{i},'stats',...
-                    ['cope' num2str(copeNums(j)) '.anat.psc.nii.gz']));
-            end
-            progBar(j);
-        end
     end
 end
