@@ -1,4 +1,4 @@
-% Plot the percent signal change to Melanopsin and LMS directed stimuli 
+% Plot the percent signal change to Melanopsin and LMS directed stimuli
 %   using:
 %
 %   bins of eccentricity

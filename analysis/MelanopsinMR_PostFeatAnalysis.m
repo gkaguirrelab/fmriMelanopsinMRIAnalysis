@@ -21,7 +21,7 @@ function MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, sub
 %
 % subj_name : name of the current subject
 %
-% condition : 'LMSPulses_400pct' , 'MelPulses_400pct', 'SplatterControl', 'MaxMelCRF', 'MaxLMSCRF' 
+% condition : 'LMSPulses_400pct' , 'MelPulses_400pct', 'SplatterControl', 'MaxMelCRF', 'MaxLMSCRF'
 %
 % runNums : list of number of runs included in the analysis (i.e. valid runs).
 %
@@ -151,7 +151,7 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-       FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         currentCondition = [condition '_AttentionTask'];
@@ -189,7 +189,7 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-         FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         currentCondition = [condition '_AttentionTask'];
@@ -231,7 +231,7 @@ switch condition
             '195pct'...
             'AttentionTask'...
             };
-               
+        
         funcs = funcs (1);
         
         % Get means, plot them and save them as a csv file for stimulus
@@ -243,7 +243,7 @@ switch condition
             startingCope = (length(copeNames)*ss)+1 ;
         end
         
-        case {'MaxMelCRF', 'MaxLMSCRF'}
+    case {'MaxMelCRF', 'MaxLMSCRF'}
         hemis = {...
             'mh'...
             'lh'...
@@ -278,7 +278,7 @@ switch condition
             '400pct'...
             'AttentionTask'...
             };
-               
+        
         funcs = funcs (1);
         
         % Get means, plot them and save them as a csv file for stimulus

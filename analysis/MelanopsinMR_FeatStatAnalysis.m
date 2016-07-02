@@ -5,29 +5,29 @@ function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session
 % Produces a LOG file.
 %
 % Global Input arguments:
-% 
+%
 % results_dir :  general path where all results for this project are saved. Specific
 % subfolders are created during each step. Note that intermediate results
 % are saved in specific paths within the data_dir.
-% 
+%
 % data_dir : path to the data directory. Raw data and
 % intermediate results are store in
 % <data_dir>/<subject_name>/<session_date>/ (session_dir)
-% 
+%
 % SUBJECTS_DIR : path tho the Freesurfer subjects directory.
-% 
-% 
+%
+%
 % subj_name : name of the current subject
-% 
+%
 % runNums : list of number of runs in current session
-% 
+%
 % Local input arguments:
 % where possible, local input arguments are hard coded according to
 % pre-registration documents.
 %
 %%%%%%%%%
 % Usage:
-% 
+%
 % results_dir =  '/some/path/ideally/on/dropbox/' ;
 % data_dir = '/data/jag/MELA/'; %Upenn cluster default path
 % subj_name = 'HERO_xxx1';
@@ -45,7 +45,7 @@ function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session
 %% Initialize analysis
 if ~exist('SUBJECTS_DIR','var')
     SUBJECTS_DIR = getenv('SUBJECTS_DIR');
-end 
+end
 session_dir = fullfile(data_dir, subj_name,session_date);
 output_dir = fullfile( results_dir, condition, subj_name, session_date);
 if ~exist (output_dir, 'dir')
@@ -62,7 +62,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ FEATstat analysis for %s , %s, %s ~~~~~~~~~~~~~~
 time = datetime
 results_dir
 data_dir
-subj_name 
+subj_name
 session_date
 condition
 numRuns
@@ -124,50 +124,50 @@ if ~isdir(FSF_dir)
 end
 d = find_bold(session_dir);
 for ff = 1:length(funcs)
-        funcName = funcs{ff};
-        for j = 1:numRuns
-            clear EVs
-            % Name the output .fsf file
-            if strcmp(funcName,'s5.wdrf.tf'); % 5mm smoothing
-                outFile = fullfile(FSF_dir,sprintf('Run_%02d_5mm.fsf',j));
-            elseif strcmp(funcName,'wdrf.tf'); % raw (no smoothing)
-                outFile = fullfile(FSF_dir,sprintf('Run_%02d_raw.fsf',j));
-            else
-                error('funcName not recognized');
-            end
-            % Name the functional and anatomical files for FSL's FEAT
-            funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
-            anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
-            stimuli_dirs = listdir(outDir,'dirs');
-            if strcmp(condition,'SplatterControl')
-                EVtypes = {...
-                    '25Pct' ...
-                    '50Pct' ...
-                    '100Pct' ...
-                    '195Pct' ...
-                    '0Pct' ...
-                    };
-                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-                ct = 1;
-                for tt=1:length(EVtypes)
-                    EVtype = EVtypes{tt};
-                    for ii=1:length(EVstmp)
-                        tmp = strfind(EVstmp{ii},['_' EVtype '_']);
-                        if ~isempty(tmp)
-                            EVs{ct} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
-                            ct = ct+1;
-                        end
+    funcName = funcs{ff};
+    for j = 1:numRuns
+        clear EVs
+        % Name the output .fsf file
+        if strcmp(funcName,'s5.wdrf.tf'); % 5mm smoothing
+            outFile = fullfile(FSF_dir,sprintf('Run_%02d_5mm.fsf',j));
+        elseif strcmp(funcName,'wdrf.tf'); % raw (no smoothing)
+            outFile = fullfile(FSF_dir,sprintf('Run_%02d_raw.fsf',j));
+        else
+            error('funcName not recognized');
+        end
+        % Name the functional and anatomical files for FSL's FEAT
+        funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
+        anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
+        stimuli_dirs = listdir(outDir,'dirs');
+        if strcmp(condition,'SplatterControl')
+            EVtypes = {...
+                '25Pct' ...
+                '50Pct' ...
+                '100Pct' ...
+                '195Pct' ...
+                '0Pct' ...
+                };
+            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            ct = 1;
+            for tt=1:length(EVtypes)
+                EVtype = EVtypes{tt};
+                for ii=1:length(EVstmp)
+                    tmp = strfind(EVstmp{ii},['_' EVtype '_']);
+                    if ~isempty(tmp)
+                        EVs{ct} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+                        ct = ct+1;
                     end
                 end
-                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
-            else
-                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-                for ii =1:length(EVstmp)
-                    EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
-                end
-                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
             end
+            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
+        else
+            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            for ii =1:length(EVstmp)
+                EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+            end
+            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
+    end
 end
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
@@ -182,10 +182,10 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ You can now submit FEAT stat using the script su
 
 % %% Submit FEAT stat script
 % fprintf ('\n~~~~~~~~~~~~~~~~~~~ Submitting FEAT stats ~~~~~~~~~~~~~~~~~~~\n');
-% 
+%
 % %%%%% TEST IF THIS WORKS
 % system('sh submit_first_level_feat.sh')  %must be on chead to run this!
-% 
+%
 % fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Wait for FEATstat to end, then move to step 3: MelanopsinMR_PostFeatStatAnalysis. ~~~~~~~~~~~~~~~~~~~\n');
 
