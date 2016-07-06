@@ -5,29 +5,33 @@ function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session
 % Produces a LOG file.
 %
 % Global Input arguments:
+% ================
 %
 % results_dir :  general path where all results for this project are saved. Specific
 % subfolders are created during each step. Note that intermediate results
-% are saved in specific paths within the data_dir.
+% are saved in specific paths within the data_dir;
 %
 % data_dir : path to the data directory. Raw data and
 % intermediate results are store in
-% <data_dir>/<subject_name>/<session_date>/ (session_dir)
+% <data_dir>/<subject_name>/<session_date>/ (session_dir) ;
 %
-% SUBJECTS_DIR : path tho the Freesurfer subjects directory.
+% SUBJECTS_DIR : path tho the Freesurfer subjects directory;
 %
 %
-% subj_name : name of the current subject
+% subj_name : name of the current subject;
 %
-% runNums : list of number of runs in current session
+% runNums : list of number of runs in current session;
 %
 % Local input arguments:
+% ===============
+% 
 % where possible, local input arguments are hard coded according to
 % pre-registration documents.
 %
-%%%%%%%%%
-% Usage:
 %
+% Usage:
+% ===============
+% 
 % results_dir =  '/some/path/ideally/on/dropbox/' ;
 % data_dir = '/data/jag/MELA/'; %Upenn cluster default path
 % subj_name = 'HERO_xxx1';
@@ -41,7 +45,9 @@ function MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, subj_name,session
 % SUBJECTS_DIR
 % MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subj_name,session_date,numRuns)
 %
-%%%%%%%%%
+%
+% 
+% 5/15/2016  gf     Written and commented.
 %% Initialize analysis
 if ~exist('SUBJECTS_DIR','var')
     SUBJECTS_DIR = getenv('SUBJECTS_DIR');

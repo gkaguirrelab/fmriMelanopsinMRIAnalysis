@@ -4,8 +4,9 @@ function MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, subjec
 % MelanopsinMR_Preprocessing, MelanopsinMR_PostFeatStatAnalysis.
 % Produces a LOG file.
 %
-% Global Input arguments:
-%
+% Global Input arguments
+% ===============
+% 
 % results_dir :  general path where all results for this project are saved. Specific
 % subfolders are created during each step. Note that intermediate results
 % are saved in specific paths within the data_dir.
@@ -23,12 +24,16 @@ function MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, subjec
 %
 % runNums : list of number of runs in current session
 %
-% Local input arguments:
+% 
+% Local input arguments
+% ===============
+% 
 % where possible, local input arguments are hard coded according to
 % pre-registration documents.
 %
-%%%%%%%%%
-% Usage:
+%
+% Usage
+% ===============
 %
 % results_dir =  '/some/path/ideally/on/dropbox/' ;
 % data_dir = '/data/jag/MELA/'; %Upenn cluster default path
@@ -39,7 +44,8 @@ function MelanopsinMR_Preprocessing (results_dir, data_dir, SUBJECTS_DIR, subjec
 % nunRums =  12 ;
 % MelanopsinMR_FeatStatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subj_name,session_date,numRuns)
 %
-%%%%%%%%%
+%
+%  05/15/16 gf written and commented.
 %% Initialize analysis
 session_dir = fullfile(data_dir, subj_name,session_date);
 output_dir = fullfile( results_dir, condition, subj_name, session_date);

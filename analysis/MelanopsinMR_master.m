@@ -1,4 +1,13 @@
-%% Melanopsin MR Masterscript
+%% Melanopsin MR Masterscript - DRAFT
+
+% This master script illustrates the complete processing pipeline for
+% MelanopsinMR datasets. 
+% In order to parallelize and speed up the analysis it is suggested to used
+% the "single scripts" strategy that will run the same pipeline separately
+% session by session.
+
+% 6/2/2016  gf     Written and commented.
+
 
 %% inputs
 % global paths

@@ -5,54 +5,60 @@ function MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, sub
 % Produces a LOG file.
 %
 % Global Input arguments:
+% ================
+% 
+%   results_dir :  general path where all results for this project are saved. Specific
+%   subfolders are created during each step. Note that intermediate results
+%   are saved in specific paths within the data_dir.
 %
-% results_dir :  general path where all results for this project are saved. Specific
-% subfolders are created during each step. Note that intermediate results
-% are saved in specific paths within the data_dir.
+%   data_dir : path to the data directory. Raw data and
+%   intermediate results are store in
+%   <data_dir>/<subject_name>/<session_date>/ (session_dir)
 %
-% data_dir : path to the data directory. Raw data and
-% intermediate results are store in
-% <data_dir>/<subject_name>/<session_date>/ (session_dir)
+%   SUBJECTS_DIR : path tho the Freesurfer subjects directory.
 %
-% SUBJECTS_DIR : path tho the Freesurfer subjects directory.
+%   subject_name : name of the Freesurfer subject corrisponding to the
+%   current subject.
 %
-% subject_name : name of the Freesurfer subject corrisponding to the
-% current subject.
+%   subj_name : name of the current subject
 %
-% subj_name : name of the current subject
+%   condition : 'LMSPulses_400pct' , 'MelPulses_400pct', 'SplatterControl', 'MaxMelCRF', 'MaxLMSCRF'
 %
-% condition : 'LMSPulses_400pct' , 'MelPulses_400pct', 'SplatterControl', 'MaxMelCRF', 'MaxLMSCRF'
+%   runNums : list of number of runs included in the analysis (i.e. valid runs).
 %
-% runNums : list of number of runs included in the analysis (i.e. valid runs).
-%
-% funcs : list of names of the FEAT stat result folder (e.g. FUNC.feat) (must be consistent among
-% runs) (all FEATstat folders must live within their own bold directory).
+%   funcs : list of names of the FEAT stat result folder (e.g. FUNC.feat) (must be consistent among
+%   runs) (all FEATstat folders must live within their own bold directory).
 
 % Local input arguments:
-% where possible, local input arguments are hard coded according to
-% pre-registration documents.
+% ================
+% 
+%   where possible, local input arguments are hard coded according to
+%   pre-registration documents.
 %
-%%%%%%%%%
+%
 % Usage:
+% ================
+% 
+%   results_dir =  '/some/path/ideally/on/dropbox/' ;
+%   data_dir = '/data/jag/MELA/'; %Upenn cluster default path
+%   SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
+%   subject_name = 'HERO_xxx1_MaxMel';
+%   subj_name = 'HERO_xxx1';
+%   session_date = 'mmddyy';
+%   condition = 'MelPulses_400pct';
+%   runNums =  1:12 ;
+%   funcs = {...
+%        'wdrf.tf' ... %raw data needs to be in position 1
+%        's5.wdrf.tf' ... %5mm data needs to be in position 2
+%         };
+%   project_template = true;
+%   project_copes = true;
 %
-% results_dir =  '/some/path/ideally/on/dropbox/' ;
-% data_dir = '/data/jag/MELA/'; %Upenn cluster default path
-% SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
-% subject_name = 'HERO_xxx1_MaxMel';
-% subj_name = 'HERO_xxx1';
-% session_date = 'mmddyy';
-% condition = 'MelPulses_400pct';
-% runNums =  1:12 ;
-% funcs = {...
-%     'wdrf.tf' ... %raw data needs to be in position 1
-%     's5.wdrf.tf' ... %5mm data needs to be in position 2
-%     };
-% project_template = true;
-% project_copes = true;
+%   MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subject_name,subj_name,session_date, condition, runNums,funcs, project_template, project_copes)
 %
-% MelanopsinMR_PostFeatAnalysis (results_dir, data_dir, SUBJECTS_DIR, subject_name,subj_name,session_date, condition, runNums,funcs, project_template, project_copes)
 %
-%%%%%%%%%
+% 
+% 5/15/2016  gf      Written and commented.
 %% Initialize analysis
 session_dir = fullfile(data_dir, subj_name,session_date);
 output_dir = fullfile( results_dir, condition, subj_name, session_date);
