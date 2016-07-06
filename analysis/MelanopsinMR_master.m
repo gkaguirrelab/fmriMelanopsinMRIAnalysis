@@ -18,9 +18,9 @@ numOfRuns =  9 ;
 reconall = 0;  % reconall flag for current session (used in preprocessing)
 
 funcs = { ...   %Change only if FEAT fsf file outputs in a folder which is not the default one. (used in FEAT stat and post FEAT stat)
-'wdrf.tf' ...
-'s5.wdrf.tf' ...
-};
+    'wdrf.tf' ...
+    's5.wdrf.tf' ...
+    };
 
 proj_template = true; % Change only if proj_template was already done for the current run (used in post FEAT stat)
 proj_copes = true; % Change only if proj_copes was already done for the current run (used in post FEAT stat)
@@ -52,10 +52,10 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Preprocessing for %s , %s, %s ~~~~~~~~~~~~~~~~~~
 time = datetime
 results_dir
 data_dir
-SUBJECTS_DIR 
+SUBJECTS_DIR
 subject_name
 subj_name
-session_date 
+session_date
 condition
 numRuns
 
@@ -70,7 +70,7 @@ if ~exist(logDir,'dir')
     mkdir(logDir);
 end
 fprintf ('\nParameters: \n');  %the parameters are left explicit (i.e. no ;) to appear in the log file.
-job_name = [subj_name '_' session_date] 
+job_name = [subj_name '_' session_date]
 slicetiming = 1
 reconall  % reconall is defined for each run at the beginnning of the master script. The other parameters should not be changed.
 B0 = 0
@@ -92,7 +92,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
 fprintf (['\n~~~~~~~~~~~~~~~~~~~ You can now start preprocessing using the script submit_' job_name '_all.sh ~~~~~~~~~~~~~~~~~~~\n']);
 % stop writing in the logfile
-diary ('off') 
+diary ('off')
 
 %% Run preprocessing scripts
 
@@ -112,7 +112,7 @@ fprintf ('\n~~~~~~~~~~~~~~~~~~~ FEATstat analysis for %s , %s, %s ~~~~~~~~~~~~~~
 time = datetime
 results_dir
 data_dir
-subj_name 
+subj_name
 session_date
 condition
 numRuns
@@ -174,50 +174,50 @@ if ~isdir(FSF_dir)
 end
 d = find_bold(session_dir);
 for ff = 1:length(funcs)
-        funcName = funcs{ff};
-        for j = 1:numRuns
-            clear EVs
-            % Name the output .fsf file
-            if strcmp(funcName,'s5.wdrf.tf'); % 5mm smoothing
-                outFile = fullfile(FSF_dir,sprintf('Run_%02d_5mm.fsf',j));
-            elseif strcmp(funcName,'wdrf.tf'); % raw (no smoothing)
-                outFile = fullfile(FSF_dir,sprintf('Run_%02d_raw.fsf',j));
-            else
-                error('funcName not recognized');
-            end
-            % Name the functional and anatomical files for FSL's FEAT
-            funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
-            anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
-            stimuli_dirs = listdir(outDir,'dirs');
-            if strcmp(condition,'SplatterControl')
-                EVtypes = {...
-                    '25Pct' ...
-                    '50Pct' ...
-                    '100Pct' ...
-                    '195Pct' ...
-                    '0Pct' ...
-                    };
-                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-                ct = 1;
-                for tt=1:length(EVtypes)
-                    EVtype = EVtypes{tt};
-                    for ii=1:length(EVstmp)
-                        tmp = strfind(EVstmp{ii},['_' EVtype '_']);
-                        if ~isempty(tmp)
-                            EVs{ct} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
-                            ct = ct+1;
-                        end
+    funcName = funcs{ff};
+    for j = 1:numRuns
+        clear EVs
+        % Name the output .fsf file
+        if strcmp(funcName,'s5.wdrf.tf'); % 5mm smoothing
+            outFile = fullfile(FSF_dir,sprintf('Run_%02d_5mm.fsf',j));
+        elseif strcmp(funcName,'wdrf.tf'); % raw (no smoothing)
+            outFile = fullfile(FSF_dir,sprintf('Run_%02d_raw.fsf',j));
+        else
+            error('funcName not recognized');
+        end
+        % Name the functional and anatomical files for FSL's FEAT
+        funcVol = fullfile(session_dir,d{j},[funcName '.nii.gz']);
+        anatVol = fullfile(session_dir,'MPRAGE','001','MPRAGE_brain.nii.gz');
+        stimuli_dirs = listdir(outDir,'dirs');
+        if strcmp(condition,'SplatterControl')
+            EVtypes = {...
+                '25Pct' ...
+                '50Pct' ...
+                '100Pct' ...
+                '195Pct' ...
+                '0Pct' ...
+                };
+            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            ct = 1;
+            for tt=1:length(EVtypes)
+                EVtype = EVtypes{tt};
+                for ii=1:length(EVstmp)
+                    tmp = strfind(EVstmp{ii},['_' EVtype '_']);
+                    if ~isempty(tmp)
+                        EVs{ct} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+                        ct = ct+1;
                     end
                 end
-                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
-            else
-                EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
-                for ii =1:length(EVstmp)
-                    EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
-                end
-                FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
             end
+            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
+        else
+            EVstmp = listdir(fullfile(outDir,stimuli_dirs{j},'*.txt'),'files');
+            for ii =1:length(EVstmp)
+                EVs{ii} = fullfile(outDir,stimuli_dirs{j},EVstmp{ii});
+            end
+            FIR_first_level_feat(outFile,funcVol,anatVol,EVs,condition)
         end
+    end
 end
 fprintf ('\n~~~~~~~~~~~~~~~~~~~ Done! ~~~~~~~~~~~~~~~~~~~\n');
 
@@ -331,7 +331,7 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-       FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         currentCondition = [condition '_AttentionTask'];
@@ -369,7 +369,7 @@ switch condition
         
         % Get means, plot them and save them as a csv file for stimulus
         fprintf ('\n~~~~~~~~~~~~~~~~~~~ Calculating, plotting and saving FIR means... ~~~~~~~~~~~~~~~~~~~\n');
-         FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
+        FIR_assemble(session_dir, subject_name, subj_name, output_dir, copeNames, runNums, hemis, ROIs, funcs, condition)
         
         % for attention task
         currentCondition = [condition '_AttentionTask'];
@@ -411,7 +411,7 @@ switch condition
             '195pct'...
             'AttentionTask'...
             };
-               
+        
         funcs = funcs (1);
         
         % Get means, plot them and save them as a csv file for stimulus
@@ -423,7 +423,7 @@ switch condition
             startingCope = (length(copeNames)*ss)+1 ;
         end
         
-        case {'MaxMelCRF', 'MaxLMSCRF'}
+    case {'MaxMelCRF', 'MaxLMSCRF'}
         hemis = {...
             'mh'...
             'lh'...
@@ -458,7 +458,7 @@ switch condition
             '400pct'...
             'AttentionTask'...
             };
-               
+        
         funcs = funcs (1);
         
         % Get means, plot them and save them as a csv file for stimulus
@@ -482,5 +482,5 @@ diary ('off')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% end of POST FEAT stat
 
-%% Move the relevant results to dropbox 
+%% Move the relevant results to dropbox
 
