@@ -120,9 +120,7 @@ directions = { ...
 % get a "clean" log, delete any previously existing log files and run the
 % script from start to end once.
 % Note that some functions called in the script (e.g.
-% create_preprocessing_scripts) will create their own log files, typically
-% saved within the session directory.
-
+% create_preprocessing_scripts) will create their own log files.
 %set logfile path and name
 diaryfile = fullfile(results_dir, 'MasterScriptLOG.txt');
 % set timestamp format
@@ -157,7 +155,7 @@ for ss = 1:length(subjNames)
     dicom_sort (fullfile(data_dir, subjNames{ss}, sessionsMELCRF{ss}, 'DICOMS'));
     dicom_sort (fullfile(data_dir, subjNames{ss}, sessionsLMSCRF{ss}, 'DICOMS'));
 end
-sprintf ('All DICOMS are sorted.\n', subjNames{ss});
+sprintf ('All DICOMS are sorted.\n');
 
 % In each session folder, we MANUALLY DELETE the incomplete DICOM series
 % that resulted from acquisition errors during the session, as per
@@ -180,7 +178,7 @@ for ss = 1:length(subjNames)
     copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}, 'DICOMS','MPRAGE'), ...
         fullfile(data_dir, subjNames{ss}, sessionsLMSCRF{ss}, 'DICOMS', 'MPRAGE'));
 end
-sprintf ('All MPRAGE folders copied.\n', subjNames{ss});
+sprintf ('All MPRAGE folders copied.\n');
 sprintf ('\n\nThe dataset is now ready for the analysis.\n')
 toc
 
