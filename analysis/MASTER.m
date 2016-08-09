@@ -121,7 +121,8 @@ directions = { ...
 % script from start to end once.
 % Note that some functions called in the script (e.g.
 % create_preprocessing_scripts) will create their own log files.
-%set logfile path and name
+
+% set logfile path and name
 diaryfile = fullfile(results_dir, 'MasterScriptLOG.txt');
 % set timestamp format
 formatOut = 'mmddyy_HH.MM.SS';
@@ -140,7 +141,7 @@ formatOut = 'mmddyy_HH.MM.SS';
 diary(diaryfile)
 diary ('on')
 timestamp = datestr((datetime('now')), formatOut);
-sprintf ('\n\n~~~~~~~ Getting the dataset ready for the analysis - %s ~~~~~~~\n\n', timestamp);
+fprintf ('\n\n~~~~~~~ Getting the dataset ready for the analysis - %s ~~~~~~~\n\n', timestamp);
 tic;
 
 % Before proceeding with the analysis, we make sure that every session
@@ -155,12 +156,12 @@ for ss = 1:length(subjNames)
     dicom_sort (fullfile(data_dir, subjNames{ss}, sessionsMELCRF{ss}, 'DICOMS'));
     dicom_sort (fullfile(data_dir, subjNames{ss}, sessionsLMSCRF{ss}, 'DICOMS'));
 end
-sprintf ('All DICOMS are sorted.\n');
+fprintf ('All DICOMS are sorted.\n');
 
 % In each session folder, we MANUALLY DELETE the incomplete DICOM series
 % that resulted from acquisition errors during the session, as per
 % information on the README.md file.
-sprintf ('\n>>>> MANUALLY DELETE incomplete DICOM series from each session folder, as per information on the README.md file <<<<<\n' )
+fprintf ('\n>>>> MANUALLY DELETE incomplete DICOM series from each session folder, as per information on the README.md file <<<<<\n' )
 
 
 % We acquired a single T1 series from each subject, during the MelPulses400
@@ -168,7 +169,7 @@ sprintf ('\n>>>> MANUALLY DELETE incomplete DICOM series from each session folde
 % the MPRAGE DICOM series from the Mel400 session in the other sessions DICOM
 % folders.
 for ss = 1:length(subjNames)
-    sprintf ('Copying MPRAGE DICOM files for subject %s \n', subjNames{ss});
+    fprintf ('Copying MPRAGE DICOM files for subject %s \n', subjNames{ss});
     copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}, 'DICOMS','MPRAGE'), ...
         fullfile(data_dir, subjNames{ss}, sessionsLMS400{ss}, 'DICOMS', 'MPRAGE'));
     copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}, 'DICOMS','MPRAGE'), ...
@@ -178,23 +179,24 @@ for ss = 1:length(subjNames)
     copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}, 'DICOMS','MPRAGE'), ...
         fullfile(data_dir, subjNames{ss}, sessionsLMSCRF{ss}, 'DICOMS', 'MPRAGE'));
 end
-sprintf ('All MPRAGE folders copied.\n');
-sprintf ('\n\nThe dataset is now ready for the analysis.\n')
+fprintf ('All MPRAGE folders copied.\n');
+fprintf ('\n\nThe dataset is now ready for the analysis.\n')
 toc
 
 % stop logging
 diary ('off')
+
 %% Preprocessing
 % start logging
 diary(diaryfile)
 diary ('on')
 timestamp = datestr((datetime('now')), formatOut);
-sprintf ('\n\n~~~~~~~ Preprocessing - %s ~~~~~~~\n\n', timestamp);
+fprintf ('\n\n~~~~~~~ Preprocessing - %s ~~~~~~~\n\n', timestamp);
 tic;
 
 % Variables for preprocessing (intentionally with no ; for displaying
 % purposes)
-sprintf ('\nGeneral parameters for MRklar preprocessing: \n');
+fprintf ('\nGeneral parameters for MRklar preprocessing: \n');
 slicetiming = 0 
 reconall = 1  % change to zero if the dataset was already run thorugh freesurfer reconall
 B0 = 0
@@ -208,7 +210,6 @@ localWM = 1
 anat = 1
 amem = 20
 fmem = 50
-
 
 for ss = 1:length(subjNames)
     subject_name = subject_names{ss};
@@ -226,11 +227,11 @@ for ss = 1:length(subjNames)
         % scripts have an embedded conversion function, we do that now to
         % avoid to feed the number of bold runs for each session as a
         % variable beforehand.
-        sprintf ('Converting DICOMS to NIFTI for subject %s, session %s \n', subjNames{ss}, sessions{nn});
+        fprintf ('Converting DICOMS to NIFTI for subject %s, session %s \n', subjNames{ss}, sessions{nn});
         sort_nifti (session_dir);
         b = find_bold(session_dir);
         numRuns = length(b);
-        sprintf ('>> %d BOLD run found./n', numRuns)
+        fprintf ('>> %d BOLD run found./n', numRuns)
         % Create preprocessing scripts for this session
         job_name = [subjNames{ss} '_' sessions{nn}];
         outDir = fullfile(session_dir,'shell_scripts', subj_name);
@@ -241,18 +242,18 @@ for ss = 1:length(subjNames)
         if ~exist(logDir,'dir')
             mkdir(logDir);
         end
-        sprintf ('Creating preprocessing scripts for subject %s, session %s \n', subjNames{ss}, sessions{nn});
+        fprintf ('Creating preprocessing scripts for subject %s, session %s \n', subjNames{ss}, sessions{nn});
         create_preprocessing_scripts(session_dir,subject_name,outDir, ...
             logDir,job_name,numRuns,reconall,slicetiming,B0,filtType, ...
             lowHz,highHz,physio,motion,task,localWM,anat,amem,fmem)
-        sprintf ('>> Done\n');
+        fprintf ('>> Done\n');
         % Launch preprocessing scripts using a system command 
-        sprintf ('Launching preprocessing script for subject %s, session %s \n', subjNames{ss}, sessions{nn});
-        system(['sh ' outDir '/' 'submit_' job_name '_all.sh']);
-        sprintf ('>> Done\n');
+        fprintf ('Launching preprocessing script for subject %s, session %s \n', subjNames{ss}, sessions{nn});
+        system(sprintf(['sh ' outDir '/' 'submit_' job_name '_all.sh']));
+        fprintf ('>> Done\n');
     end    
 end
-sprintf ('\n\nAll preprocessing script have been submitted. Wait for them to complete before moving on with this script\n')
+fprintf ('\n\nAll preprocessing script have been submitted. Wait for them to complete before moving on with this script\n')
 toc
 
 %stop logging
