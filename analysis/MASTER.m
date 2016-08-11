@@ -14,9 +14,9 @@ end
 % subject names
 subjNames = { ...
     'HERO_asb1' ...
-%     'HERO_aso1' ...
-%     'HERO_gka1' ...
-%     'HERO_mxs1' ...
+    'HERO_aso1' ...
+    'HERO_gka1' ...
+    'HERO_mxs1' ...
     };
 
 % freesurfer subject names
@@ -56,7 +56,7 @@ sessionsMELCRF = { ...
     {'060716' ''} ...
     {'053116' ''} ...
     {'060216' ''} ...
-    {'060916' '061016'} ...  %%%% for HERO_mxs1 this condition was acquired in 2 different sessions
+    {'060916' '061016_Mel'} ...  %%%% for HERO_mxs1 this condition was acquired in 2 different sessions
     };
 
 % LMS Pulses CRF
@@ -138,7 +138,7 @@ formatOut = 'mmddyy_HH.MM.SS';
 %% Preprocessing variables
 slicetiming = 0 ;
 reconall = 0 ; % change to 1 if the dataset was already run thorugh freesurfer reconall
-B0 = 0 ;
+refvol = 1 ;
 filtType = 'high' ;
 lowHz = 0.01 ;
 highHz = 0.10 ;
@@ -208,8 +208,8 @@ for ss = 1:length(subjNames)
     for kk = 1:length(allSessions) % we copy into all the sessions following the first one
         sessions = allSessions{kk}{ss};
         for mm = 1:length(sessions)
-            if ~isempty(sessions{mm}) & ~strcmp(sessions{mm},sessionsMEL400{ss})
-                copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}{mm}, 'DICOMS','*T1w_MPR'), ...
+            if ~isempty(sessions{mm}) & ~strcmp(sessions{mm},sessionsMEL400{ss}{1})
+                copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}{1}, 'DICOMS','*T1w_MPR'), ...
                     fullfile(data_dir, subjNames{ss}, sessions{mm}, 'DICOMS'));
             end
         end
@@ -234,7 +234,7 @@ tic;
 fprintf ('\nGeneral parameters for MRklar preprocessing: \n');
 display(slicetiming)
 display(reconall)
-display(B0)
+display(refvol)
 display(filtType)
 display(lowHz)
 display(highHz)
@@ -271,7 +271,7 @@ for ss = 1:length(subjNames)
                 
                 fprintf ('Creating preprocessing scripts for subject %s, session %s \n', subjNames{ss}, sessions{mm});
                 create_preprocessing_scripts(session_dir,subject_name,outDir, ...
-                    logDir,job_name,numRuns,reconall,slicetiming,B0,filtType, ...
+                    logDir,job_name,numRuns,reconall,slicetiming,refvol,filtType, ...
                     lowHz,highHz,physio,motion,task,localWM,anat,amem,fmem)
                 fprintf ('>> Done\n\n');
                 % Launch preprocessing scripts using a system command
