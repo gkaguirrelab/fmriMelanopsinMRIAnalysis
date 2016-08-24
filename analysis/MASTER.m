@@ -11,14 +11,9 @@ SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 if ~exist (results_dir, 'dir')
     mkdir (results_dir);
 end
-% subject names
-subjNames = { ...
-    'HERO_asb1' ...
-    'HERO_aso1' ...
-    'HERO_gka1' ...
-    'HERO_mxs1' ...
-    };
 
+% Used to find the subjects
+subjectIdentifier = 'HERO_*';
 % freesurfer subject names
 subject_names = { ...
     'HERO_asb1_MaxMel' ...
@@ -26,54 +21,6 @@ subject_names = { ...
     'HERO_gka1_3T' ...
     'HERO_mxs1_MaxMel' ...
     };
-
-% 400pct MaxMel sessions
-sessionsMEL400 = { ...
-    {'032416' ''} ...
-    {'032516' ''} ...
-    {'033116' ''} ...
-    {'040616' ''} ...
-    };
-
-% 400pct MaxLMS sessions
-sessionsLMS400 = { ...
-    {'040716' ''} ...
-    {'033016' ''} ...
-    {'040116' ''} ...
-    {'040816' ''} ...
-    };
-
-% Splatter Control CRF
-sessionsSplatterCRF = { ...
-    {'051016' ''}  ...
-    {'042916' ''} ...
-    {'050616' ''} ...
-    {'050916' ''} ...
-    };
-
-% Mel Pulses CRF
-sessionsMELCRF = { ...
-    {'060716' ''} ...
-    {'053116' ''} ...
-    {'060216' ''} ...
-    {'060916' '061016_Mel'} ...  %%%% for HERO_mxs1 this condition was acquired in 2 different sessions
-    };
-
-% LMS Pulses CRF
-sessionsLMSCRF = { ...
-    {'060816' ''} ...
-    {'060116' ''} ...
-    {'060616' ''} ...
-    {'062816' ''} ...
-    };
-
-% all sessions
-allSessions = { sessionsMEL400 ...
-        sessionsLMS400 ...
-        sessionsSplatterCRF ...
-        sessionsMELCRF ...
-        sessionsLMSCRF ...
-        };
 
 %% Analysis variables
 % session types (or conditions)
@@ -134,7 +81,6 @@ diaryfile = fullfile(results_dir, 'MasterScriptLOG.txt');
 % set timestamp format
 formatOut = 'mmddyy_HH.MM.SS';
 
-
 %% Preprocessing variables
 slicetiming = 0 ;
 reconall = 0 ; % change to 1 if the dataset was already run thorugh freesurfer reconall
@@ -180,14 +126,20 @@ tic;
 % contains the appropriate DICOM files.
 
 % Firstly, we sort the DICOM files into Series folders:
-for ss = 1:length(subjNames)
-    sprintf ('Sorting DICOMs for subject %s \n', subjNames{ss});
-    for kk = 1:length(allSessions)
-        sessions = allSessions{kk}{ss};
-        for mm = 1:length(sessions)
-            if ~isempty(sessions{mm})
-                dicom_sort (fullfile(data_dir, subjNames{ss}, sessions{mm}, 'DICOMS'));
-            end
+subjDirs = listdir(fullfile(data_dir,subjectIdentifier),'dirs');
+for ss = 1:length(subjDirs)
+    subDir = fullfile(data_dir,subjDirs{ss});
+    sessDirs = listdir(fullfile(subDir),'dirs');
+    for j = 1:length(sessDirs)
+        fprintf('Sorting DICOMs for subject %s session %s\n',subjDirs{ss},sessDirs{j});
+        dicom_sort(fullfile(subDir,sessDirs{j},'DICOMS'));
+        % We acquired a single T1 series from each subject, during the MelPulses400
+        % session (i.e. each subject's first session). For each subject, we copy
+        % the MPRAGE DICOM series from the Mel400 session in the other sessions DICOM
+        % folders.
+        if j ~= 1
+            copyfile(fullfile(subDir,sessDirs{1},'DICOMS','*T1w_MPR'), ...
+                fullfile(subDir,sessDirs{j},'DICOMS'));
         end
     end
 end
@@ -197,27 +149,6 @@ fprintf ('All DICOMS are sorted.\n');
 % that resulted from acquisition errors during the session, as per
 % information on the README.md file.
 fprintf ('\n>>>> MANUALLY DELETE incomplete DICOM series from each session folder, as per information on the README.md file <<<<<\n\n' )
-
-
-% We acquired a single T1 series from each subject, during the MelPulses400
-% session (i.e. each subject's first session). For each subject, we copy
-% the MPRAGE DICOM series from the Mel400 session in the other sessions DICOM
-% folders.
-for ss = 1:length(subjNames)
-    fprintf ('Copying MPRAGE DICOM files for subject %s \n', subjNames{ss});
-    for kk = 1:length(allSessions) % we copy into all the sessions following the first one
-        sessions = allSessions{kk}{ss};
-        for mm = 1:length(sessions)
-            if ~isempty(sessions{mm}) & ~strcmp(sessions{mm},sessionsMEL400{ss}{1})
-                copyfile(fullfile(data_dir, subjNames{ss}, sessionsMEL400{ss}{1}, 'DICOMS','*T1w_MPR'), ...
-                    fullfile(data_dir, subjNames{ss}, sessions{mm}, 'DICOMS'));
-            end
-        end
-    end
-end
-fprintf ('All MPRAGE folders copied.\n');
-fprintf ('\n\nThe dataset is now ready for the analysis.\n')
-toc
 
 % stop logging
 diary ('off')
@@ -247,39 +178,40 @@ display(amem)
 display(fmem)
 display(logDir)
 
-for ss = 1:length(subjNames)
-    subject_name = subject_names{ss};
-    for kk = 1:length(allSessions) % we copy into all the sessions following the first one
-        sessions = allSessions{kk}{ss};
-        for mm = 1:length(sessions)
-            if ~isempty(sessions{mm})
-                session_dir  = fullfile(data_dir, subjNames{ss}, sessions{mm});
-                % Count how many bold runs are in each session.  We do this
-                % now to avoid to feed the number of bold runs for each
-                % session as a preprocessing variable beforehand.
-                fprintf ('Counting BOLD runs for subject %s, session %s \n',...
-                    subjNames{ss}, sessions{mm});
-                b = find_bold(fullfile(session_dir,'DICOMS'));
-                numRuns = length(b);
-                fprintf ('>> %d BOLD runs found.\n', numRuns)
-                % Create preprocessing scripts for this session
-                job_name = [subjNames{ss} '_' sessions{mm}];
-                outDir = fullfile(session_dir,'shell_scripts');
-                if ~exist(outDir,'dir')
-                    mkdir(outDir);
-                end
-                
-                fprintf ('Creating preprocessing scripts for subject %s, session %s \n', subjNames{ss}, sessions{mm});
-                create_preprocessing_scripts(session_dir,subject_name,outDir, ...
-                    logDir,job_name,numRuns,reconall,slicetiming,refvol,filtType, ...
-                    lowHz,highHz,physio,motion,task,localWM,anat,amem,fmem)
-                fprintf ('>> Done\n\n');
-                % Launch preprocessing scripts using a system command
-                fprintf ('Launching preprocessing script for subject %s, session %s \n', subjNames{ss}, sessions{mm});
-                system(sprintf('sh %s/submit_%s_all.sh', outDir,job_name));
-                fprintf ('>> Done\n\n');
-            end
+
+
+subjDirs = listdir(fullfile(data_dir,subjectIdentifier),'dirs');
+for ss = 1:length(subjDirs)
+    subject_name = subjDirs{ss};
+    subDir = fullfile(data_dir,subjDirs{ss});
+    sessDirs = listdir(fullfile(subDir),'dirs');
+    for kk = 1:length(sessDirs) % we copy into all the sessions following the first one
+        session_name = sessDirs{kk};
+        session_dir  = fullfile(subDir,session_name);
+        % Count how many bold runs are in each session.  We do this
+        % now to avoid to feed the number of bold runs for each
+        % session as a preprocessing variable beforehand.
+        fprintf ('Counting BOLD runs for subject %s, session %s \n',...
+            subject_name, session_dir);
+        b = find_bold(fullfile(session_dir,'DICOMS'));
+        numRuns = length(b);
+        fprintf ('>> %d BOLD runs found.\n', numRuns)
+        % Create preprocessing scripts for this session
+        job_name = [subject_name '_' session_name];
+        outDir = fullfile(session_dir,'shell_scripts');
+        if ~exist(outDir,'dir')
+            mkdir(outDir);
         end
+        
+        fprintf ('Creating preprocessing scripts for subject %s, session %s \n', subject_name, session_name);
+        create_preprocessing_scripts(session_dir,subject_name,outDir, ...
+            logDir,job_name,numRuns,reconall,slicetiming,refvol,filtType, ...
+            lowHz,highHz,physio,motion,task,localWM,anat,amem,fmem)
+        fprintf ('>> Done\n\n');
+        % Launch preprocessing scripts using a system command
+        fprintf ('Launching preprocessing script for subject %s, session %s \n', subject_name, session_name);
+        system(sprintf('sh %s/submit_%s_all.sh', outDir,job_name));
+        fprintf ('>> Done\n\n');
     end
 end
 fprintf ('\n\nAll preprocessing script have been submitted. Wait for them to complete before moving on with this script\n')
@@ -296,14 +228,14 @@ timestamp = datestr((datetime('now')), formatOut);
 fprintf ('\n\n~~~~~~~ Project template - %s ~~~~~~~\n\n', timestamp);
 tic;
 
-for ss = 1:length(subjNames)
-    for kk = 1:length(allSessions)
-        sessions = allSessions{kk}{ss};
-        for mm = 1:length(sessions)
-            if ~isempty(sessions{mm})
-                project_template (fullfile(data_dir, subjNames{ss}, sessions{mm}),subject_names{ss});
-            end
-        end
+subjDirs = listdir(fullfile(data_dir,subjectIdentifier),'dirs');
+for ss = 1:length(subjDirs)
+    subject_name = subjDirs{ss};
+    subDir = fullfile(data_dir,subjDirs{ss});
+    sessDirs = listdir(fullfile(subDir),'dirs');
+    for kk = 1:length(sessDirs)
+        session_dir = fullfile(subDir,sessDirs{kk});
+        project_template(session_dir,subject_name);
     end
 end
 
@@ -317,10 +249,10 @@ mem = 42;
 packetType = 'V1';
 func = 'wdrf.tf';
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
-for i = 1:length(subList)
-    sessList = listdir(fullfile(data_dir,subList{i}),'dirs');
+for ss = 1:length(subList)
+    sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
     for j = 1:length(sessList)
-        sessionDir = fullfile(data_dir,subList{i},sessList{j});
+        sessionDir = fullfile(data_dir,subList{ss},sessList{j});
         outDir = fullfile(sessionDir,'shell_scripts');
         % Create 'makePackets' script
         fname = fullfile(outDir,'makePackets_V1.sh');
