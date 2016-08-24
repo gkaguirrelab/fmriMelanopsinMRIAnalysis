@@ -11,7 +11,6 @@ SUBJECTS_DIR = '/data/jag/MELA/freesurfer_subjects'; %Upenn cluster default path
 if ~exist (results_dir, 'dir')
     mkdir (results_dir);
 end
-
 % Used to find the subjects
 subjectIdentifier = 'HERO_*';
 % freesurfer subject names
@@ -76,6 +75,11 @@ directions = { ...
 % Note that some functions called in the script (e.g.
 % create_preprocessing_scripts) will create their own log files.
 
+% Define log directory
+logDir = fullfile(data_dir, 'LOGS'); % folder for preprocessing logs (required by MRklar).
+if ~exist(logDir,'dir')
+    mkdir(logDir);
+end
 % set logfile path and name
 diaryfile = fullfile(results_dir, 'MasterScriptLOG.txt');
 % set timestamp format
@@ -95,10 +99,6 @@ localWM = 1;
 anat = 1;
 amem = 20;
 fmem = 50;
-logDir = fullfile(data_dir, 'LOGS'); % folder for preprocessing logs (required by MRklar).
-if ~exist(logDir,'dir')
-    mkdir(logDir);
-end
 % NOTE: will will get the number of runs for each session counting the bold runs
 % within the session folder
 
@@ -245,7 +245,7 @@ toc
 %stop logging
 diary ('off')
 %% Create jobs to make packets
-mem = 42;
+mem = 52;
 packetType = 'V1';
 func = 'wdrf.tf';
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
@@ -255,22 +255,22 @@ for ss = 1:length(subList)
         sessionDir = fullfile(data_dir,subList{ss},sessList{j});
         outDir = fullfile(sessionDir,'shell_scripts');
         % Create 'makePackets' script
-        fname = fullfile(outDir,'makePackets_V1.sh');
-        fid = fopen(fname,'w');
-        fprintf(fid,'#!/bin/bash\n');
-        fprintf(fid,['sessionDir=' sessionDir '\n']);
-        fprintf(fid,['packetType=' packetType '\n']);
-        fprintf(fid,['func=' func '\n\n']);
+        fname1 = fullfile(outDir,'makePackets_V1.sh');
+        fid1 = fopen(fname1,'w');
+        fprintf(fid1,'#!/bin/bash\n');
+        fprintf(fid1,['sessionDir=' sessionDir '\n']);
+        fprintf(fid1,['packetType=' packetType '\n']);
+        fprintf(fid1,['func=' func '\n\n']);
         matlab_string = '"makePackets(''$sessionDir'',''$packetType'',''$func'');"';
-        fprintf(fid,['matlab -nodisplay -nosplash -r ' matlab_string]);
-        fclose(fid);
+        fprintf(fid1,['matlab -nodisplay -nosplash -r ' matlab_string]);
+        fclose(fid1);
         % Create submit script
-        fname = fullfile(outDir,'submit_makePackets_V1.sh');
-        fid = fopen(fname,'w');
-        fprintf(fid,['qsub -l h_vmem=' num2str(mem) ...
+        fname2 = fullfile(outDir,'submit_makePackets_V1.sh');
+        fid2 = fopen(fname2,'w');
+        fprintf(fid2,['qsub -l h_vmem=' num2str(mem) ...
             '.2G,s_vmem=' num2str(mem) 'G -e ' logDir ' -o ' logDir ' ' ...
             fullfile(outDir,'makePackets_V1.sh')]);
-        fclose(fid);
+        fclose(fid2);
     end
 end
 %% Extract packets for each session for V1
