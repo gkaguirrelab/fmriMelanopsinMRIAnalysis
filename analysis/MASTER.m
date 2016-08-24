@@ -287,3 +287,63 @@ toc
 
 %stop logging
 diary ('off')
+
+%% Project template
+% start logging
+diary(diaryfile)
+diary ('on')
+timestamp = datestr((datetime('now')), formatOut);
+fprintf ('\n\n~~~~~~~ Project template - %s ~~~~~~~\n\n', timestamp);
+tic;
+
+for ss = 1:length(subjNames)
+    for kk = 1:length(allSessions)
+        sessions = allSessions{kk}{ss};
+        for mm = 1:length(sessions)
+            if ~isempty(sessions{mm})
+                project_template (fullfile(data_dir, subjNames{ss}, sessions{mm}),subject_names{ss});
+            end
+        end
+    end
+end
+
+fprintf ('\n\nProject template completed for all runs.\n')
+toc
+
+%stop logging
+diary ('off')
+
+%% Extract packets for each session for V1
+% start logging
+diary(diaryfile)
+diary ('on')
+timestamp = datestr((datetime('now')), formatOut);
+fprintf ('\n\n~~~~~~~ Make Packets - %s ~~~~~~~\n\n', timestamp);
+tic;
+
+%extract packets
+for ss = 1:length(subjNames)
+    for kk = 1:length(allSessions)
+        sessions = allSessions{kk}{ss};
+        for mm = 1:length(sessions)
+            if ~isempty(sessions{mm})
+                for rr = 1:length(ROIs)
+                    if strcmp(ROIs{rr}, 'V2andV3')
+                        packetType = 'V2V3';
+                    else
+                        packetType = ROIs{rr};
+                    end
+                    fprintf('\n Saving %s packets for for subject %s, session %s ... ', ROIs{rr}, subjNames{ss}, sessions{mm});
+                    [packets] = makePackets(fullfile(data_dir, subjNames{ss}, sessions{mm}),packetType);
+                    fprintf ('done.\n')
+                    clear packets
+                end
+            end
+        end
+    end
+end
+fprintf ('\n\nMake Packets completed for all runs.\n')
+toc
+
+%stop logging
+diary ('off')
