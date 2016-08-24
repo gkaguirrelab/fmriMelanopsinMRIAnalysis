@@ -230,7 +230,7 @@ tic;
 
 subjDirs = listdir(fullfile(data_dir,subjectIdentifier),'dirs');
 for ss = 1:length(subjDirs)
-    subject_name = subjDirs{ss};
+    subject_name = subject_names{ss};
     subDir = fullfile(data_dir,subjDirs{ss});
     sessDirs = listdir(fullfile(subDir),'dirs');
     for kk = 1:length(sessDirs)
