@@ -281,7 +281,7 @@ for ss = 1:length(subList)
             fid2 = fopen(fname2,'w');
             fprintf(fid2,['qsub -l h_vmem=' num2str(mem) ...
                 '.2G,s_vmem=' num2str(mem) 'G -e ' logDir ' -o ' logDir ' ' ...
-                fullfile(outDir,'makePackets_V1.sh')]);
+                fullfile(outDir,['makePackets_' packetType '.sh'])]);
             fclose(fid2);
             % Launch preprocessing scripts using a system command
             fprintf ('Launching makePacket script for subject %s, session %s, ROI %s \n', subList{ss},sessList{j},ROIs{rr});
