@@ -235,7 +235,8 @@ for ss = 1:length(subjDirs)
     sessDirs = listdir(fullfile(subDir),'dirs');
     for kk = 1:length(sessDirs)
         session_dir = fullfile(subDir,sessDirs{kk});
-        project_template(session_dir,subject_name);
+        project_template(session_dir,subject_name); % for Visual Cortex ROIs
+        make_LGN_ROI(session_dir,subject_name); % for LGN ROI
     end
 end
 
