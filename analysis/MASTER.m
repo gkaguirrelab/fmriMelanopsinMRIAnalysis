@@ -244,66 +244,55 @@ toc
 
 %stop logging
 diary ('off')
-%% Create jobs to make packets
+%% Create and submit jobs to make packets
+% start logging
+diary(diaryfile)
+diary ('on')
+timestamp = datestr((datetime('now')), formatOut);
+fprintf ('\n\n~~~~~~~ Create and submit make packets jobs - %s ~~~~~~~\n\n', timestamp);
+tic;
+
 mem = 52;
-packetType = 'V1';
 func = 'wdrf.tf';
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
 for ss = 1:length(subList)
     sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
     for j = 1:length(sessList)
-        sessionDir = fullfile(data_dir,subList{ss},sessList{j});
-        outDir = fullfile(sessionDir,'shell_scripts');
-        % Create 'makePackets' script
-        fname1 = fullfile(outDir,'makePackets_V1.sh');
-        fid1 = fopen(fname1,'w');
-        fprintf(fid1,'#!/bin/bash\n');
-        fprintf(fid1,['sessionDir=' sessionDir '\n']);
-        fprintf(fid1,['packetType=' packetType '\n']);
-        fprintf(fid1,['func=' func '\n\n']);
-        matlab_string = '"makePackets(''$sessionDir'',''$packetType'',''$func'');"';
-        fprintf(fid1,['matlab -nodisplay -nosplash -r ' matlab_string]);
-        fclose(fid1);
-        % Create submit script
-        fname2 = fullfile(outDir,'submit_makePackets_V1.sh');
-        fid2 = fopen(fname2,'w');
-        fprintf(fid2,['qsub -l h_vmem=' num2str(mem) ...
-            '.2G,s_vmem=' num2str(mem) 'G -e ' logDir ' -o ' logDir ' ' ...
-            fullfile(outDir,'makePackets_V1.sh')]);
-        fclose(fid2);
+        for rr = 1:length(ROIs)
+            if strcmp(ROIs{rr}, 'V2andV3')
+                packetType = 'V2V3';
+            else
+                packetType = ROIs{rr};
+            end
+            sessionDir = fullfile(data_dir,subList{ss},sessList{j});
+            outDir = fullfile(sessionDir,'shell_scripts');
+            % Create 'makePackets' script
+            fname1 = fullfile(outDir,['makePackets_' packetType '.sh']);
+            fid1 = fopen(fname1,'w');
+            fprintf(fid1,'#!/bin/bash\n');
+            fprintf(fid1,['sessionDir=' sessionDir '\n']);
+            fprintf(fid1,['packetType=' packetType '\n']);
+            fprintf(fid1,['func=' func '\n\n']);
+            matlab_string = '"makePackets(''$sessionDir'',''$packetType'',''$func'');"';
+            fprintf(fid1,['matlab -nodisplay -nosplash -r ' matlab_string]);
+            fclose(fid1);
+            % Create submit script
+            fname2 = fullfile(outDir,['submit_makePackets_' packetType '.sh']);
+            fid2 = fopen(fname2,'w');
+            fprintf(fid2,['qsub -l h_vmem=' num2str(mem) ...
+                '.2G,s_vmem=' num2str(mem) 'G -e ' logDir ' -o ' logDir ' ' ...
+                fullfile(outDir,'makePackets_V1.sh')]);
+            fclose(fid2);
+            % Launch preprocessing scripts using a system command
+            fprintf ('Launching makePacket script for subject %s, session %s, ROI %s \n', subList{ss},sessList{j},ROIs{rr});
+            system(sprintf('sh %s/submit_makePackets_%s.sh', outDir,packetType));
+            fprintf ('>> Done\n\n');
+        end
     end
 end
-%% Extract packets for each session for V1
-% % start logging
-% diary(diaryfile)
-% diary ('on')
-% timestamp = datestr((datetime('now')), formatOut);
-% fprintf ('\n\n~~~~~~~ Make Packets - %s ~~~~~~~\n\n', timestamp);
-% tic;
-% 
-% %extract packets
-% for ss = 1:length(subjNames)
-%     for kk = 1:length(allSessions)
-%         sessions = allSessions{kk}{ss};
-%         for mm = 1:length(sessions)
-%             if ~isempty(sessions{mm})
-%                 for rr = 1:length(ROIs)
-%                     if strcmp(ROIs{rr}, 'V2andV3')
-%                         packetType = 'V2V3';
-%                     else
-%                         packetType = ROIs{rr};
-%                     end
-%                     fprintf('\n Saving %s packets for for subject %s, session %s ... ', ROIs{rr}, subjNames{ss}, sessions{mm});
-%                     [packets] = makePackets(fullfile(data_dir, subjNames{ss}, sessions{mm}),packetType);
-%                     fprintf ('done.\n')
-%                     clear packets
-%                 end
-%             end
-%         end
-%     end
-% end
-% fprintf ('\n\nMake Packets completed for all runs.\n')
-% toc
+
+fprintf ('\n\nAll makePackets script have been submitted. Wait for them to complete before moving on with the next cell\n')
+toc
 
 %stop logging
 diary ('off')
