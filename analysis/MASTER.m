@@ -297,3 +297,37 @@ toc
 
 %stop logging
 diary ('off')
+
+%% Plot and save HRF values for every subject and every session
+
+subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
+for ss = 1:length(subList)  
+    sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
+    for rr = 1:length(ROIs)
+        fig = figure('units','normalized','position',[0 0 1 1]);
+        title (['HRF values for ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
+        for j = 1:length(sessList)
+            if strcmp(ROIs{rr}, 'V2andV3')
+                packetType = 'V2V3';
+            else
+                packetType = ROIs{rr};
+            end
+            packetsDir = fullfile(data_dir,subList{ss},sessList{j},'Packets');
+            load(fullfile(packetsDir,[packetType '.mat']))
+            plot (packets{1}.HRF.values)
+            legendInfo{j} = sessList{j};
+            hold on
+        end
+        legend (legendInfo, 'Interpreter','none');
+        adjustPlot(fig);
+        saveName = ['HRF_val_' subList{ss} '_' ROIs{rr}];cd 
+        saveDir = fullfile(results_dir, 'HRF_values');
+        if ~exist (saveDir, 'dir')
+            mkdir (saveDir);
+        end
+        saveas(fig, fullfile(saveDir, saveName), 'pdf');
+        close(fig);
+    end
+end
+        
+            
