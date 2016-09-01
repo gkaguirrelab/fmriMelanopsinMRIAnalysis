@@ -130,16 +130,16 @@ subjDirs = listdir(fullfile(data_dir,subjectIdentifier),'dirs');
 for ss = 1:length(subjDirs)
     subDir = fullfile(data_dir,subjDirs{ss});
     sessDirs = listdir(fullfile(subDir),'dirs');
-    for j = 1:length(sessDirs)
-        fprintf('Sorting DICOMs for subject %s session %s\n',subjDirs{ss},sessDirs{j});
-        dicom_sort(fullfile(subDir,sessDirs{j},'DICOMS'));
+    for jj = 1:length(sessDirs)
+        fprintf('Sorting DICOMs for subject %s session %s\n',subjDirs{ss},sessDirs{jj});
+        dicom_sort(fullfile(subDir,sessDirs{jj},'DICOMS'));
         % We acquired a single T1 series from each subject, during the MelPulses400
         % session (i.e. each subject's first session). For each subject, we copy
         % the MPRAGE DICOM series from the Mel400 session in the other sessions DICOM
         % folders.
-        if j ~= 1
+        if jj ~= 1
             copyfile(fullfile(subDir,sessDirs{1},'DICOMS','*T1w_MPR'), ...
-                fullfile(subDir,sessDirs{j},'DICOMS'));
+                fullfile(subDir,sessDirs{jj},'DICOMS'));
         end
     end
 end
@@ -258,14 +258,14 @@ func = 'wdrf.tf';
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
 for ss = 1:length(subList)
     sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
-    for j = 1:length(sessList)
+    for jj = 1:length(sessList)
         for rr = 1:length(ROIs)
             if strcmp(ROIs{rr}, 'V2andV3')
                 packetType = 'V2V3';
             else
                 packetType = ROIs{rr};
             end
-            sessionDir = fullfile(data_dir,subList{ss},sessList{j});
+            sessionDir = fullfile(data_dir,subList{ss},sessList{jj});
             outDir = fullfile(sessionDir,'shell_scripts');
             % Create 'makePackets' script
             fname1 = fullfile(outDir,['makePackets_' packetType '.sh']);
@@ -285,7 +285,7 @@ for ss = 1:length(subList)
                 fullfile(outDir,['makePackets_' packetType '.sh'])]);
             fclose(fid2);
             % Launch preprocessing scripts using a system command
-            fprintf ('Launching makePacket script for subject %s, session %s, ROI %s \n', subList{ss},sessList{j},ROIs{rr});
+            fprintf ('Launching makePacket script for subject %s, session %s, ROI %s \n', subList{ss},sessList{jj},ROIs{rr});
             system(sprintf('sh %s/submit_makePackets_%s.sh', outDir,packetType));
             fprintf ('>> Done\n\n');
         end
@@ -305,20 +305,32 @@ for ss = 1:length(subList)
     sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
     for rr = 1:length(ROIs)
         fig = figure('units','normalized','position',[0 0 1 1]);
-        title (['HRF values for ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
-        for j = 1:length(sessList)
+        subplot (1,2,1)
+        for jj = 1:length(sessList)
             if strcmp(ROIs{rr}, 'V2andV3')
                 packetType = 'V2V3';
             else
                 packetType = ROIs{rr};
             end
-            packetsDir = fullfile(data_dir,subList{ss},sessList{j},'Packets');
+            packetsDir = fullfile(data_dir,subList{ss},sessList{jj},'Packets');
             load(fullfile(packetsDir,[packetType '.mat']))
+            HRFval(:,jj) = (packets{1}.HRF.values)'; % store the HRF values
             plot (packets{1}.HRF.values)
-            legendInfo{j} = sessList{j};
+            legendInfo{jj} = sessList{jj};
             hold on
         end
         legend (legendInfo, 'Interpreter','none');
+        title (['HRF values for ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
+        xlabel('Time [msec]');
+        ylabel('Amplitude [% signal change]');
+        %calculate and plot mean and SEM
+        meanHRF = mean(HRFval,2);
+        semHRF = std(HRFval,0,2)/sqrt(size(HRFval,2));
+        subplot (1,2,2)
+        shadedErrorBar([],meanHRF,semHRF)
+        title (['Mean' char(177) 'SEM across sessions ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
+        xlabel('Time [msec]');
+        ylabel('Amplitude [% signal change]');         
         adjustPlot(fig);
         saveName = ['HRF_val_' subList{ss} '_' ROIs{rr}];cd 
         saveDir = fullfile(results_dir, 'HRF_values');
