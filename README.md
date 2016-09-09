@@ -6,6 +6,7 @@ Project for the melanopsin fMRI measurements in the  [Aguirre](https://cfn.upenn
 
 * [MRklar](https://www.github.com/gkaguirrelab/MRklar)
 * [MRlyze](https://www.github.com/gkaguirrelab/MRlyze)
+* [mriTemporalFitting](https://github.com/gkaguirrelab/mriTemporalFitting)
 
 ## Team
 
