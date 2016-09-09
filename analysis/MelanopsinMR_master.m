@@ -255,7 +255,7 @@ fprintf ('\n\n~~~~~~~ Make HRF for every subject - %s ~~~~~~~\n\n', timestamp);
 tic;
 
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
-for ss = 1%:length(subList)
+for ss = 1:length(subList)
     params.subjDir = fullfile(data_dir,subList{ss});
     subjHRF(params);
 end
