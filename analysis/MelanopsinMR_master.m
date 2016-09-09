@@ -323,42 +323,30 @@ toc
 %stop logging
 diary ('off')
 
-%% Plot and save HRF values for every subject and every session
+%% Plot and save HRF mean and SEM for every subject 
 
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
-for ss = 1:length(subList)  
+for ss = 1:length(subList)
     sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
-    for rr = 1:length(ROIs)
+    sessionDir = fullfile(data_dir,subList{ss},sessList{1}); % the HRF folder is the same in every session. We just pick the first one.
+    hrfDir = fullfile(sessionDir,'HRF');
+    for rr = 1%:length(ROIs)
+        roiType = ROIs{rr};
+        load(fullfile(hrfDir,[roiType '.mat']));
         fig = figure('units','normalized','position',[0 0 1 1]);
-        subplot (1,2,1)
-        for jj = 1:length(sessList)
-            if strcmp(ROIs{rr}, 'V2andV3')
-                packetType = 'V2V3';
-            else
-                packetType = ROIs{rr};
-            end
-            packetsDir = fullfile(data_dir,subList{ss},sessList{jj},'Packets');
-            load(fullfile(packetsDir,[packetType '.mat']))
-            HRFval(:,jj) = (packets{1}.HRF.values)'; % store the HRF values
-            plot (packets{1}.HRF.values)
-            legendInfo{jj} = sessList{jj};
-            hold on
-        end
-        legend (legendInfo, 'Interpreter','none');
-        title (['HRF values for ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
+        shadedErrorBar([],HRF.mean, HRF.sem);
+        title (['Mean' char(177) 'SEM - ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
         xlabel('Time [msec]');
         ylabel('Amplitude [% signal change]');
-        %calculate and plot mean and SEM
-        meanHRF = mean(HRFval,2);
-        semHRF = std(HRFval,0,2)/sqrt(size(HRFval,2));
-        subplot (1,2,2)
-        shadedErrorBar([],meanHRF,semHRF)
-        title (['Mean' char(177) 'SEM across sessions ' subList{ss} ' ' ROIs{rr}],'Interpreter','none')
-        xlabel('Time [msec]');
-        ylabel('Amplitude [% signal change]');         
+        str = ['Total runs = ',num2str(HRF.numRuns)];
+        text(2000, -0.1, str)
+        ylims = [-0.3 1.4];
+        ylim(ylims);
+        xlims = [0, 17000];
+        xlim(xlims);
         adjustPlot(fig);
-        saveName = ['HRF_val_' subList{ss} '_' ROIs{rr}];cd 
-        saveDir = fullfile(results_dir, 'HRF_values');
+        saveName = ['HRF_,mean_' subList{ss} '_' ROIs{rr}];
+        saveDir = fullfile(results_dir, 'HRF_mean');
         if ~exist (saveDir, 'dir')
             mkdir (saveDir);
         end
@@ -366,5 +354,6 @@ for ss = 1:length(subList)
         close(fig);
     end
 end
-        
-            
+
+    
+      
