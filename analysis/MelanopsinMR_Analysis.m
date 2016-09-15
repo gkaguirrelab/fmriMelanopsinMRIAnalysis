@@ -1,0 +1,21 @@
+params.sessionDir   = '/data/jag/MELA/MelanopsinMR/HERO_asb1/040716';
+params.subjectName  = 'HERO_asb1_MaxMel';
+params.outDir       = fullfile(params.sessionDir,'preprocessing_scripts');
+params.logDir       = '/data/jag/MELA/LOGS';
+params.jobName      = params.subjectName;
+params.numRuns      = 10; % number of bold runs
+params.reconal      = 0;
+params.slicetiming  = 0;
+params.refvol       = 1;
+params.regFirst     = 1;
+params.filtType     = 'high';
+params.lowHz        = 0.01;
+params.highHz       = 0.10;
+params.physio       = 1;
+params.motion       = 1;
+params.task         = 0;
+params.localWM      = 1;
+params.anat         = 1;
+params.amem         = 20;
+params.fmem         = 50;
+create_preprocessing_scripts(params);
