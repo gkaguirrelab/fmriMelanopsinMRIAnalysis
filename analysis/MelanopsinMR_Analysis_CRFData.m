@@ -101,7 +101,7 @@ create_preprocessing_scripts(params);
 
 %% HERO_mxs1 - 062816 - MaxLMSCRF
 params                  = params0;
-params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/040816';
+params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/062816';
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
 params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
