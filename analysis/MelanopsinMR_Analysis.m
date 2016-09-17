@@ -21,7 +21,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_asb1/032416';
 params.subjectName      = 'HERO_asb1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 11; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -31,7 +31,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_asb1/040716';
 params.subjectName      = 'HERO_asb1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 10; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -41,7 +41,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_aso1/032516';
 params.subjectName      = 'HERO_aso1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 11; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -51,7 +51,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_aso1/033016';
 params.subjectName      = 'HERO_aso1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -61,7 +61,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_gka1/033116';
 params.subjectName      = 'HERO_gka1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -71,7 +71,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_gka1/040116';
 params.subjectName      = 'HERO_gka1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -81,7 +81,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/040616';
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -91,7 +91,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/040816';
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = fullfile('/data/jag/MELA/MelanopsinMR/LOGS/', datestr(now, 'mmddyy'));
+params.logDir           = '/home/mspitschan/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
