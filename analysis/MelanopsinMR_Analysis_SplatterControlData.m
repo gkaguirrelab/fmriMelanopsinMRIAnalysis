@@ -17,7 +17,7 @@ params0.amem             = 20;
 params0.fmem             = 50;
 
 %% HERO_asb1 - 051016 - SplatterControl
-params = params0;
+params                  = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_asb1/051016';
 params.subjectName      = 'HERO_asb1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
@@ -27,7 +27,7 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_aso1 - 042916 - SplatterControl
-params = params0;
+params                  = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_aso1/042916';
 params.subjectName      = 'HERO_aso1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
@@ -37,7 +37,7 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_gka1 - 050616 - SplatterControl
-params = params0;
+params                  = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_gka1/050616';
 params.subjectName      = 'HERO_gka1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
@@ -47,7 +47,7 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_mxs1 - 050916 - SplatterControl
-params = params0;
+params                  = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/050916';
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
