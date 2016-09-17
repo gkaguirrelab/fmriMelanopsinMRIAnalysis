@@ -21,7 +21,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_asb1/051016';
 params.subjectName      = 'HERO_asb1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = '/data/jag/MELA/LOGS';
+params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -31,7 +31,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_aso1/042916';
 params.subjectName      = 'HERO_aso1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = '/data/jag/MELA/LOGS';
+params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -41,7 +41,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_gka1/050616';
 params.subjectName      = 'HERO_gka1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = '/data/jag/MELA/LOGS';
+params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
@@ -51,7 +51,7 @@ params = params0;
 params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_mxs1/050916';
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
-params.logDir           = '/data/jag/MELA/LOGS';
+params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
