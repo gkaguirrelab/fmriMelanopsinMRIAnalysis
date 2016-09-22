@@ -33,7 +33,7 @@ params.subjectName      = 'HERO_aso1_MaxMel';
 params.outDir           = fullfile(params.sessionDir,'preprocessing_scripts');
 params.logDir           = '/data/jag/MELA/MelanopsinMR/logs';
 params.jobName          = params.subjectName;
-params.numRuns          = 12; % Number of BOLD runs
+params.numRuns          = 11; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_gka1 - 050616 - SplatterControl
