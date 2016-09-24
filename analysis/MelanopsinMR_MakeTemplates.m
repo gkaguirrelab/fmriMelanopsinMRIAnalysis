@@ -1,6 +1,9 @@
 % Download the retinotopy templates (V2.5 from the Wiki).
 currDir = pwd;
 anatTemplateDir = '/data/jag/MELA/anat_templates';
+if ~exist(anatTemplateDir, 'dir')
+   mkdir(anatTemplateDir); 
+end
 cd(anatTemplateDir);
 if ~exist('angle-template-2.5.sym.mgh', 'file')
     !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/angle-template-2.5.sym.mgh
@@ -24,9 +27,9 @@ if ~exist('areas-template-2.5.sym.nii.gz', 'file')
 end
 
 % Set up template files
-templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.nii.gz') ...
-    fullfile(anatTemplateDir, 'angle-template-2.5.sym.nii.gz') ...
-    fullfile(anatTemplateDir, 'areas-template-2.5.sym.nii.gz')};
+templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.mgh') ...
+    fullfile(anatTemplateDir, 'angle-template-2.5.sym.mgh') ...
+    fullfile(anatTemplateDir, 'areas-template-2.5.sym.mgh')};
 
 % HERO_asb1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_asb1';
