@@ -27,7 +27,7 @@ for ss = 1:length(subList)
         if ~exist (saveDir, 'dir')
             mkdir (saveDir);
         end
-        saveas(fig, fullfile(saveDir, saveName), 'pdf');
+        savefig(fig, fullfile(saveDir, saveName, '.png'));
         close(fig);
     end
 end
