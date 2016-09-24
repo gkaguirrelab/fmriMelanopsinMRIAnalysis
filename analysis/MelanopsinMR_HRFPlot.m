@@ -1,4 +1,4 @@
-results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
+results_dir =  '/data/jag/MELA/MelanopsinMR/results';
 data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
 
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
