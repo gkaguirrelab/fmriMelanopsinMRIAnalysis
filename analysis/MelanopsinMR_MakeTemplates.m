@@ -39,7 +39,7 @@ project_template(fullfile(subjDir, '053116'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060116'), subjectName, templateFiles);
 
 % HERO_gka1
-subjDir = '/data/jag/MELA/MelanopsinMR/HERO_mxs1';
+subjDir = '/data/jag/MELA/MelanopsinMR/HERO_gka1';
 subjectName = 'HERO_gka1_MaxMel';
 project_template(fullfile(subjDir, '033116'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '040116'), subjectName, templateFiles);
