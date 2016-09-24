@@ -15,17 +15,6 @@ if ~exist('eccen-template-2.5.sym.mgh', 'file')
     !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/eccen-template-2.5.sym.mgh
 end
 
-% Convert to .nii.gz
-if ~exist('angle-template-2.5.sym.nii.gz', 'file')
-    !mri_convert angle-template-2.5.sym.mgh angle-template-2.5.sym.nii.gz
-end
-if ~exist('eccen-template-2.5.sym.nii.gz', 'file')
-    !mri_convert eccen-template-2.5.sym.mgh eccen-template-2.5.sym.nii.gz
-end
-if ~exist('areas-template-2.5.sym.nii.gz', 'file')
-    !mri_convert areas-template-2.5.sym.mgh areas-template-2.5.sym.nii.gz
-end
-
 % Set up template files
 templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.mgh') ...
     fullfile(anatTemplateDir, 'angle-template-2.5.sym.mgh') ...
