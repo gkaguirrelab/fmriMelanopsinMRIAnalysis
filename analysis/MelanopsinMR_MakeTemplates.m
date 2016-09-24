@@ -31,20 +31,20 @@ templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.nii.gz') ...
 % HERO_asb1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_asb1';
 subjectName = 'HERO_asb1_MaxMel';
-project_template(sessionDir, subjectName);
+project_template(sessionDir, subjectName, templateFiles);
 
 % HERO_aso1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_aso1';
 subjectName = 'HERO_aso1_MaxMel';
-project_template(sessionDir, subjectName);
+project_template(sessionDir, subjectName, templateFiles);
 
 % HERO_gka1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_mxs1';
 subjectName = 'HERO_gka1_MaxMel';
-project_template(sessionDir, subjectName);
+project_template(sessionDir, subjectName, templateFiles);
 
 % HERO_mxs1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_mxs1';
 subjectName = 'HERO_mxs1_MaxMel';
-project_template(sessionDir, subjectName);
+project_template(sessionDir, subjectName, templateFiles);
 
