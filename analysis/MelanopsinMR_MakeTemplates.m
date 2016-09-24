@@ -1,16 +1,32 @@
 % Download the retinotopy templates (V2.5 from the Wiki).
 currDir = pwd;
-!wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/angle-template-2.5.sym.mgh
-!wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/eccen-template-2.5.sym.mgh
-!wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/areas-template-2.5.sym.mgh
+anatTemplateDir = '/data/jag/MELA/anat_templates';
+cd(anatTemplateDir);
+if ~exist('angle-template-2.5.sym.mgh', 'file')
+    !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/angle-template-2.5.sym.mgh
+end
+if ~exist('areas-template-2.5.sym.mgh', 'file')
+    !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/areas-template-2.5.sym.mgh
+end
+if ~exist('eccen-template-2.5.sym.mgh', 'file')
+    !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/eccen-template-2.5.sym.mgh
+end
 
 % Convert to .nii.gz
-!mri_covert angle-template-2.5.sym.mgh angle-template-2.5.sym.nii.gz
-!mri_covert eccen-template-2.5.sym.mgh eccen-template-2.5.sym.nii.gz
-!mri_covert areas-template-2.5.sym.mgh areas-template-2.5.sym.nii.gz
+if ~exist('angle-template-2.5.sym.nii.gz', 'file')
+    !mri_covert angle-template-2.5.sym.mgh angle-template-2.5.sym.nii.gz
+end
+if ~exist('eccen-template-2.5.sym.nii.gz', 'file')
+    !mri_covert eccen-template-2.5.sym.mgh eccen-template-2.5.sym.nii.gz
+end
+if ~exist('areas-template-2.5.sym.nii.gz', 'file')
+    !mri_covert areas-template-2.5.sym.mgh areas-template-2.5.sym.nii.gz
+end
 
 % Set up template files
-templateFiles = {'eccen-template-2.5.sym.nii.gz' 'angle-template-2.5.sym.nii.gz' 'areas-template-2.5.sym.nii.gz'};
+templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.nii.gz') ...
+    fullfile(anatTemplateDir, 'angle-template-2.5.sym.nii.gz') ...
+    fullfile(anatTemplateDir, 'areas-template-2.5.sym.nii.gz')};
 
 % HERO_asb1
 sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_asb1';
