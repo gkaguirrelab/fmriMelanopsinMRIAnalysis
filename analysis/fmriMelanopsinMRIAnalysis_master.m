@@ -15,3 +15,4 @@ fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
 
 % Fun with packets here
+fmriMelanopsinMRIAnalysis_packetFit;
