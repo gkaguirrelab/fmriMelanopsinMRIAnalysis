@@ -1,6 +1,10 @@
 % New Master from MS
-results_dir =  '/data/jag/MELA/MelanopsinMR/Results';
-data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
+params.resultsDir =  '/data/jag/MELA/MelanopsinMR/results';
+params.logDir = '/data/jag/MELA/MelanopsinMR/logs';
+params.dataDir = '/data/jag/MELA/MelanopsinMR';
+
+% Create preprocessing scripts
+fmriMelanopsinMRIAnalysis_createPreprocessingScripts(params);
 
 % Create preprocessing scripts
 MelanopsinMR_Analysis_400PctData;
