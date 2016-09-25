@@ -23,7 +23,7 @@ for ss = 1:length(subList)
         xlims = [0, 17000];
         xlim(xlims);
         adjustPlot(fig);
-        saveName = ['HRF_,mean_' subList{ss} '_' ROIs{rr}];
+        saveName = ['HRF_mean_' subList{ss} '_' ROIs{rr}];
         saveDir = fullfile(results_dir, 'HRF_mean');
         if ~exist (saveDir, 'dir')
             mkdir (saveDir);
