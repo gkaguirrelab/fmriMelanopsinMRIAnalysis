@@ -2,18 +2,14 @@
 params.resultsDir =  '/data/jag/MELA/MelanopsinMR/results';
 params.logDir = '/data/jag/MELA/MelanopsinMR/logs';
 params.dataDir = '/data/jag/MELA/MelanopsinMR';
+params.anatTemplateDir = '/data/jag/MELA/anat_templates';
 
 % Create preprocessing scripts
 fmriMelanopsinMRIAnalysis_createPreprocessingScripts(params);
 
-% Create preprocessing scripts
-MelanopsinMR_Analysis_400PctData;
-MelanopsinMR_Analysis_CRFData;
-MelanopsinMR_Analysis_SplatterControlData;
-
 % Make anatomical templates
-MelanopsinMR_MakeTemplates;
+fmriMelanopsinMRIAnalysis_makeAnatTemplates(params);
 
 % Derive the HRFs
-MelanopsinMR_HRFDerive;
-MelanopsinMR_HRFPlot;
+fmriMelanopsinMRIAnalysis_deriveHRF(params);
+fmriMelanopsinMRIAnalysis_plotHRF(params);

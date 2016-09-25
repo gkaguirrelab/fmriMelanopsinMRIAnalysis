@@ -1,14 +1,14 @@
-results_dir =  '/data/jag/MELA/MelanopsinMR/results';
-data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
+function fmriMelanopsinMRIAnalysis_plotHRF(inputParams)
+
 ROIs = {'V1'};
 close all;
 
-subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
+subList = listdir(fullfile(inputParams.dataDir,'HERO_*'),'dirs');
 for ss = 1:length(subList)
-    sessList = listdir(fullfile(data_dir,subList{ss}),'dirs');
-    sessionDir = fullfile(data_dir,subList{ss},sessList{1}); % the HRF folder is the same in every session. We just pick the first one.
+    sessList = listdir(fullfile(inputParams.dataDir,subList{ss}),'dirs');
+    sessionDir = fullfile(inputParams.dataDir,subList{ss},sessList{1}); % the HRF folder is the same in every session. We just pick the first one.
     hrfDir = fullfile(sessionDir,'HRF');
-    for rr = 1%:length(ROIs)
+    for rr = 1:length(ROIs)
         roiType = ROIs{rr};
         load(fullfile(hrfDir,[roiType '.mat']));
         fig = figure('units','normalized','position',[0 0 1 1]);
@@ -24,7 +24,7 @@ for ss = 1:length(subList)
         xlim(xlims);
         adjustPlot(fig);
         saveName = ['HRF_mean_' subList{ss} '_' ROIs{rr}];
-        saveDir = fullfile(results_dir, 'HRF_mean');
+        saveDir = fullfile(inputParams.resultsDir, 'HRF_mean');
         if ~exist (saveDir, 'dir')
             mkdir (saveDir);
         end
