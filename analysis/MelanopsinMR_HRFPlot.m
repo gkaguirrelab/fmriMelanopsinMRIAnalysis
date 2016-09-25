@@ -1,6 +1,7 @@
 results_dir =  '/data/jag/MELA/MelanopsinMR/results';
 data_dir = '/data/jag/MELA/MelanopsinMR'; %Upenn cluster default path
 ROIs = {'V1'};
+close all;
 
 subList = listdir(fullfile(data_dir,'HERO_*'),'dirs');
 for ss = 1:length(subList)
@@ -27,7 +28,7 @@ for ss = 1:length(subList)
         if ~exist (saveDir, 'dir')
             mkdir (saveDir);
         end
-        savefig(fig, fullfile(saveDir, saveName, '.png'));
+        saveas(fig, fullfile(saveDir, saveName), 'png');
         close(fig);
     end
 end
