@@ -14,5 +14,5 @@ fmriMelanopsinMRIAnalysis_makeAnatTemplates(params);
 fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
 
-%% Fun with packets here
+%% Fun with packets heree
 fmriMelanopsinMRIAnalysis_packetFit;

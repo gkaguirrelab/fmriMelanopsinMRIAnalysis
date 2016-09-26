@@ -48,5 +48,6 @@ medianV1                = median(V1signal,1);
 % run dummyFit
 params.respValues       = medianV1;
 packet                  = makePacket(params);
-eventNum                = 1; % first stimulus event
-[B,R2]                  = dummyFit(packet,eventNum);
+for eventNum = 1:size(packet.stimulus.values, 1)
+[B(eventNum),R2(eventNum)]                  = dummyFit(packet,eventNum);
+end

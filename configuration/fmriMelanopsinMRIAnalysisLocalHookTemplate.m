@@ -15,7 +15,7 @@ function fmriMelanopsinMRIAnalysis
 % to match what is true on your computer.
 
 %% Say hello
-fprintf('Running fmriMelanopsinMRIAnalysis local hook\n');
+fprintf('* Running fmriMelanopsinMRIAnalysis local hook\n');
 
 %% Set preferences
 
