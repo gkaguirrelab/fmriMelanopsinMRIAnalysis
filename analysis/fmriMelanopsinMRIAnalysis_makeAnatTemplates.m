@@ -1,4 +1,9 @@
 function fmriMelanopsinMRIAnalysis_makeAnatTemplates(inputParams)
+% fmriMelanopsinMRIAnalysis_makeAnatTemplates(inputParams)
+%
+% Make templates for each subject
+%
+% 9/26/2016     ms      Homogenized comments and function documentation.
 
 % Download the retinotopy templates (V2.5 from the Wiki).
 currDir = pwd;
@@ -7,6 +12,8 @@ if ~exist(anatTemplateDir, 'dir')
    mkdir(anatTemplateDir); 
 end
 cd(anatTemplateDir);
+
+% Only download if we don't have these files already.
 if ~exist('angle-template-2.5.sym.mgh', 'file')
     !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/angle-template-2.5.sym.mgh
 end
@@ -16,6 +23,9 @@ end
 if ~exist('eccen-template-2.5.sym.mgh', 'file')
     !wget https://cfn.upenn.edu/aguirreg/public/ES_template/mgh_files/eccen-template-2.5.sym.mgh
 end
+
+% Return to the original directory
+cd(currDir);
 
 % Set up template files
 templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.mgh') ...

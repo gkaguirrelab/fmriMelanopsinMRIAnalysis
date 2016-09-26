@@ -1,6 +1,10 @@
-% Example script outlining how to use 'makePacket'
+function fmriMelanopsinMRIAnalysis_packetFit(inputParams)
+% fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %
-%   Written by Andrew S Bock Sep 2016
+% Fit packets.
+%
+% 9/26/2016     ms      Homogenized comments and function documentation.
+%                       Based on code from Andrew S. Bock (fun_with_packets.m)
 
 %% Set initial params
 params.packetType       = 'bold';
@@ -8,17 +12,21 @@ params.sessionDir       = '/data/jag/MELA/MelanopsinMR/HERO_asb1/032416';
 params.runNum           = 1;
 params.stimulusFile     = fullfile(params.sessionDir,'MatFiles/HERO_asb1-MelanopsinMRMaxMel-01.mat');
 params.responseFile     = fullfile(params.sessionDir,'Series_012_fMRI_MaxMelPulse_A_AP_run01/wdrf.tf.nii.gz');
-%% load the response file
+
+%% Load the response file
 resp                    = load_nifti(params.responseFile);
 TR                      = resp.pixdim(5)/1000;
 runDur                  = size(resp.vol,4);
 params.respTimeBase     = 0:TR:(runDur*TR)-TR;
-%% laod the stimulus file
+
+%% Load the stimulus file
 [params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRImakeStimStruct(params);
+
 %% If 'bold', get HRF
 if strcmp(params.packetType,'bold')
     params.hrfFile      = fullfile(params.sessionDir,'HRF','V1.mat');
 end
+
 %% run 'dummyFit' for every voxel
 volDims                 = size(resp.vol);
 flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
@@ -34,6 +42,7 @@ for i = 1:size(pscVol,1)
     [B(i),R2(i)]            = dummyFit(packet,eventNum);
     progBar(i);
 end
+
 %% run 'dummyFit' for V1 only
 anatFile                = fullfile(params.sessionDir,'Series_012_fMRI_MaxMelPulse_A_AP_run01','mh.areas.func.vol.nii.gz');
 anat                    = load_nifti(anatFile);
