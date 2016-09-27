@@ -7,6 +7,7 @@ function eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params)
 %                       Based on code from Andrew S. Bock (subjHRF.m)
 
 % Get the attention events
+attentionTaskNames  = {'MirrorsOffMaxLMS','MirrorsOffMaxMel','MirrorsOffSplatterControl'};
 stimulus.metaData           = load(params.stimulusFile);
 ct = 0;
 attEvents = [];
