@@ -1,7 +1,10 @@
-function [values timebase metaData] = fmriMelanopsinMRImakeStimStruct(params)
-% [values timebase metaData] = fmriMelanopsinMRImakeStimStruct(params)
+function [values timebase metaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params)
+% [values timebase metaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params)
 %
-% Makes a stimulus structure
+%  Makes a stimulus structure.
+%
+% 9/27/2016     ms      Homogenized comments and function documentation.
+%                       Based on code from Andrew S. Bock (fun_with_packets.m)
 
 %% Stimulus
 % Load that .mat file produced by the stimulus computer

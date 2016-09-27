@@ -20,7 +20,10 @@ runDur                  = size(resp.vol,4);
 params.respTimeBase     = 0:TR:(runDur*TR)-TR;
 
 %% Load the stimulus file
-[params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRImakeStimStruct(params);
+[params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params);
+
+%% Extract the attenion events
+eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
 
 %% If 'bold', get HRF
 if strcmp(params.packetType,'bold')
