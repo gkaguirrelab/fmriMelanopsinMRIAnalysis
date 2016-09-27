@@ -15,7 +15,7 @@ function fmriMelanopsinMRIAnalysis
 % to match what is true on your computer.
 
 %% Say hello
-fprintf('* Running fmriMelanopsinMRIAnalysis local hook\n');
+fprintf('* Running fmriMelanopsinMRIAnalysis local hook...');
 
 %% Set preferences
 
@@ -41,3 +41,5 @@ setpref('OneLight', 'dropboxPath', dropboxBaseDir);
 setpref('OneLight', 'dataPath', dataPath);
 
 addpath(genpath(['/Users/' userID '/Documents/MATLAB/Analysis/fmriMelanopsinMRIAnalysis']));
+
+fprintf('done!\n');
