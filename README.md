@@ -10,7 +10,7 @@ Project for the melanopsin fMRI measurements in the  [Aguirre](https://cfn.upenn
 
 ## Integration with ToolboxToolbox
 
-This analysis repository can be deployed using [ToolboxToolbox](https://www.github.com/ToolboxHub/ToolboxToolbox) (TbTb). An appropriate TbTb configuration exists in the [ToolboxRegistry)(https://www.github.com/ToolboxHub/ToolboxRegistry) [here](https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/fmriMelanopsinMRIAnalysis.json). This configuration json file also exists in the `configuration/` sub-directory of this repository.
+This analysis repository can be deployed using [ToolboxToolbox](https://www.github.com/ToolboxHub/ToolboxToolbox) (TbTb). An appropriate TbTb configuration exists in the [ToolboxRegistry](https://www.github.com/ToolboxHub/ToolboxRegistry) [here](https://github.com/ToolboxHub/ToolboxRegistry/blob/master/configurations/fmriMelanopsinMRIAnalysis.json). This configuration json file also exists in the `configuration/` sub-directory of this repository.
 
 ## Team
 
