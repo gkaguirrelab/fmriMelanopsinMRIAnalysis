@@ -25,45 +25,24 @@ params.respTimeBase     = 0:TR:(runDur*TR)-TR;
 %% Extract the attenion events
 eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
 
+%% Set some parameters for the HRF modeling
+HRFdur              = 16000;
+numFreqs            = HRFdur/1000;
+
+%% Flatten the volume
+volDims                 = size(resp.vol);
+flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
+flatVolPSC              = NaN*zeros(size(flatVol));
+cleanDataPSC            = NaN*zeros(size(flatVol));
+
 %% If 'bold', get HRF
 if strcmp(params.packetType,'bold')
     params.hrfFile      = fullfile(params.sessionDir,'HRF','V1.mat');
 end
 
-%% Run 'dummyFit' for every voxel
-volDims                 = size(resp.vol);
-flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
-
-% Convert to percent signal change
-pscVol                  = convert_to_psc(flatVol);
-B                       = nan(1,size(pscVol,1));
-R2                      = nan(1,size(pscVol,1));
-progBar                 = ProgressBar(size(pscVol,1),'looping..');
-for i = 1:size(pscVol,1)
-    params.respValues       = pscVol(i,:);
-    packet                  = makePacket(params);
-    eventNum                = 1; % first stimulus event
-    [B(i),R2(i)]            = dummyFit(packet,eventNum);
-    progBar(i);
-end
-
-%% Run 'dummyFit' for V1 only
-anatFile                = fullfile(params.sessionDir,'Series_012_fMRI_MaxMelPulse_A_AP_run01','mh.areas.func.vol.nii.gz');
-anat                    = load_nifti(anatFile);
-V1ind                   = find(abs(anat.vol)==1);
-volDims                 = size(resp.vol);
-flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
-
-% Convert to percent signal change
-pscVol                  = convert_to_psc(flatVol);
-
-% Pull out the V1 signal
-V1signal                = pscVol(V1ind,:);
-medianV1                = median(V1signal,1);
-
-% Run dummyFit
-params.respValues       = medianV1;
-packet                  = makePacket(params);
-for eventNum = 1:size(packet.stimulus.values, 1)
-[B(eventNum),R2(eventNum)]                  = dummyFit(packet,eventNum);
+%% Iterate over all voxels
+for ii = 1:size(flatVol, 1)
+    flatVolPSC(ii, :)             = convert_to_psc(flatVol(ii, :));
+    [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(ii, :)',eventTimes,TR*1000,HRFdur,numFreqs);
+    % Fit packet here.
 end
