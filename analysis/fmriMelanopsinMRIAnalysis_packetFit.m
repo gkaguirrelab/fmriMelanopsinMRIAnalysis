@@ -12,9 +12,8 @@ params0 = temporalFit.defaultParams();
 paramLockMatrix = [];
 
 %% Set initial params
+params                  = inputParams;
 params.packetType       = 'bold';
-params.stimulusFile     = inputParams.stimulusFile;
-params.responseFile     = inputParams.responseFile;
 
 %% Load the response file
 resp                    = load_nifti(params.responseFile);
@@ -53,7 +52,7 @@ for ii = 1:size(flatVol, 1)
     % <?> Not sure if we should do this.
     
     % Make a packet
-    params.timeSeries       = cleanDataPSC(ii, :);
+    params.respValues       = cleanDataPSC(ii, :);
     thePacket               = makePacket(params);
     
     % Fit packet here.

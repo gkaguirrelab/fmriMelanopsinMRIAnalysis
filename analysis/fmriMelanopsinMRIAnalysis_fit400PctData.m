@@ -7,9 +7,9 @@ for ss = 1:length(subList) % Iterate over subjects
     
     %% Iterate over the sessions
     for sn = 1:length(sessList);
-       
-        inputParams.stimulusFile = fullfile(params.sessionDir,'MatFiles/HERO_asb1-MelanopsinMRMaxMel-01.mat');
-        inputParams.responseFile = fullfile(params.sessionDir,'Series_012_fMRI_MaxMelPulse_A_AP_run01/wdrf.tf.nii.gz');
+        inputParams.sessionDir = '/data/jag/MELA/MelanopsinMR/HERO_asb1/032416/';
+        inputParams.stimulusFile = fullfile(inputParams.sessionDir,'MatFiles/HERO_asb1-MelanopsinMRMaxMel-01.mat');
+        inputParams.responseFile = fullfile(inputParams.sessionDir,'Series_012_fMRI_MaxMelPulse_A_AP_run01/wdrf.tf.nii.gz');
         
         fmriMelanopsinMRIAnalysis_packetFit(inputParams)
         
