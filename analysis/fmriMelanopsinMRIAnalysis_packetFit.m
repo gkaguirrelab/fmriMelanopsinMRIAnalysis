@@ -24,6 +24,9 @@ params.respTimeBase     = 0:TR:(runDur*TR)-TR;
 %% Load the stimulus file
 [params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params);
 
+% Extract only the stimulus
+params.stimValues = sum(params.stimValues(find(params.stimMetaData.stimTypes == 1), :));
+
 %% Extract the attention events
 eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
 
@@ -44,18 +47,18 @@ end
 
 %% Iterate over all voxels
 for ii = 1:size(flatVol, 1)
-    % Convert to % signal change, and remove the HRF.
+    % Convert to % signal change, and remove the HRF
     flatVolPSC(ii, :)             = convert_to_psc(flatVol(ii, :));
     [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(ii, :)',eventTimes,TR*1000,HRFdur,numFreqs);
     
-    % Re-center the data.
-    % <?> Not sure if we should do this.
+    % Re-center the data
+    % <?> 
     
     % Make a packet
-    params.respValues       = cleanDataPSC(ii, :);
-    thePacket               = makePacket(params);
+    params.respValues             = cleanDataPSC(ii, :);
+    thePacket                     = makePacket(params);
     
-    % Fit packet here.
+    % Fit packet here
     [paramsFit,fVal,modelResponseStruct] = ...
         temporalFit.fitResponse(thePacket,...
         'defaultParamsInfo', defaultParamsInfo, ...
