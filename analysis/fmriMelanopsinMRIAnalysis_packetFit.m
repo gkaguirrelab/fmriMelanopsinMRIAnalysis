@@ -50,6 +50,7 @@ if strcmp(params.packetType,'bold')
 end
 
 %% Iterate over all voxels
+tic;
 progBar = ProgressBar(size(flatVol, 1), 'looping..');
 for ii = 1:size(flatVol, 1)
     if ~all(flatVol(ii, :) == 0)
@@ -81,3 +82,4 @@ for ii = 1:size(flatVol, 1)
     end
     progBar(ii);
 end
+toc;
