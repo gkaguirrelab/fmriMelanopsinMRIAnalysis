@@ -41,8 +41,8 @@ numFreqs            = HRFdur/1000;
 %% Flatten the volume
 volDims                 = size(resp.vol);
 flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
-fitAmp                  = NaN*zeros(size(flatVol, 1));
-fitErr                  = NaN*zeros(size(flatVol, 1));
+fitAmp                  = NaN*zeros(size(flatVol, 1), 1);
+fitErr                  = NaN*zeros(size(flatVol, 1), 1);
 
 %% If 'bold', get HRF
 if strcmp(params.packetType,'bold')
@@ -56,6 +56,7 @@ for ii = 1:size(flatVol, 1)
         % Convert to % signal change, and remove the HRF
         flatVolPSC            = convert_to_psc(flatVol(ii, :));
         [~, cleanDataPSC]      = deriveHRF(flatVolPSC',eventTimes,TR*1000,HRFdur,numFreqs);
+        cleanDataPSC = cleanDataPSC';
         
         % Re-center the data
         cleanDataPSC = cleanDataPSC - mean(cleanDataPSC);
