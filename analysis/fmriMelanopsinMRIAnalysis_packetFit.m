@@ -52,7 +52,7 @@ for ii = 1:size(flatVol, 1)
     [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(ii, :)',eventTimes,TR*1000,HRFdur,numFreqs);
     
     % Re-center the data
-    % <?> 
+    % <?> s
     
     % Make a packet
     params.respValues             = cleanDataPSC(ii, :);
