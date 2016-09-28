@@ -41,8 +41,6 @@ numFreqs            = HRFdur/1000;
 %% Flatten the volume
 volDims                 = size(resp.vol);
 flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
-flatVolPSC              = NaN*zeros(size(flatVol));
-cleanDataPSC            = NaN*zeros(size(flatVol));
 fitAmp                  = NaN*zeros(size(flatVol, 1));
 fitErr                  = NaN*zeros(size(flatVol, 1));
 
@@ -56,16 +54,16 @@ tic;
 for ii = 1:size(flatVol, 1)
     if ~all(flatVol(ii, :) == 0)
         % Convert to % signal change, and remove the HRF
-        flatVolPSC(ii, :)             = convert_to_psc(flatVol(ii, :));
-        [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(ii, :)',eventTimes,TR*1000,HRFdur,numFreqs);
+        flatVolPSC            = convert_to_psc(flatVol(ii, :));
+        [~, cleanDataPSC]      = deriveHRF(flatVolPSC',eventTimes,TR*1000,HRFdur,numFreqs);
         
         % Re-center the data
-        cleanDataPSC(ii, :) = cleanDataPSC(ii, :) - mean(cleanDataPSC(ii, :));
+        cleanDataPSC = cleanDataPSC - mean(cleanDataPSC);
         
         % Only fit if we actually have non-NaN data
         
         % Make a packet
-        params.respValues             = cleanDataPSC(ii, :);
+        params.respValues             = cleanDataPSC;
         thePacket                     = makePacket(params);
         
         % Fit packet here
