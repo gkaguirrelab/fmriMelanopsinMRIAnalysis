@@ -64,7 +64,7 @@ values = stimulus.values;
 conditionArray = [stimulus.metaData.params.theDirections' stimulus.metaData.params.theFrequencyIndices' stimulus.metaData.params.theContrastRelMaxIndices'];
 [uniqueConditions, ~, idx] = unique(conditionArray, 'rows');
 metaData.stimTypes = idx;
-for ii = 1:length(uniqueConditions)
+for ii = 1:size(uniqueConditions, 1)
     if ~(stimulus.metaData.params.theFrequenciesHz == -1)
         % Fill out here
     else
