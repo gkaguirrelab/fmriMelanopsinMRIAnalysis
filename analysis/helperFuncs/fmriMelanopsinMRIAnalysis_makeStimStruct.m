@@ -65,13 +65,9 @@ conditionArray = [stimulus.metaData.params.theDirections' stimulus.metaData.para
 [uniqueConditions, ~, idx] = unique(conditionArray, 'rows');
 metaData.stimTypes = idx;
 for ii = 1:size(uniqueConditions, 1)
-    if ~(stimulus.metaData.params.theFrequenciesHz == -1)
-        % Fill out here
-    else
-        tmp = strsplit(stimulus.metaData.params.modulationFiles, ',');
-        tmp = strsplit(tmp{conditionArray(ii, 1)}, '-');
-        [~, tmp2] = fileparts(tmp{3});
-        metaData.stimLabels{ii} = [tmp{2} '_' tmp2 '_' num2str(100*stimulus.metaData.params.theContrastsPct(conditionArray(ii, 3))*stimulus.metaData.params.theContrastMax) '%'];
-    end
+    tmp = strsplit(stimulus.metaData.params.modulationFiles, ',');
+    tmp = strsplit(tmp{conditionArray(ii, 1)}, '-');
+    [~, tmp2] = fileparts(tmp{3});
+    metaData.stimLabels{ii} = [tmp{2} '_' tmp2 '_' num2str(100*stimulus.metaData.params.theContrastsPct(conditionArray(ii, 3))*stimulus.metaData.params.theContrastMax) '%'];
 end
 
