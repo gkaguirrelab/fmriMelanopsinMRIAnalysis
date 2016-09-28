@@ -50,7 +50,7 @@ if strcmp(params.packetType,'bold')
 end
 
 %% Iterate over all voxels
-tic;
+progBar = ProgressBar(size(flatVol, 1), 'looping..');
 for ii = 1:size(flatVol, 1)
     if ~all(flatVol(ii, :) == 0)
         % Convert to % signal change, and remove the HRF
@@ -79,5 +79,5 @@ for ii = 1:size(flatVol, 1)
         fitAmp(ii) = NaN;
         fitErr(ii) = NaN;
     end
+    progBar(ii);
 end
-toc;
