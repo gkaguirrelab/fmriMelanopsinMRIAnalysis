@@ -71,8 +71,6 @@ for ii = 1:size(flatVol, 1)
         % Re-center the data
         cleanDataPSC = cleanDataPSC - mean(cleanDataPSC);
         
-        % Only fit if we actually have non-NaN data
-        
         % Make a packet
         thePacket = thePacket0;
         thePacket.response.values = cleanDataPSC;
