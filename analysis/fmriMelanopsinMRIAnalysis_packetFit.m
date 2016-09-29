@@ -6,12 +6,6 @@ function fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 % 9/26/2016     ms      Homogenized comments and function documentation.
 %                       Based on code from Andrew S. Bock (fun_with_packets.m)
 
-%% Construct the model object once and reuse it.
-temporalFit = tfeIAMP('verbosity','none');
-params0 = temporalFit.defaultParams();
-paramLockMatrix = [];
-defaultParamsInfo.nInstances = 1;
-
 %% Set initial params
 params                  = inputParams;
 params.packetType       = 'bold';
@@ -24,6 +18,10 @@ params.respTimeBase     = 0:TR:(runDur*TR)-TR;
 
 %% Load the stimulus file
 [params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params);
+
+% Resample the stimulus time base
+params.stimValues = params.stimValues(:, 1:100:end);
+params.stimTimeBase = params.stimTimeBase(1:100:end);
 
 % Extract only the stimulus
 params.stimValues = sum(params.stimValues(find(params.stimMetaData.stimTypes == 1), :));
@@ -44,14 +42,25 @@ flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volD
 fitAmp                  = NaN*zeros(size(flatVol, 1), 1);
 fitErr                  = NaN*zeros(size(flatVol, 1), 1);
 
-%% If 'bold', get HRF
-if strcmp(params.packetType,'bold')
+%% Get the HRF
     params.hrfFile      = fullfile(params.sessionDir,'HRF','V1.mat');
-end
 
 %% Iterate over all voxels
+%tic;
+
+%% Construct the model object once and reuse it.
+temporalFit = tfeIAMP('verbosity','none');
+params0 = temporalFit.defaultParams();
+paramLockMatrix = [];
+defaultParamsInfo.nInstances = 1;
+
+% Convolve the stimulus outside of the loop once
+params.respValues             = zeros(size(flatVol(1, :)));
+thePacket0                     = makePacket(params);
+convolvedStimulus = temporalFit.applyKernel(thePacket0.stimulus,thePacket0.kernel);
+
+%progBar = ProgressBar(size(flatVol, 1), 'looping..');
 tic;
-progBar = ProgressBar(size(flatVol, 1), 'looping..');
 for ii = 1:size(flatVol, 1)
     if ~all(flatVol(ii, :) == 0)
         % Convert to % signal change, and remove the HRF
@@ -65,8 +74,11 @@ for ii = 1:size(flatVol, 1)
         % Only fit if we actually have non-NaN data
         
         % Make a packet
-        params.respValues             = cleanDataPSC;
-        thePacket                     = makePacket(params);
+        thePacket = thePacket0;
+        thePacket.response.values = cleanDataPSC;
+        thePacket.kernel.values = [];
+        thePacket.kernel.timebase = [];
+        thePacket.kernel.metaData = [];
         
         % Fit packet here
         [paramsFit,fVal,modelResponseStruct] = ...
@@ -80,6 +92,5 @@ for ii = 1:size(flatVol, 1)
         fitAmp(ii) = NaN;
         fitErr(ii) = NaN;
     end
-    progBar(ii);
 end
-toc;
+toc
