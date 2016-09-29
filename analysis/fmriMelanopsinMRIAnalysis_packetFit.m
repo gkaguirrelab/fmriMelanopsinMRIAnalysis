@@ -1,4 +1,4 @@
-function fmriMelanopsinMRIAnalysis_packetFit(inputParams)
+function [fitAmp fitErr] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 % fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %
 % Fit packets.
@@ -7,23 +7,31 @@ function fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %                       Based on code from Andrew S. Bock (fun_with_packets.m)
 
 %% Set initial params
+fprintf('\n* <strong>Defining parameters</strong>...');
 params                  = inputParams;
 params.packetType       = 'bold';
-
-%% Load the response file
-resp                    = load_nifti(params.responseFile);
-TR                      = resp.pixdim(5)/1000;
-runDur                  = size(resp.vol,4);
-params.respTimeBase     = (0:TR:(runDur*TR)-TR)*1000;
+fprintf('DONE.\n');
 
 %% Load the stimulus file
+fprintf('* <strong>Extracting stimulus parameters</strong>...');
 [params.stimValues,params.stimTimeBase,params.stimMetaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params);
 
 % Extract only the stimulus
 params.stimValues = sum(params.stimValues(find(params.stimMetaData.stimTypes == 1), :));
+fprintf('DONE.\n');
 
 %% Extract the attention events
+fprintf('* <strong>Extracting attention events</strong>...');
 eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
+fprintf('DONE.\n');
+
+%% Load the response file
+fprintf('* <strong>Loading response file</strong>...');
+resp                    = load_nifti(params.responseFile);
+TR                      = resp.pixdim(5)/1000;
+runDur                  = size(resp.vol,4);
+params.respTimeBase     = (0:TR:(runDur*TR)-TR)*1000;
+fprintf('DONE.\n');
 
 %% Set some parameters for the HRF modeling
 HRFdur              = 16000;
@@ -40,6 +48,7 @@ flatVolPSC = NaN*zeros(size(flatVol));
 params.hrfFile      = fullfile(params.sessionDir,'HRF','V1.mat');
 
 %% Load in the relevant voxels
+fprintf('* <strong>Prepare anatomical template</strong>...');
 eccRange                 = [2.5 32]; % based on MaxMel data
 params.boldDir = fileparts(params.responseFile);
 
@@ -52,6 +61,7 @@ ROI_V1              = find(abs(areaData.vol)==1 & ...
 ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
     eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
 ROI = [ROI_V1 ; ROI_V2V3];
+fprintf('DONE.\n');
 
 %% Iterate over the relevant voxels
 % Set up a @tfe object to do convolution
@@ -76,6 +86,7 @@ tic;
 cleanDataPSC = NaN*ones(size(flatVolPSC));
 
 %% Loop over the ROI voxels
+fprintf('* <strong>Iterating over voxels</strong>...\n');
 for ii = 1:length(ROI)
     % Extract the indices from this ROI
     idx = ROI(ii);
@@ -99,7 +110,7 @@ for ii = 1:length(ROI)
     thePacket.kernel.metaData = [];
     
     % Fit packet here
-    [paramsFit, fVal] = ...
+    [paramsFit, fVal, modelResponseStruct{ii}] = ...
         temporalFit.fitResponse(thePacket, ...
         'defaultParamsInfo', defaultParamsInfo, ...
         'paramLockMatrix', paramLockMatrix, ...
@@ -107,7 +118,9 @@ for ii = 1:length(ROI)
         'errorType', '1-r2');
     fitAmp(idx) = paramsFit.paramMainMatrix(1);
     fitErr(idx) = 1-fVal;
+    if mod(ii, 100) == 0
+        fprintf('  > Voxel %g / %g\n', ii, length(ROI)); toc;
+    end
 end
 toc;
-
-keyboard
+fprintf('DONE.\n');
