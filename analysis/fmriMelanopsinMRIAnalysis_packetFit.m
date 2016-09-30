@@ -1,4 +1,4 @@
-function [fitAmp fitErr] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
+function [fitAmp fitErr cleanDataPSC predictedData] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 % fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %
 % Fit packets.
@@ -10,7 +10,7 @@ function [fitAmp fitErr] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 fprintf('\n* <strong>Defining parameters</strong>...');
 params                  = inputParams;
 params.packetType       = 'bold';
-fprintf('DONE.\n');
+fprintf('\t\tDONE.\n');
 
 %% Load the stimulus file
 fprintf('* <strong>Extracting stimulus parameters</strong>...');
@@ -18,12 +18,12 @@ fprintf('* <strong>Extracting stimulus parameters</strong>...');
 
 % Extract only the stimulus
 params.stimValues = sum(params.stimValues(find(params.stimMetaData.stimTypes == 1), :));
-fprintf('DONE.\n');
+fprintf('\tDONE.\n');
 
 %% Extract the attention events
 fprintf('* <strong>Extracting attention events</strong>...');
 eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
-fprintf('DONE.\n');
+fprintf('\tDONE.\n');
 
 %% Load the response file
 fprintf('* <strong>Loading response file</strong>...');
@@ -31,7 +31,7 @@ resp                    = load_nifti(params.responseFile);
 TR                      = resp.pixdim(5)/1000;
 runDur                  = size(resp.vol,4);
 params.respTimeBase     = (0:TR:(runDur*TR)-TR)*1000;
-fprintf('DONE.\n');
+fprintf('\tDONE.\n');
 
 %% Set some parameters for the HRF modeling
 HRFdur              = 16000;
@@ -61,7 +61,7 @@ ROI_V1              = find(abs(areaData.vol)==1 & ...
 ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
     eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
 ROI = [ROI_V1 ; ROI_V2V3];
-fprintf('DONE.\n');
+fprintf('\tDONE.\n');
 
 %% Iterate over the relevant voxels
 % Set up a @tfe object to do convolution
@@ -94,14 +94,14 @@ for ii = 1:length(ROI)
     % Create a cleaned up version of the time series by removing the HRF
     % Convert to % signal change, and remove the HRF
     flatVolPSC(idx, :) = convert_to_psc(flatVol(idx, :));
-    [~, cleanDataPSC(idx, :)]      = deriveHRF(flatVolPSC(idx, :)', eventTimes,TR*1000, HRFdur, numFreqs);
+    [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(idx, :)', eventTimes,TR*1000, HRFdur, numFreqs);
     
     % Re-center the data
-    cleanDataPSC(idx, :) = cleanDataPSC(idx, :) - mean(cleanDataPSC(idx, :));
+    cleanDataPSC(ii, :) = cleanDataPSC(ii, :) - mean(cleanDataPSC(ii, :));
     
     % Make a packet
     thePacket = thePacket0;
-    thePacket.response.values = cleanDataPSC(idx, :);
+    thePacket.response.values = cleanDataPSC(ii, :);
     
     % Clear the kernel because we do not want to convolve inside the tfe
     % object
@@ -110,7 +110,7 @@ for ii = 1:length(ROI)
     thePacket.kernel.metaData = [];
     
     % Fit packet here
-    [paramsFit, fVal, modelResponseStruct{ii}] = ...
+    [paramsFit, fVal, modelResponseStruct] = ...
         temporalFit.fitResponse(thePacket, ...
         'defaultParamsInfo', defaultParamsInfo, ...
         'paramLockMatrix', paramLockMatrix, ...
@@ -118,9 +118,10 @@ for ii = 1:length(ROI)
         'errorType', '1-r2');
     fitAmp(idx) = paramsFit.paramMainMatrix(1);
     fitErr(idx) = 1-fVal;
+    predictedData(ii, :) = modelResponseStruct.values;
     if mod(ii, 100) == 0
-        fprintf('  > Voxel %g / %g\n', ii, length(ROI)); toc;
+        fprintf('  > Voxel %g / %g\n', ii, length(ROI));
     end
 end
 toc;
-fprintf('DONE.\n');
+fprintf('\tDONE.\n');

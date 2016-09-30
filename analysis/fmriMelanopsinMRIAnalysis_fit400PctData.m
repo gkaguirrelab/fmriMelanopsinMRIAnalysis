@@ -11,7 +11,7 @@ for b = 1:length(boldDirs)
     inputParams.stimulusFile = fullfile(matDir, matFiles{b});
     inputParams.responseFile = fullfile(inputParams.sessionDir, boldDirs{b}, 'wdrf.tf.nii.gz');
     inputParams.anatRefRun = fullfile(inputParams.sessionDir, boldDirs{1});
-    [fitAmp(:, b) fitErr(:, b)] = fmriMelanopsinMRIAnalysis_packetFit(inputParams);
+    [fitAmp(:, b) fitErr(:, b) data predicted] = fmriMelanopsinMRIAnalysis_packetFit(inputParams);
 end
 
 inputParams.sessionDir       = fullfile(inputParams.dataDir, 'HERO_asb1/040716');
