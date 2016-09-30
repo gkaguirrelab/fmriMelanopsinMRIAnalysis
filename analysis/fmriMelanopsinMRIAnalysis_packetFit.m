@@ -116,8 +116,8 @@ for ii = 1:length(ROI)
         'paramLockMatrix', paramLockMatrix, ...
         'searchMethod','linearRegression', ...
         'errorType', '1-r2');
-    fitAmp(idx) = paramsFit.paramMainMatrix(1);
-    fitErr(idx) = 1-fVal;
+    fitAmp(ii) = paramsFit.paramMainMatrix(1);
+    fitErr(ii) = 1-fVal;
     predictedData(ii, :) = modelResponseStruct.values;
     if mod(ii, 100) == 0
         fprintf('  > Voxel %g / %g\n', ii, length(ROI));
