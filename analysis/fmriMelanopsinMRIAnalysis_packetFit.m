@@ -105,7 +105,7 @@ for ii = 1:length(ROI)
     % Convert to % signal change, and remove the HRF
     flatVolPSC(idx, :) = convert_to_psc(flatVol(idx, :));
     [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(idx, :)', attentionEventTimes, TR*1000, HRFdur, numFreqs);
-    test = deriveHRF(flatVolPSC(idx, :)', stimulusEventTimes, TR*1000, HRFdur, numFreqs);
+    stimEvoked(ii, :) = deriveHRF(flatVolPSC(idx, :)', stimulusEventTimes, TR*1000, HRFdur, numFreqs);
     
     % Re-center the data
     cleanDataPSC(ii, :) = cleanDataPSC(ii, :) - mean(cleanDataPSC(ii, :));
