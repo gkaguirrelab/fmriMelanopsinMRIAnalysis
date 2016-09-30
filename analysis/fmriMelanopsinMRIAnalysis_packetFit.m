@@ -22,8 +22,16 @@ fprintf('\tDONE.\n');
 
 %% Extract the attention events
 fprintf('* <strong>Extracting attention events</strong>...');
-eventTimes = fmriMelanopsinMRIAnalysis_getAttentionEvents(params);
+eventIdx = 2;
+attentionEventTimes = fmriMelanopsinMRIAnalysis_getStimulusEvents(params, eventIdx);
 fprintf('\tDONE.\n');
+
+%% Extract the stimulus events
+fprintf('* <strong>Extracting stimulus events</strong>...');
+eventIdx = 1;
+stimulusEventTimes = fmriMelanopsinMRIAnalysis_getStimulusEvents(params, eventIdx);
+fprintf('\tDONE.\n');
+
 
 %% Load the response file
 fprintf('* <strong>Loading response file</strong>...');
@@ -40,8 +48,6 @@ numFreqs            = HRFdur/1000;
 %% Flatten the volume
 volDims                 = size(resp.vol);
 flatVol                 = reshape(resp.vol,volDims(1)*volDims(2)*volDims(3),volDims(4));
-fitAmp                  = NaN*zeros(size(flatVol, 1), 1);
-fitErr                  = NaN*zeros(size(flatVol, 1), 1);
 flatVolPSC = NaN*zeros(size(flatVol));
 
 %% Get the HRF
@@ -63,6 +69,12 @@ ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
 ROI = [ROI_V1 ; ROI_V2V3];
 fprintf('\tDONE.\n');
 
+fitAmp                  = NaN*zeros(size(ROI));
+fitErr                  = NaN*zeros(size(ROI));
+predictedData           = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
+cleanDataPSC            = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
+
+
 %% Iterate over the relevant voxels
 % Set up a @tfe object to do convolution
 temporalFit                     = tfeIAMP('verbosity','none');
@@ -82,8 +94,6 @@ thePacket0.stimulus.timebase = thePacket0.response.timebase;
 thePacket0.stimulus.values = regressionMatrixStruct.values;
 
 tic;
-% Pre-allocate
-cleanDataPSC = NaN*ones(size(flatVolPSC));
 
 %% Loop over the ROI voxels
 fprintf('* <strong>Iterating over voxels</strong>...\n');
@@ -94,7 +104,8 @@ for ii = 1:length(ROI)
     % Create a cleaned up version of the time series by removing the HRF
     % Convert to % signal change, and remove the HRF
     flatVolPSC(idx, :) = convert_to_psc(flatVol(idx, :));
-    [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(idx, :)', eventTimes,TR*1000, HRFdur, numFreqs);
+    [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(idx, :)', attentionEventTimes, TR*1000, HRFdur, numFreqs);
+    test = deriveHRF(flatVolPSC(idx, :)', stimulusEventTimes, TR*1000, HRFdur, numFreqs);
     
     % Re-center the data
     cleanDataPSC(ii, :) = cleanDataPSC(ii, :) - mean(cleanDataPSC(ii, :));
