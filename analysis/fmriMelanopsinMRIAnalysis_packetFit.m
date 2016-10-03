@@ -30,7 +30,7 @@ fprintf('\tDONE.\n');
 fprintf('* <strong>Extracting stimulus events</strong>...');
 eventIdx = 1;
 stimulusEventTimes = fmriMelanopsinMRIAnalysis_getStimulusEvents(params, eventIdx);
-fprintf('\tDONE.\n');
+fprintf('\t\tDONE.\n');
 
 
 %% Load the response file
@@ -114,6 +114,29 @@ for ii = 1:length(ROI)
     thePacket = thePacket0;
     thePacket.response.values = cleanDataPSC(ii, :);
     
+    %% Fit the Fourier basis
+    % Create the stimulusStructure that contains the Fourier components
+    msecsToModel = 16000; numFourierComponents = 16;
+    [stimulusStruct, fourierSetStructure] = ...
+        makeFourierStimStruct( thePacket.stimulus.timebase, ...
+        stimulusEventTimes, ...
+        msecsToModel, numFourierComponents );
+    
+    % instantiate a model object that will be used for fitting
+    fourierFit = tfeIAMP('verbosity','none');
+    
+    % set up the default properties of the fit
+    fourierFitParamsLockMatrix = []; % unused
+    fourierFitDefaultParams.nInstances = numFourierComponents;
+    
+    % Derive the Fourier set fit
+    [paramsFit,~,~] = ...
+        fourierFit.fitResponse(thePacket,...
+        'defaultParamsInfo', fourierFitDefaultParams, ...
+        'paramLockMatrix',fourierFitParamsLockMatrix, ...
+        'searchMethod', 'linearRegression');
+
+    %% Fit an amplitudef model
     % Clear the kernel because we do not want to convolve inside the tfe
     % object
     thePacket.kernel.values = [];
