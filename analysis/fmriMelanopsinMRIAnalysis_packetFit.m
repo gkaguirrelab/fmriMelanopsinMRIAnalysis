@@ -6,6 +6,9 @@ function [fitAmpVol fitErrVol] = fmriMelanopsinMRIAnalysis_packetFit(inputParams
 % 9/26/2016     ms      Homogenized comments and function documentation.
 %                       Based on code from Andrew S. Bock (fun_with_packets.m)
 
+fprintf('\n***');
+fprintf('\n* Working on <strong>%s</strong>', inputParams.sessionDir);
+
 %% Set initial params
 fprintf('\n* <strong>Defining parameters</strong>...');
 params                  = inputParams;
