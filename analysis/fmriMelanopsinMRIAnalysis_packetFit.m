@@ -1,4 +1,4 @@
-function [fitAmp fitErr cleanDataPSC predictedData] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
+function [fitAmp fitErr] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 % fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %
 % Fit packets.
@@ -71,7 +71,8 @@ fprintf('\tDONE.\n');
 
 fitAmp                  = NaN*zeros(size(ROI));
 fitErr                  = NaN*zeros(size(ROI));
-predictedData           = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
+predictedDataAmpModel   = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
+predictedDataFourier    = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 cleanDataPSC            = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 
 
@@ -105,7 +106,7 @@ for ii = 1:length(ROI)
     % Convert to % signal change, and remove the HRF
     flatVolPSC(idx, :) = convert_to_psc(flatVol(idx, :));
     [~, cleanDataPSC(ii, :)]      = deriveHRF(flatVolPSC(idx, :)', attentionEventTimes, TR*1000, HRFdur, numFreqs);
-    stimEvoked(ii, :) = deriveHRF(flatVolPSC(idx, :)', stimulusEventTimes, TR*1000, HRFdur, numFreqs);
+    %[~,~,~,~,~,~,predictedDataFourier(ii, :)] = deriveHRF(flatVolPSC(idx, :)', stimulusEventTimes, TR*1000, HRFdur, numFreqs);;
     
     % Re-center the data
     cleanDataPSC(ii, :) = cleanDataPSC(ii, :) - mean(cleanDataPSC(ii, :));
@@ -113,28 +114,6 @@ for ii = 1:length(ROI)
     % Make a packet
     thePacket = thePacket0;
     thePacket.response.values = cleanDataPSC(ii, :);
-    
-    %% Fit the Fourier basis
-    % Create the stimulusStructure that contains the Fourier components
-    msecsToModel = 16000; numFourierComponents = 16;
-    [stimulusStruct, fourierSetStructure] = ...
-        makeFourierStimStruct( thePacket.stimulus.timebase, ...
-        stimulusEventTimes, ...
-        msecsToModel, numFourierComponents );
-    
-    % instantiate a model object that will be used for fitting
-    fourierFit = tfeIAMP('verbosity','none');
-    
-    % set up the default properties of the fit
-    fourierFitParamsLockMatrix = []; % unused
-    fourierFitDefaultParams.nInstances = numFourierComponents;
-    
-    % Derive the Fourier set fit
-    [paramsFit,~,~] = ...
-        fourierFit.fitResponse(thePacket,...
-        'defaultParamsInfo', fourierFitDefaultParams, ...
-        'paramLockMatrix',fourierFitParamsLockMatrix, ...
-        'searchMethod', 'linearRegression');
 
     %% Fit an amplitudef model
     % Clear the kernel because we do not want to convolve inside the tfe
@@ -152,7 +131,7 @@ for ii = 1:length(ROI)
         'errorType', '1-r2');
     fitAmp(ii) = paramsFit.paramMainMatrix(1);
     fitErr(ii) = 1-fVal;
-    predictedData(ii, :) = modelResponseStruct.values;
+    predictedDataAmpModel(ii, :) = modelResponseStruct.values;
     if mod(ii, 100) == 0
         fprintf('  > Voxel %g / %g\n', ii, length(ROI));
     end
