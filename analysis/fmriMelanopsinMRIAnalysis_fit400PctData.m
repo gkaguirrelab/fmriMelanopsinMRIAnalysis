@@ -5,7 +5,7 @@ inputParams.dataDir = '/data/jag/MELA/MelanopsinMR';
 subjIDs = {'HERO_asb1' 'HERO_asb1' 'HERO_aso1' 'HERO_aso1' 'HERO_gka1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};
 sessionIDs = {'032416' '040716' '032516' '033016' '033116' '040116' '040616' '040816'};
 
-for ss = 1:length(sessionDirs);
+for ss = 1:length(subjIDs);
     subjID = subjIDs{ss}; sessionID = sessionIDs{ss};
     inputParams.sessionDir = fullfile(inputParams.dataDir, subjID, sessionID);
     inputParams.outDir = fullfile(inputParams.sessionDir, 'stats');
