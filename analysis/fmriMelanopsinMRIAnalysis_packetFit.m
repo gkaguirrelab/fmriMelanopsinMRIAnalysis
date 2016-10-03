@@ -1,4 +1,4 @@
-function [fitAmp fitErr] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
+function [fitAmpVol fitErrVol] = fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 % fmriMelanopsinMRIAnalysis_packetFit(inputParams)
 %
 % Fit packets.
@@ -136,5 +136,12 @@ for ii = 1:length(ROI)
         fprintf('  > Voxel %g / %g\n', ii, length(ROI));
     end
 end
+
+% Move the data over to the non-ROI representation, i.e. in the whole brain
+fitAmpVol = NaN*ones(volDims(1)*volDims(2)*volDims(3), 1);
+fitAmpVol(ROI) = fitAmp;
+fitErrVol = NaN*ones(volDims(1)*volDims(2)*volDims(3), 1);
+fitErrVol(ROI) = fitErr;
+
 toc;
 fprintf('\tDONE.\n');
