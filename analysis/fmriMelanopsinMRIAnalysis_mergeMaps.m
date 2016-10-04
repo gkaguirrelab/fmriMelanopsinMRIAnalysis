@@ -12,5 +12,7 @@ varExplainedThreshold = 0.005;
 for ii = 1:length(mapsToBeMerged)
     map1 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'stats', 'avg_err.nii.gz'));
     map2 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 2)}, sessionIDs{mapsToBeMerged(ii, 2)}, 'stats', 'avg_err.nii.gz'));
-    sum(sum(sum(((map1.vol > varExplainedThreshold) & (map2.vol > varExplainedThreshold))))) / sum(sum(sum(((map1.vol > varExplainedThreshold) | (map2.vol > varExplainedThreshold)))))
+    %sum(sum(sum(((map1.vol > varExplainedThreshold) & (map2.vol > varExplainedThreshold))))) / sum(sum(sum(((map1.vol > varExplainedThreshold) | (map2.vol > varExplainedThreshold)))))
+    %sum(sum(sum(((map1.vol > varExplainedThreshold) | (map2.vol > varExplainedThreshold)))))
+    sum(sum(sum(((map1.vol > varExplainedThreshold) & (map2.vol > varExplainedThreshold)))))
 end
