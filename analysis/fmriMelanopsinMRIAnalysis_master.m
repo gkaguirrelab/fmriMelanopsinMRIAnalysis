@@ -22,4 +22,4 @@ fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
 
 %% Fun with packets heree
-fmriMelanopsinMRIAnalysis_packetFit(params);
+fmriMelanopsinMRIAnalysis_fit400PctData(params);
