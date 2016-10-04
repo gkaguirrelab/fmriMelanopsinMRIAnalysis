@@ -12,7 +12,18 @@ varExplainedThreshold = 0.005;
 for ii = 1:length(mapsToBeMerged)
     map1 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'stats', 'avg_err.nii.gz'));
     map2 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 2)}, sessionIDs{mapsToBeMerged(ii, 2)}, 'stats', 'avg_err.nii.gz'));
-    %sum(sum(sum(((map1.vol > varExplainedThreshold) & (map2.vol > varExplainedThreshold))))) / sum(sum(sum(((map1.vol > varExplainedThreshold) | (map2.vol > varExplainedThreshold)))))
-    %sum(sum(sum(((map1.vol > varExplainedThreshold) | (map2.vol > varExplainedThreshold)))))
-    sum(sum(sum(((map1.vol > varExplainedThreshold) & (map2.vol > varExplainedThreshold)))))
+    map1vol = map1.vol(:);
+    map2vol = map2.vol(:);
+    s
+    areas = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.areas.func.vol.nii.gz'));
+    areasvol = areas.vol(:);
+    % V1 only
+    areasvol = abs(areasvol) == 1;
+    
+    NTotalV1 = sum(areasvol);
+    NMap1 = sum(areasvol & map1vol > varExplainedThreshold);
+    NMap2 = sum(areasvol & map2vol > varExplainedThreshold);
+    NMap1_2 = sum(areasvol & map1vol > varExplainedThreshold & map2vol > varExplainedThreshold);
+    
+    fprintf('\n%s V1: \t%g, thresh1: \t%g, thresh2: \t%g, thresh1&2:\t%g\n', subjIDs{mapsToBeMerged(ii, 1)}, NTotalV1, NMap1, NMap2, NMap1_2)
 end
