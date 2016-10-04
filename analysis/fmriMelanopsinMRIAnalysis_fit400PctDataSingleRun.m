@@ -65,17 +65,22 @@ eccFile             = fullfile(inputParams.anatRefRun, 'mh.ecc.func.vol.nii.gz')
 areasFile           = fullfile(inputParams.anatRefRun, 'mh.areas.func.vol.nii.gz');
 eccData             = load_nifti(eccFile);
 areaData            = load_nifti(areasFile);
-ROI_V1              = find(abs(areaData.vol)==1 & ...
-    eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
-ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
-    eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+DO_ECC = false;
+if DO_ECC
+    ROI_V1              = find(abs(areaData.vol)==1 & ...
+        eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+    ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
+        eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+else
+    ROI_V1              = find(abs(areaData.vol)==1);
+    ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3));
+end
 ROI = [ROI_V1 ; ROI_V2V3];
 fprintf('\tDONE.\n');
 
 fitAmp                  = NaN*zeros(size(ROI));
 fitErr                  = NaN*zeros(size(ROI));
 predictedDataAmpModel   = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
-predictedDataFourier    = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 cleanDataPSC            = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 
 

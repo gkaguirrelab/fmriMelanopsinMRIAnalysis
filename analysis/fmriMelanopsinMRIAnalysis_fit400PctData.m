@@ -19,7 +19,7 @@ for ss = 1:length(subjIDs);
         inputParams.stimulusFile = fullfile(matDir, matFiles{b});
         inputParams.responseFile = fullfile(inputParams.sessionDir, boldDirs{b}, 'wdrf.tf.nii.gz');
         inputParams.anatRefRun = fullfile(inputParams.sessionDir, boldDirs{1});
-        [fitAmp(:, b) fitErr(:, b)] = fmriMelanopsinMRIAnalysis_packetFit(inputParams);
+        [fitAmp(:, b) fitErr(:, b)] = fmriMelanopsinMRIAnalysis_fit400PctDataSingleRun(inputParams);
     end
     fitAmpMean = mean(fitAmp, 2);
     fitErrMean = mean(fitErr, 2);
@@ -36,5 +36,5 @@ for ss = 1:length(subjIDs);
     
     % Save out the data
     save_nifti(amp0, fullfile(inputParams.outDir, 'avg_amp.nii.gz'));
-    save_nifti(err0, fullfile(inputParams.outDir, 'avg_err.nii.gz'));
+    save_nifti(err0, fullfile(inputParams.outDir, 'avg_varexp.nii.gz'));
 end
