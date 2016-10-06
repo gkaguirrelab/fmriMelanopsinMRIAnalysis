@@ -67,4 +67,4 @@ else
 end
 setpref('ToolboxToolbox', 'checkInternetCommand', checkInternetCommand);
 
-tbUse('MelanopsinMR_BOLDAnalysisConfig');
+tbUse('fmriMelanopsinMRIAnalysis');
