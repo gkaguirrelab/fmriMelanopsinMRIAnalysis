@@ -66,8 +66,12 @@ conditionArray = [stimulus.metaData.params.theDirections' stimulus.metaData.para
 metaData.stimTypes = idx;
 for ii = 1:size(uniqueConditions, 1)
     tmp = strsplit(stimulus.metaData.params.modulationFiles, ',');
-    tmp = strsplit(tmp{conditionArray(ii, 1)}, '-');
+    tmp = strsplit(tmp{uniqueConditions(ii, 1)}, '-');
     [~, tmp2] = fileparts(tmp{3});
-    metaData.stimLabels{ii} = [tmp{2} '_' tmp2 '_' num2str(100*stimulus.metaData.params.theContrastsPct(conditionArray(ii, 3))*stimulus.metaData.params.theContrastMax) '%'];
+    if strfind(tmp{3}, 'Attention')
+        metaData.stimLabels{ii} = [tmp{2} '_' tmp2];
+    else
+        metaData.stimLabels{ii} = [tmp{2} '_' tmp2 '_' num2str(100*stimulus.metaData.params.theContrastsPct(uniqueConditions(ii, 3))*stimulus.metaData.params.theContrastMax, '%03.f') 'Pct'];
+    end
 end
 
