@@ -21,25 +21,24 @@ for ii = 1:length(mapsToBeMerged)
     map2 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 2)}, ...
         sessionIDs{mapsToBeMerged(ii, 2)}, 'stats', 'avg_varexp.nii.gz'));
 
-    [map1vol, volDims] = fmriMelanopsinMRIANalysis_flattenVolume(map1);
-    map2vol = fmriMelanopsinMRIANalysis_flattenVolume(map2);
+    [map1vol, volDims] = fmriMelanopsinMRIAnalysis_flattenVolume(map1);
+    map2vol = fmriMelanopsinMRIAnalysis_flattenVolume(map2);
     
     areas = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, ...
         sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.areas.func.vol.nii.gz'));
-    areasvol = fmriMelanopsinMRIANalysis_flattenVolume(areas);
+    areasvol = fmriMelanopsinMRIAnalysis_flattenVolume(areas);
     ecc = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, ...
         sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.ecc.func.vol.nii.gz'));
-    eccvol = fmriMelanopsinMRIANalysis_flattenVolume(ecc);
+    eccvol = fmriMelanopsinMRIAnalysis_flattenVolume(ecc);
     
     ROI_V1              = (abs(areasvol)==1 & ...
         eccvol>eccRange(1) & eccvol<eccRange(2));
     ROI_V2V3            = ((abs(areasvol)==2 | abs(areasvol)==3) & ...
         eccvol>eccRange(1) &eccvol<eccRange(2));
     
-
     map1_2 = (ROI_V1) & (map1vol > varExplainedThreshold & map2vol > varExplainedThreshold);
 
     map0 = map1;
-    map0.vol = fmriMelanopsinMRIANalysis_unflattenVolume(map1_2, volDims);
+    map0.vol = fmriMelanopsinMRIAnalysis_unflattenVolume(map1_2, volDims);
     save_nifti(map0, fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'stats', 'avg_varexp_thresh.nii.gz'));
 end

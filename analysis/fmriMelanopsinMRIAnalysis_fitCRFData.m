@@ -9,6 +9,7 @@ function fmriMelanopsinMRIAnalysis_fit400PctData(inputParams)
 subjIDs = {'HERO_asb1' 'HERO_asb1' 'HERO_asb1'};
 sessionIDs = {'051016' '060716'  '060816'};
 sessionRef = '032416'; % This is where we take the mask from
+maskName = 'avg_varexp_thresh.nii.gz';
 
 for ss = 1:length(subjIDs);
     subjID = subjIDs{ss}; sessionID = sessionIDs{ss};
@@ -24,10 +25,17 @@ for ss = 1:length(subjIDs);
         inputParams.stimulusFile = fullfile(matDir, matFiles{b});
         inputParams.responseFile = fullfile(inputParams.sessionDir, boldDirs{b}, 'wdrf.tf.nii.gz');
         inputParams.anatRefRun = fullfile(inputParams.sessionDir, boldDirs{1});
+        inputParams.maskFile = fullfile(inputParams.dataDir, subjID, sessionRef, 'stats', maskName);
         
         fprintf('* <strong>Loading response file</strong>...');
-        resp                    = load_nifti(params.responseFile);
+        resp                    = load_nifti(inputParams.responseFile);
         fprintf('\tDONE.\n');
+        
+                
+        fprintf('* <strong>Loading mask file</strong>...');
+        maskfile                    = load_nifti(inputParams.maskFile);
+        fprintf('\tDONE.\n');
+        keyboard
     end
     % AVerage across run
     fitAmpMean = mean(fitAmp, 2);

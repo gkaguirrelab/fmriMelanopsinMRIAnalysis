@@ -26,3 +26,4 @@ fmriMelanopsinMRIAnalysis_fit400PctData(params);
 fmriMelanopsinMRIAnalysis_mergeMaps(params);
 
 %% Assemble V1 time series for the CRF data
+fmriMelanopsinMRIAnalysis_fitCRFData(params);
