@@ -10,16 +10,21 @@ mapsToBeMerged = [1 2 ; 3 4 ; 5 6 ; 7 8];
 varExplainedThreshold = 0.005;
 eccRange = [2.5 32];
 
+% Iterate over the maps
 for ii = 1:length(mapsToBeMerged)
-    map1 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'stats', 'avg_varexp.nii.gz'));
-    map2 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 2)}, sessionIDs{mapsToBeMerged(ii, 2)}, 'stats', 'avg_varexp.nii.gz'));
+    map1 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, ...
+        sessionIDs{mapsToBeMerged(ii, 1)}, 'stats', 'avg_varexp.nii.gz'));
+    map2 = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 2)}, ...
+        sessionIDs{mapsToBeMerged(ii, 2)}, 'stats', 'avg_varexp.nii.gz'));
 
     [map1vol, volDims] = fmriMelanopsinMRIANalysis_flattenVolume(map1);
     map2vol = fmriMelanopsinMRIANalysis_flattenVolume(map2);
     
-    areas = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.areas.func.vol.nii.gz'));
+    areas = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, ...
+        sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.areas.func.vol.nii.gz'));
     areasvol = fmriMelanopsinMRIANalysis_flattenVolume(areas);
-    ecc = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.ecc.func.vol.nii.gz'));
+    ecc = load_nifti(fullfile(inputParams.dataDir, subjIDs{mapsToBeMerged(ii, 1)}, ...
+        sessionIDs{mapsToBeMerged(ii, 1)}, 'Series_012_fMRI_MaxMelPulse_A_AP_run01', 'mh.ecc.func.vol.nii.gz'));
     eccvol = fmriMelanopsinMRIANalysis_flattenVolume(ecc);
     
     ROI_V1              = (abs(areasvol)==1 & ...
