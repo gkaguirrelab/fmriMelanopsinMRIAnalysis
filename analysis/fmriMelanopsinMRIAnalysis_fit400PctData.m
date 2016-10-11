@@ -25,6 +25,7 @@ for ss = 1:length(subjIDs);
         inputParams.anatRefRun = fullfile(inputParams.sessionDir, boldDirs{1});
         [fitAmp(:, b) fitErr(:, b)] = fmriMelanopsinMRIAnalysis_fit400PctDataSingleRun(inputParams);
     end
+    % AVerage across run
     fitAmpMean = mean(fitAmp, 2);
     fitErrMean = mean(fitErr, 2);
     
