@@ -1,7 +1,11 @@
-%% Iterate over the subjects
-inputParams.dataDir = '/data/jag/MELA/MelanopsinMR';
+function fmriMelanopsinMRIAnalysis_fit400PctData(inputParams)
+% fmriMelanopsinMRIAnalysis_fit400PctData(inputParams)
+%
+% Fits the 400% data
+%
+% 10/1/2016     ms      Wrote it.
 
-%% HERO_asb1
+%% Iterate over the subjects
 subjIDs = {'HERO_asb1' 'HERO_asb1' 'HERO_aso1' 'HERO_aso1' 'HERO_gka1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};
 sessionIDs = {'032416' '040716' '032516' '033016' '033116' '040116' '040616' '040816'};
 
