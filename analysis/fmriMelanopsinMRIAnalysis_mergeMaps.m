@@ -1,5 +1,9 @@
-%% Iterate over the subjects
-inputParams.dataDir = '/data/jag/MELA/MelanopsinMR';
+function fMRIMelanopsinMRIAnalysis_mergeMaps(inputPParams)
+% fMRIMelanopsinMRIAnalysis_mergeMaps(inputParams)
+%
+% Fit packets.
+%
+% 9/26/2016     ms      Merges significant maps.
 
 %% HERO_asb1
 subjIDs = {'HERO_asb1' 'HERO_asb1' 'HERO_aso1' 'HERO_aso1' 'HERO_gka1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};

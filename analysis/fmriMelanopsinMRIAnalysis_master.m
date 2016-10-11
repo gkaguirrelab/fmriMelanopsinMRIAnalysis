@@ -21,5 +21,8 @@ fmriMelanopsinMRIAnalysis_makeAnatTemplates(params);
 fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
 
-%% Fun with packets heree
+%% Derive the significant voxels
 fmriMelanopsinMRIAnalysis_fit400PctData(params);
+fmriMelanopsinMRIAnalysis_mergeMaps;
+
+%%
