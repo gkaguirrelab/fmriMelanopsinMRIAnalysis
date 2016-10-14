@@ -17,6 +17,9 @@ fmriMelanopsinMRIAnalysis_createPreprocessingScripts(params);
 %% Make anatomical templates
 fmriMelanopsinMRIAnalysis_makeAnatTemplates(params);
 
+%% Project anatomical templates
+fmriMelanopsinMRIAnalysis_projectAnatTemplatesToFunc(params);
+
 %% Derive the HRFs
 fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
