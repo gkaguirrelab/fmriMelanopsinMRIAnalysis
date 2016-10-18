@@ -35,7 +35,6 @@ eventIdx = 1;
 stimulusEventTimes = fmriMelanopsinMRIAnalysis_getStimulusEvents(params, eventIdx);
 fprintf('\t\tDONE.\n');
 
-
 %% Load the response file
 fprintf('* <strong>Loading response file</strong>...');
 resp                    = load_nifti(params.responseFile);
@@ -122,13 +121,13 @@ for ii = 1:length(ROI)
     thePacket = thePacket0;
     thePacket.response.values = cleanDataPSC(ii, :);
 
-    %% Fit an amplitudef model
+    %% Fit an amplitude model
     % Clear the kernel because we do not want to convolve inside the tfe
     % object
     thePacket.kernel.values = [];
     thePacket.kernel.timebase = [];
     thePacket.kernel.metaData = [];
-    
+
     % Fit packet here
     [paramsFit, fVal, modelResponseStruct] = ...
         temporalFit.fitResponse(thePacket, ...
