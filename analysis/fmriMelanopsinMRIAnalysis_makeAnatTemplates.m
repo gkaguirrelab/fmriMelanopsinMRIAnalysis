@@ -10,7 +10,7 @@ currDir = pwd;
 anatTemplateDir = params.anatTemplateDir;
 if ~exist(anatTemplateDir, 'dir')
    mkdir(anatTemplateDir); 
-   endaa
+   end
 cd(anatTemplateDir);
 
 % Only download if we don't have these files already.
