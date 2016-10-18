@@ -82,7 +82,6 @@ fitErr                  = NaN*zeros(size(ROI));
 predictedDataAmpModel   = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 cleanDataPSC            = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 
-
 %% Iterate over the relevant voxels
 % Set up a @tfe object to do convolution
 temporalFit                     = tfeIAMP('verbosity','none');
