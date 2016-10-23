@@ -52,7 +52,7 @@ end
 %% HERO_mxs1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_mxs1');
 sessDirs = {'040616' '040816' '050916' '060916' '061016_Mel' '062816'};
-for ss = 1:length(sessDirs)
+for ss = 1:length(sessDirs)s
     sessionDir      = fullfile(fullfile(subjDir, sessDirs{ss}));
     b               = find_bold(sessionDir);
     %% Project templates to functional space
