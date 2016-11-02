@@ -35,7 +35,6 @@ eventIdx = 1;
 stimulusEventTimes = fmriMelanopsinMRIAnalysis_getStimulusEvents(params, eventIdx);
 fprintf('\t\tDONE.\n');
 
-
 %% Load the response file
 fprintf('* <strong>Loading response file</strong>...');
 resp                    = load_nifti(params.responseFile);
@@ -83,7 +82,6 @@ fitErr                  = NaN*zeros(size(ROI));
 predictedDataAmpModel   = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 cleanDataPSC            = NaN*zeros(size(ROI, 1), size(resp.vol, 4));
 
-
 %% Iterate over the relevant voxels
 % Set up a @tfe object to do convolution
 temporalFit                     = tfeIAMP('verbosity','none');
@@ -122,13 +120,13 @@ for ii = 1:length(ROI)
     thePacket = thePacket0;
     thePacket.response.values = cleanDataPSC(ii, :);
 
-    %% Fit an amplitudef model
+    %% Fit an amplitude model
     % Clear the kernel because we do not want to convolve inside the tfe
     % object
     thePacket.kernel.values = [];
     thePacket.kernel.timebase = [];
     thePacket.kernel.metaData = [];
-    
+
     % Fit packet here
     [paramsFit, fVal, modelResponseStruct] = ...
         temporalFit.fitResponse(thePacket, ...

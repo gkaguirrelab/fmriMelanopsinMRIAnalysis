@@ -30,7 +30,7 @@ for ss = 1:length(subjIDs);
     fitErrMean = mean(fitErr, 2);
     
     % Create an empty volume template
-    tmp0 = load_nifti(inputParams.responseFile)
+    tmp0 = load_nifti(inputParams.responseFile);
     volDims = size(tmp0.vol);
     
     % Carry over the values
