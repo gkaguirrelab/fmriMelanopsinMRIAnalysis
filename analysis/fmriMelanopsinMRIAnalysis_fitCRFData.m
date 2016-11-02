@@ -15,7 +15,7 @@ params0 = temporalFit.defaultParams();
 paramLockMatrix = [];
 
 %% Iterate over the subjects
-whichDataSets = {'SplatterControlCRF' 'LMSCRF' 'MelCRF'};
+whichDataSets = {'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
 for dd = 1:length(whichDataSets)
     whichDataSet = whichDataSets{dd};
     switch whichDataSet
@@ -37,7 +37,7 @@ for dd = 1:length(whichDataSets)
     if ~exist(packetSaveDir);
         mkdir(packetSaveDir);
     end;
-    maskName = 'avg_varexp_thresh.nii.gz';
+    
     
     for ss = 1:length(subjIDs);
         stimType = []; fitAmplitude = [];
@@ -56,7 +56,25 @@ for dd = 1:length(whichDataSets)
             params.stimulusFile = fullfile(matDir, matFiles{bb});
             params.responseFile = fullfile(params.sessionDir, boldDirs{bb}, 'wdrf.tf.nii.gz');
             params.anatRefRun = fullfile(params.sessionDir, boldDirs{1});
-            params.maskFile = fullfile(params.dataDir, subjID, sessionRef{ss}, 'stats', maskName);
+
+            %%
+            fprintf('* <strong>Prepare anatomical template</strong>...');
+            eccFile             = fullfile(params.anatRefRun, 'mh.ecc.func.vol.nii.gz');
+            areasFile           = fullfile(params.anatRefRun, 'mh.areas.func.vol.nii.gz');
+            eccData             = load_nifti(eccFile);
+            areaData            = load_nifti(areasFile);
+            DO_ECC = false;
+            if DO_ECC
+                ROI_V1              = find(abs(areaData.vol)==1 & ...
+                    eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+                ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
+                    eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+            else
+                ROI_V1              = find(abs(areaData.vol)==1);
+                ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3));
+            end
+            maskvol = ROI_V1;
+            fprintf('\tDONE.\n');
             
             fprintf('* <strong>Loading response file</strong>...');
             resp = load_nifti(params.responseFile);
@@ -66,18 +84,9 @@ for dd = 1:length(whichDataSets)
             fprintf('\tDONE.\n');
             % Flatten the volume
             [respvol, volDims] = fmriMelanopsinMRIAnalysis_flattenVolume(resp);
-            
-            fprintf('* <strong>Loading mask file</strong>...');
-            maskfile = load_nifti(params.maskFile);
-            fprintf('\tDONE.\n');
-            % Flatten the mask
-            maskvol = fmriMelanopsinMRIAnalysis_flattenVolume(maskfile);
-            
+
             % Assemble the average response
-            params.respValues = mean(respvol(find(maskvol), :));
-            
-            % Convert to epSC
-            params.respValues = convert_to_psc(params.respValues);
+            params.respValues = mean(respvol(maskvol, :));
             
             %% Get the HRF
             params.hrfFile = fullfile(params.sessionDir,'HRF','V1.mat');

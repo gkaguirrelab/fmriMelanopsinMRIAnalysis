@@ -178,7 +178,7 @@ create_preprocessing_scripts(params);
 
 %% HERO_mxs1 - 061016_Mel - MaxMelCRF (2)
 params                  = params0;
-params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/061016_Mel';
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/061016_Mel');
 params.subjectName      = 'HERO_mxs1_MaxMel';
 params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
 params.logDir           = inputParams.logDir;
@@ -235,4 +235,55 @@ params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
 params.logDir           = inputParams.logDir;
 params.jobName          = params.subjectName;
 params.numRuns          = 12; % Number of BOLD runs
+create_preprocessing_scripts(params);
+
+%% Rod Control
+%% HERO_asb1 - 101916 - RodControl - Scotopic/Photopic
+params                  = params0;
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_asb1/101916');
+params.subjectName      = 'HERO_asb1_MaxMel';
+params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
+params.logDir           = inputParams.logDir;
+params.jobName          = params.subjectName;
+params.numRuns          = 12; % Number of BOLD runs
+create_preprocessing_scripts(params);
+
+%% HERO_gka1 - 101916 - RodControl - Scotopic/Photopic (Photopic to be discarded)
+params                  = params0;
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_gka1/101916');
+params.subjectName      = 'HERO_gka1_MaxMel';
+params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
+params.logDir           = inputParams.logDir;
+params.jobName          = params.subjectName;
+params.numRuns          = 12; % Number of BOLD runs
+create_preprocessing_scripts(params);
+
+%% HERO_gka1 - 102416 - RodControl ? Photopic
+params                  = params0;
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_gka1/102416');
+params.subjectName      = 'HERO_gka1_MaxMel';
+params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
+params.logDir           = inputParams.logDir;
+params.jobName          = params.subjectName;
+params.numRuns          = 6; % Number of BOLD runs
+create_preprocessing_scripts(params);
+
+%% HERO_mxs1 - 101916 - RodControl - Scotopic/Photopic (Photopic to be discarded)
+params                  = params0;
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/101916');
+params.subjectName      = 'HERO_mxs1_MaxMel';
+params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
+params.logDir           = inputParams.logDir;
+params.jobName          = params.subjectName;
+params.numRuns          = 12; % Number of BOLD runs
+create_preprocessing_scripts(params);
+
+%% HERO_mxs1 - 102416 - RodControl ? Photopic
+params                  = params0;
+params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/102416');
+params.subjectName      = 'HERO_mxs1_MaxMel';
+params.outDir           = fullfile(params.sessionDir, 'preprocessing_scripts');
+params.logDir           = inputParams.logDir;
+params.jobName          = params.subjectName;
+params.numRuns          = 6; % Number of BOLD runs
 create_preprocessing_scripts(params);
