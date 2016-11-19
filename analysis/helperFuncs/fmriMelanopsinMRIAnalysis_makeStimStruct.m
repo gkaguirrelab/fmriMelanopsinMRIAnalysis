@@ -37,7 +37,7 @@ for j = 1:size(stimulus.metaData.params.responseStruct.events,2)
     stimWindow                              = ceil((startTime*1000) : (startTime*1000 + ((durTime*1000)-1)));
     % Save the stimulus values
     thisStim                                = zVect;
-    thisStim(stimWindow)                    = 1;
+    thisStim(stimWindow)                   = 1;
     % cosine ramp onset
     if stimulus.metaData.params.responseStruct.events(j).describe.params.cosineWindowIn
         winDur  = stimulus.metaData.params.responseStruct.events(j).describe.params.cosineWindowDurationSecs;
@@ -74,4 +74,3 @@ for ii = 1:size(uniqueConditions, 1)
         metaData.stimLabels{ii} = [tmp{2} '_' tmp2 '_' num2str(100*stimulus.metaData.params.theContrastsPct(uniqueConditions(ii, 3))*stimulus.metaData.params.theContrastMax, '%03.f') 'Pct'];
     end
 end
-

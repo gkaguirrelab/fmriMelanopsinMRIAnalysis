@@ -8,7 +8,6 @@ params.logDir = '/data/jag/MELA/MelanopsinMR/logs';
 params.dataDir = '/data/jag/MELA/MelanopsinMR';
 params.anatTemplateDir = '/data/jag/MELA/anat_templates';
 
-
 %% Create preprocessing scripts
 fmriMelanopsinMRIAnalysis_createPreprocessingScripts(params);
 
@@ -25,6 +24,7 @@ fmriMelanopsinMRIAnalysis_projectAnatTemplatesToFunc(params);
 fmriMelanopsinMRIAnalysis_deriveHRF(params);
 fmriMelanopsinMRIAnalysis_plotHRF(params);
 
+
 %% Derive the significant voxels
 fmriMelanopsinMRIAnalysis_fit400PctData(params);
 fmriMelanopsinMRIAnalysis_mergeMaps(params);
@@ -32,3 +32,11 @@ fmriMelanopsinMRIAnalysis_mergeMaps(params);
 %% Assemble V1 time series for the CRF data
 fmriMelanopsinMRIAnalysis_makeAllCRFPackets(params);
 
+
+%% Rod control data - Add the subject's HRF
+% Make this a function
+fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_asb1', '051016'), fullfile(params.dataDir, 'HERO_asb1', '101916'));
+fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_gka1', '050616'), fullfile(params.dataDir, 'HERO_gka1', '101916'));
+fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_gka1', '050616'), fullfile(params.dataDir, 'HERO_gka1', '102416'));
+fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_mxs1', '050916'), fullfile(params.dataDir, 'HERO_mxs1', '101916'));
+fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_mxs1', '050916'), fullfile(params.dataDir, 'HERO_mxs1', '102416'));

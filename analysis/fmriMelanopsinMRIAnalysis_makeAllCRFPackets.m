@@ -15,35 +15,30 @@ params0 = temporalFit.defaultParams();
 paramLockMatrix = [];
 
 %% Iterate over the subjects
-whichDataSets = { 'RodControlScotopic' 'RodControlPhotopic'};%{'MelCRF' 'LMSCRF' 'SplatterControlCRF' 'RodControl'};
+whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF' 'RodControl'};
 for dd = 1:length(whichDataSets)
     whichDataSet = whichDataSets{dd};
     switch whichDataSet
         case 'SplatterControlCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'051016' '042916' '050616' '050916'};
-            sessionRef = {'032416' '032516' '033116' '040616'};
             boldIds = {[1:12] [1:11] [1:12] [1:12]};
         case 'LMSCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'060816' '060116' '060616' '062816'};
-            sessionRef = {'032416' '032516' '033116' '040616'};
             boldIds = {[1:9] [1:9] [1:10] [1:9]};
         case 'MelCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};
             sessionIDs = {'060716' '053116' '060216' '060916' '061016_Mel'};
-            sessionRef = {'032416' '032516' '033116' '040616' '040616'};
             boldIds = {[1:9] [1:9] [1:9] [1:5] [1:4]};
         case 'RodControlScotopic'
             subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'101916' '101916' '101916'};
-            sessionRef = {'032416' '033116' '040616'};
             boldIds = {[1:6] [1:6] [1:6]};
         case 'RodControlPhotopic'
             subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'101916' '102416' '102416'};
-            sessionRef = {'032416' '033116' '040616'};
-            boldIds = {[7 9:12] [1:6] [1:6]};
+            boldIds = {[7 9:12] [1:6] [1:6]}; % Note that for asb1, the 8th run was the wrong protocol. Dealing this by skipping it here and creating a dummy .mat response fil.e
     end
     packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
     packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
@@ -135,6 +130,7 @@ for dd = 1:length(whichDataSets)
             packetCellArray{ss, bb} = thePacket;
         end
     end
+    keyboard
     packetCellArrayHash = DataHash(packetCellArray);
     packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_' packetCellArrayHash '.mat']);
     save(packetCacheFileName,'packetCellArray','-v7.3');
