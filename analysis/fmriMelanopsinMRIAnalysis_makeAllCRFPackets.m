@@ -1,5 +1,5 @@
-function fmriMelanopsinMRIAnalysis_fitCRFData(inputParams)
-% fmriMelanopsinMRIAnalysis_fitCRFData(inputParams)
+function fmriMelanopsinMRIAnalysis_makeAllCRFPackets(inputParams)
+% fmriMelanopsinMRIAnalysis_makeAllCRFPackets(inputParams)
 %
 % Fits the 400% data
 %
@@ -15,7 +15,7 @@ params0 = temporalFit.defaultParams();
 paramLockMatrix = [];
 
 %% Iterate over the subjects
-whichDataSets = {'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
+whichDataSets = { 'RodControlScotopic' 'RodControlPhotopic'};%{'MelCRF' 'LMSCRF' 'SplatterControlCRF' 'RodControl'};
 for dd = 1:length(whichDataSets)
     whichDataSet = whichDataSets{dd};
     switch whichDataSet
@@ -23,21 +23,33 @@ for dd = 1:length(whichDataSets)
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'051016' '042916' '050616' '050916'};
             sessionRef = {'032416' '032516' '033116' '040616'};
+            boldIds = {[1:12] [1:11] [1:12] [1:12]};
         case 'LMSCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'060816' '060116' '060616' '062816'};
             sessionRef = {'032416' '032516' '033116' '040616'};
+            boldIds = {[1:9] [1:9] [1:10] [1:9]};
         case 'MelCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};
             sessionIDs = {'060716' '053116' '060216' '060916' '061016_Mel'};
             sessionRef = {'032416' '032516' '033116' '040616' '040616'};
+            boldIds = {[1:9] [1:9] [1:9] [1:5] [1:4]};
+        case 'RodControlScotopic'
+            subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
+            sessionIDs = {'101916' '101916' '101916'};
+            sessionRef = {'032416' '033116' '040616'};
+            boldIds = {[1:6] [1:6] [1:6]};
+        case 'RodControlPhotopic'
+            subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
+            sessionIDs = {'101916' '102416' '102416'};
+            sessionRef = {'032416' '033116' '040616'};
+            boldIds = {[7 9:12] [1:6] [1:6]};
     end
-    packetCellArrayTag = ['MelanopsinMR_' whichDataSet '_threshsig'];
+    packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
     packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
     if ~exist(packetSaveDir);
         mkdir(packetSaveDir);
     end;
-    
     
     for ss = 1:length(subjIDs);
         stimType = []; fitAmplitude = [];
@@ -52,7 +64,7 @@ for dd = 1:length(whichDataSets)
         matFiles = listdir(matDir,'files');
         
         % Iterate over BOLD dirs
-        for bb = 1:length(boldDirs)
+        for bb = boldIds{ss}
             params.stimulusFile = fullfile(matDir, matFiles{bb});
             params.responseFile = fullfile(params.sessionDir, boldDirs{bb}, 'wdrf.tf.nii.gz');
             params.anatRefRun = fullfile(params.sessionDir, boldDirs{1});
@@ -63,7 +75,8 @@ for dd = 1:length(whichDataSets)
             areasFile           = fullfile(params.anatRefRun, 'mh.areas.func.vol.nii.gz');
             eccData             = load_nifti(eccFile);
             areaData            = load_nifti(areasFile);
-            DO_ECC = false;
+            DO_ECC = true;
+            eccRange = [5 25];
             if DO_ECC
                 ROI_V1              = find(abs(areaData.vol)==1 & ...
                     eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
@@ -123,7 +136,7 @@ for dd = 1:length(whichDataSets)
         end
     end
     packetCellArrayHash = DataHash(packetCellArray);
-    packetCacheFileName = fullfile(outDir, [packetCellArrayTag '_' packetCellArrayHash '.mat']);
+    packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_' packetCellArrayHash '.mat']);
     save(packetCacheFileName,'packetCellArray','-v7.3');
     fprintf(['Saved the packetCellArray with hash ID ' packetCellArrayHash '\n']);
 end

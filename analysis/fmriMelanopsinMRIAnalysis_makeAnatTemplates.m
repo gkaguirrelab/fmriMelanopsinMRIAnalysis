@@ -7,7 +7,7 @@ function fmriMelanopsinMRIAnalysis_makeAnatTemplates(inputParams)
 
 % Download the retinotopy templates (V2.5 from the Wiki).
 currDir = pwd;
-anatTemplateDir = params.anatTemplateDir;
+anatTemplateDir = inputParams.anatTemplateDir;
 if ~exist(anatTemplateDir, 'dir')
    mkdir(anatTemplateDir); 
    end
@@ -40,6 +40,7 @@ project_template(fullfile(subjDir, '040716'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '051016'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060716'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060816'), subjectName, templateFiles);
+project_template(fullfile(subjDir, '101916'), subjectName, templateFiles);
 
 % HERO_aso1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_aso1');
@@ -58,6 +59,8 @@ project_template(fullfile(subjDir, '040116'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '050616'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060216'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060616'), subjectName, templateFiles);
+project_template(fullfile(subjDir, '101916'), subjectName, templateFiles);
+project_template(fullfile(subjDir, '102416'), subjectName, templateFiles);
 
 % HERO_mxs1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_mxs1');
@@ -68,3 +71,5 @@ project_template(fullfile(subjDir, '050916'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060916'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '061016_Mel'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '062816'), subjectName, templateFiles);
+project_template(fullfile(subjDir, '101916'), subjectName, templateFiles);
+project_template(fullfile(subjDir, '102416'), subjectName, templateFiles);

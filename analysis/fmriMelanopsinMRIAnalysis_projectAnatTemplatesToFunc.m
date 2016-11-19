@@ -9,7 +9,7 @@ function fmriMelanopsinMRIAnalysis_projectAnatTemplatesToFunc(inputParams)
 
 %% HERO_asb1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_asb1');
-sessDirs = {'032416' '040716' '051016' '060716' '060816'};
+sessDirs = {'032416' '040716' '051016' '060716' '060816' '101916'};
 for ss = 1:length(sessDirs)
     sessionDir      = fullfile(fullfile(subjDir, sessDirs{ss}));
     b               = find_bold(sessionDir);
@@ -37,7 +37,7 @@ end
 
 %% HERO_gka1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_gka1');
-sessDirs = {'033116' '040116' '050616' '060216' '060616'};
+sessDirs = {'033116' '040116' '050616' '060216' '060616' '101916' '102416'};
 for ss = 1:length(sessDirs)
     sessionDir      = fullfile(fullfile(subjDir, sessDirs{ss}));
     b               = find_bold(sessionDir);
@@ -51,8 +51,8 @@ end
 
 %% HERO_mxs1
 subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_mxs1');
-sessDirs = {'040616' '040816' '050916' '060916' '061016_Mel' '062816'};
-for ss = 1:length(sessDirs)s
+sessDirs = {'040616' '040816' '050916' '060916' '061016_Mel' '062816' '101916' '102416'};
+for ss = 1:length(sessDirs)
     sessionDir      = fullfile(fullfile(subjDir, sessDirs{ss}));
     b               = find_bold(sessionDir);
     %% Project templates to functional space

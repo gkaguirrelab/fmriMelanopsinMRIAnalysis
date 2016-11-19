@@ -8,6 +8,7 @@ params.logDir = '/data/jag/MELA/MelanopsinMR/logs';
 params.dataDir = '/data/jag/MELA/MelanopsinMR';
 params.anatTemplateDir = '/data/jag/MELA/anat_templates';
 
+
 %% Create preprocessing scripts
 fmriMelanopsinMRIAnalysis_createPreprocessingScripts(params);
 
@@ -29,4 +30,5 @@ fmriMelanopsinMRIAnalysis_fit400PctData(params);
 fmriMelanopsinMRIAnalysis_mergeMaps(params);
 
 %% Assemble V1 time series for the CRF data
-fmriMelanopsinMRIAnalysis_fitCRFData(params);
+fmriMelanopsinMRIAnalysis_makeAllCRFPackets(params);
+
