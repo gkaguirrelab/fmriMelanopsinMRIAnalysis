@@ -23,24 +23,30 @@ for dd = 1:length(whichDataSets)
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'051016' '042916' '050616' '050916'};
             boldIds = {[1:12] [1:11] [1:12] [1:12]};
+            finalPacketCellArrayIdx = {[1] [2] [3] [4]};
         case 'LMSCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'060816' '060116' '060616' '062816'};
             boldIds = {[1:9] [1:9] [1:10] [1:9]};
+            finalPacketCellArrayIdx = {[1] [2] [3] [4]};
         case 'MelCRF'
             subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1' 'HERO_mxs1'};
             sessionIDs = {'060716' '053116' '060216' '060916' '061016_Mel'};
             boldIds = {[1:9] [1:9] [1:9] [1:5] [1:4]};
+            finalPacketCellArrayIdx = {[1] [2] [3] [4 5]};
         case 'RodControlScotopic'
             subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'101916' '101916' '101916'};
             boldIds = {[1:6] [1:6] [1:6]};
+            finalPacketCellArrayIdx = {[1] [2] [3]};
         case 'RodControlPhotopic'
             subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
             sessionIDs = {'101916' '102416' '102416'};
             boldIds = {[7 9:12] [1:6] [1:6]}; % Note that for asb1, the 8th run was the wrong protocol. Dealing this by skipping it here and creating a dummy .mat response fil.e
+            finalPacketCellArrayIdx = {[1] [2] [3]};
     end
     packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
+    packetCellArray = [];
     packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
     if ~exist(packetSaveDir);
         mkdir(packetSaveDir);
@@ -59,6 +65,7 @@ for dd = 1:length(whichDataSets)
         matFiles = listdir(matDir,'files');
         
         % Iterate over BOLD dirs
+        c = 1;
         for bb = boldIds{ss}
             params.stimulusFile = fullfile(matDir, matFiles{bb});
             params.responseFile = fullfile(params.sessionDir, boldDirs{bb}, 'wdrf.tf.nii.gz');
@@ -106,8 +113,6 @@ for dd = 1:length(whichDataSets)
             for ii = 1:size(params.stimValues, 1)
                 params.stimValues(ii, :) = params.stimValues(ii, :) - mean(params.stimValues(ii, :));
             end
-            stimType(bb, :) = params.stimMetaData.stimTypes;
-            
             defaultParamsInfo.nInstances = size(params.stimValues, 1);
             
             %% Make the packet
@@ -127,37 +132,24 @@ for dd = 1:length(whichDataSets)
                     'searchMethod','linearRegression');
                 fitAmplitude(b, :) = paramsFit.paramMainMatrix;
             end
-            packetCellArray{ss, bb} = thePacket;
+            packetCellArray{ss, c} = thePacket;
+            c = c+1;
         end
     end
-    keyboard
+    
+    % Merge sessions
+    NSessionsMerged = length(finalPacketCellArrayIdx);
+    for mm = 1:NSessionsMerged
+        mergeIdx = finalPacketCellArrayIdx{mm};
+        mergedPacket = {packetCellArray{mergeIdx, :}};
+        mergedPacket = mergedPacket(~cellfun('isempty', mergedPacket));
+        for nn = 1:length(mergedPacket)
+        finalPacketCellArrays{mm, nn} = mergedPacket{nn};
+        end
+    end
+    packetCellArray = finalPacketCellArrays;
     packetCellArrayHash = DataHash(packetCellArray);
     packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_' packetCellArrayHash '.mat']);
     save(packetCacheFileName,'packetCellArray','-v7.3');
     fprintf(['Saved the packetCellArray with hash ID ' packetCellArrayHash '\n']);
 end
-keyboard
-
-% subplot(1, 3, 3)
-% plot(log10([0.25 0.50 1 1.95]), mean(fitAmplitudesMean{1}(:, 1:4)), '-sk', 'MarkerFaceColor', 'k');
-% pbaspect([1 1 1]); set(gca, 'TickDir', 'out');
-% xlabel('log contrast'); ylabel('Percent signal change');
-% set(gca, 'XTick', log10([0.25 0.50 1 1.95]), 'XTickLabel', 100*([0.25 0.50 1 1.95]))
-% ylim([-0.1 2]);
-% title('Splatter control');
-% 
-% subplot(1, 3, 2)
-% plot(log10([0.25 0.5 1 2 4]), mean(fitAmplitudesMean{2}(:, 1:5)), '-sk', 'MarkerFaceColor', 'k');
-% pbaspect([1 1 1]); set(gca, 'TickDir', 'out');
-% xlabel('log contrast'); ylabel('Percent signal change');
-% set(gca, 'XTick', log10([0.25 0.50 1 2 4]), 'XTickLabel', 100*([0.25 0.50 1 2 4]))
-% ylim([-0.1 2]);
-% title('LMS')
-% 
-% subplot(1, 3, 1)
-% plot(log10([0.25 0.5 1 2 4]), mean(fitAmplitudesMean{3}(:, 1:5)), '-sk', 'MarkerFaceColor', 'k');
-% pbaspect([1 1 1]); set(gca, 'TickDir', 'out');
-% xlabel('log contrast'); ylabel('Percent signal change');
-% set(gca, 'XTick', log10([0.25 0.50 1 2 4]), 'XTickLabel', 100*([0.25 0.50 1 2 4]))
-% ylim([-0.1 2]);
-% title('Mel')
