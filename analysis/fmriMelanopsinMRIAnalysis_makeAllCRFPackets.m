@@ -50,9 +50,9 @@ for ecc = 1:NEccRanges
                 subjIDs = {'HERO_asb1' 'HERO_gka1' 'HERO_mxs1'};
                 sessionIDs = {'101916' '102416' '102416'};
                 boldIds = {[7 9:12] [1:6] [1:6]}; % Note that for asb1, the 8th run was the wrong protocol. Dealing this by skipping it here and creating a dummy .mat response fil.e
-                finalPacketCellArrayIdx = {[1 [2] [3]};
+                finalPacketCellArrayIdx = {[1] [2] [3]};
             otherwise
-            error('data set doesn''t exist');
+                error('data set doesn''t exist');
         end
         packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
         packetCellArray = [];
@@ -87,7 +87,7 @@ for ecc = 1:NEccRanges
                 eccData             = load_nifti(eccFile);
                 areaData            = load_nifti(areasFile);
                 DO_ECC = true;
-                x
+                
                 if DO_ECC
                     ROI_V1              = find(abs(areaData.vol)==1 & ...
                         eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
@@ -141,7 +141,7 @@ for ecc = 1:NEccRanges
         end
         packetCellArray = finalPacketCellArrays;
         packetCellArrayHash = DataHash(packetCellArray);
-        packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_V1_' num2str(eccRange(1)) '_' num2str(eccRange(2)) 'deg_ 'packetCellArrayHash '.mat']);
+        packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_V1_' num2str(eccRange(1)) '_' num2str(eccRange(2)) 'deg_' packetCellArrayHash '.mat']);
         save(packetCacheFileName,'packetCellArray','-v7.3');
         fprintf(['Saved the packetCellArray with hash ID ' packetCellArrayHash '\n']);
     end
