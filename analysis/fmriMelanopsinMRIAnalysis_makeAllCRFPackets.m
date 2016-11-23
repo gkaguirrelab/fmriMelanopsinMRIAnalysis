@@ -112,9 +112,6 @@ for ecc = 1:NEccRanges
                 % Assemble the average response
                 params.respValues = mean(respvol(maskvol, :));
                 
-                %% Get the HRF
-                params.hrfFile = fullfile(params.sessionDir,'HRF','V1.mat');
-                
                 %% Get the stimulus values
                 [params.stimValues, params.stimTimeBase, params.stimMetaData] = fmriMelanopsinMRIAnalysis_makeStimStruct(params);
                 
@@ -127,18 +124,6 @@ for ecc = 1:NEccRanges
                 %% Make the packet
                 params.packetType = '';
                 thePacket = makePacket(params);
-                
-                
-                %% Fit packet
-                FIT = false;
-                if FIT
-                    [paramsFit, fVal, modelResponseStruct] = ...
-                        temporalFit.fitResponse(thePacket, ...
-                        'defaultParamsInfo', defaultParamsInfo, ...
-                        'paramLockMatrix', paramLockMatrix, ...
-                        'searchMethod','linearRegression');
-                    fitAmplitude(b, :) = paramsFit.paramMainMatrix;
-                end
                 packetCellArray{ss, c} = thePacket;
                 c = c+1;
             end
