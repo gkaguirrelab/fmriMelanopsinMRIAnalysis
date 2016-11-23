@@ -15,7 +15,7 @@ params0 = temporalFit.defaultParams();
 paramLockMatrix = [];
 
 %% Iterate over the subjects
-whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF' 'RodControl'};
+whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
 for dd = 1:length(whichDataSets)
     whichDataSet = whichDataSets{dd};
     switch whichDataSet
@@ -44,6 +44,8 @@ for dd = 1:length(whichDataSets)
             sessionIDs = {'101916' '102416' '102416'};
             boldIds = {[7 9:12] [1:6] [1:6]}; % Note that for asb1, the 8th run was the wrong protocol. Dealing this by skipping it here and creating a dummy .mat response fil.e
             finalPacketCellArrayIdx = {[1] [2] [3]};
+        otherwise
+            error('data set doesn''t exist');
     end
     packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
     packetCellArray = [];
