@@ -125,11 +125,9 @@ for ecc = 1:NEccRanges
                 defaultParamsInfo.nInstances = size(params.stimValues, 1);
                 
                 %% Make the packet
-                params.packetType = 'bold';
+                params.packetType = '';
                 thePacket = makePacket(params);
                 
-                % Prep the HRF
-                thePacket.kernel = prepareHRFKernel(thePacket.kernel);
                 
                 %% Fit packet
                 FIT = false;
