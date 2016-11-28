@@ -68,7 +68,7 @@ end % loop over packets
 figure
 responseStructCellArray=[];
 for ss=1:nSubjects
-    subplot(nSubjects,1,ss);
+    subplot(nSubjects+1,1,ss);
     subjectMatrix=squeeze(responseMatrix(:,ss,:,:));
     runCount=sum(sum(~isnan(subjectMatrix(:,:,1))));
     meanResponse=squeeze(nanmean(nanmean(subjectMatrix)))*100;
@@ -86,5 +86,19 @@ for ss=1:nSubjects
     plot(meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
     plot(meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
 end % loop over subjects
+
+% Add the average across subjects
+subplot(nSubjects+1,1,nSubjects+1);
+dataMatrix=[];
+for ss=1:nSubjects
+    dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;
+end
+meanResponse=nanmean(dataMatrix);
+semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
+plot(meanResponse);
+plot(meanResponse,'Color',[1 0 0]);
+hold on
+plot(meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
+plot(meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
 
 end % function
