@@ -9,14 +9,14 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='skip';
-meanEvokedResponseBehavior='skip';
+kernelCacheBehavior='make';
+meanEvokedResponseBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','RodControlScotopic','RodControlPhotopic'};
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
-kernelRegion=2;
+stimulatedRegion=2; % The primary region of analysis
 
 kernelStructCellArrayHash='9b003a07f79e59b5ee02b1afb48c7ccc';
 
@@ -53,16 +53,22 @@ dropBoxHEROkernelStructDir = ...
     'Dropbox-Aguirre-Brainard-Lab/Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
 
 
-% Derive the empirical HRF for each subject if so instructed
+%% Derive the empirical HRF for each subject
 if strcmp(kernelCacheBehavior,'make')
     
     % Set up the packetNames for the 5-25° field for the LMS, Mel, and
     % Splatter experiments. Obtain the HRFs.
-    packetFiles={fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{kernelRegion} '_' PacketHashArray{1}{kernelRegion} '.mat']),...
-        fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{kernelRegion} '_' PacketHashArray{2}{kernelRegion} '.mat']),...
-        fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{kernelRegion} '_' PacketHashArray{3}{kernelRegion} '.mat'])};
-    [kernelStructCellArray] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles);
+    packetFiles={fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']),...
+        fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']),...
+        fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{3}{stimulatedRegion} '.mat'])};
+    [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles);
     notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF experiments';
+    
+    % Save the plot of the HRFs
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'EmpiricalHRFs.pdf');
+    set(plotHandle,'Renderer','painters');
+    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandle);
     
     % Loop across subjects and save the HRF for each subject
     for ss=1:length(kernelStructCellArray)
@@ -80,23 +86,45 @@ if strcmp(kernelCacheBehavior,'make')
     
     % Save the set of HRFs for all subjects for ease of use later
     kernelStructCellArrayHash = DataHash(kernelStructCellArray);
-    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{kernelRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
     save(kernelStructCellArrayFileName,'kernelStructCellArray','-v7.3');
     fprintf(['Saved a kernelStructCellArray with hash ID ' kernelStructCellArrayHash '\n']);
     
 end % make HRFs
 
-% Obtain the average evoked response for each subject and stimulus type
+
+%% Obtain the average evoked responses and model the neural duration
 if strcmp(meanEvokedResponseBehavior,'make')
-    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{2} '_' PacketHashArray{1}{2} '.mat']);
-    LMS_responseStructCellArray = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
-    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{2} '_' PacketHashArray{2}{2} '.mat']);
-    Mel_responseStructCellArray = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
-    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{2} '_' PacketHashArray{3}{2} '.mat']);
-    Splatter_responseStructCellArray = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']);
+    [LMS_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs.pdf');
+    fmriMaxMel_suptitle(plotHandle,'LMS CRFs');
+    set(gca,'FontSize',6); 
+    set(plotHandle,'Renderer','painters');
+    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandle);
+    
+    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']);
+    [Mel_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs.pdf');
+    fmriMaxMel_suptitle(plotHandle,'Mel CRFs');
+    set(gca,'FontSize',6); 
+    set(plotHandle,'Renderer','painters');
+    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandle);
+        
+    packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{3}{stimulatedRegion} '.mat']);
+    [Splatter_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splatter_CRFs.pdf');
+    fmriMaxMel_suptitle(plotHandle,'Splatter CRFs');
+    set(gca,'FontSize',6); 
+    set(plotHandle,'Renderer','painters');
+    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandle);
+    
     
     % Load the kernelStructCellArray
-    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{kernelRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
     load(kernelStructCellArrayFileName);
     
     % Fit the 400% contrast response for the LMS and Mel with the DEDU model
@@ -162,7 +190,7 @@ if strcmp(rodScotopicControlBehavior,'make')
     load(packetFile);
     
     % Load the kernelStructCellArray
-    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{kernelRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
     load(kernelStructCellArrayFileName);
     
     % Measure the amplitude of responses for the rod control
@@ -181,10 +209,12 @@ if strcmp(rodScotopicControlBehavior,'make')
         end
     end
     
+    kernelMapper=[1,3,4];
+    
     for ss=1:3
         
         thePacket=tfeHandle.concatenatePackets(packetCellArray(ss,:),'stimValueExtender',0);
-        thePacket.kernel = prepareHRFKernel(kernelStructCellArray{ss});
+        thePacket.kernel = prepareHRFKernel(kernelStructCellArray{kernelMapper(ss)});
         
         % Downsample the stimulus to 100msec temporal resolution
         msecsToModel=max(thePacket.stimulus.timebase)+1;
@@ -195,8 +225,7 @@ if strcmp(rodScotopicControlBehavior,'make')
         defaultParamsInfo.nInstances=size(thePacket.stimulus.values,1);
         [paramsFit,fVal,modelResponseStruct] = ...
             tfeHandle.fitResponse(thePacket,...
-            'defaultParamsInfo',defaultParamsInfo,...
-            'searchMethod','linearRegression');
+            'defaultParamsInfo',defaultParamsInfo);
         
         figure
         tfeHandle.plot(thePacket.response,'NewWindow',false,'DisplayName','Data');
@@ -217,7 +246,7 @@ if strcmp(rodPhotopicControlBehavior,'make')
     load(packetFile);
     
     % Load the kernelStructCellArray
-    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{kernelRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
     load(kernelStructCellArrayFileName);
     
     % Measure the amplitude of responses for the rod control

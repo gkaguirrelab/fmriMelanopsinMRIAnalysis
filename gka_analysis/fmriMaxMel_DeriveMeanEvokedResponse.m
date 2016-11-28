@@ -1,4 +1,4 @@
-function [responseStructCellArray] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile)
+function [responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile)
 % function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
 %
 
@@ -59,10 +59,12 @@ end % loop over subjects
 
 % obtain the mean and SEM of the response across all measures for each
 % subject / stimulus
-figure
+plotHandle=figure();
+set(plotHandle,'PaperSize',[4,11])
 responseStructCellArray=[];
 for ss=1:nSubjects
     subplot(nSubjects+1,1,ss);
+    hold on
     for ii=1:nStimuli
         subjectMatrix=squeeze(responseMatrix(ii,ss,:,:));
         runCount=sum(~isnan(subjectMatrix(:,1)));
@@ -76,24 +78,35 @@ for ss=1:nSubjects
         responseStruct.metaData.numberEvents=runCount;
         responseStruct.metaData.units='%change';
         responseStructCellArray{ss,ii}=responseStruct;
-        plot(meanResponse);
-        hold on
+        plot(timebase/1000,meanResponse);
     end % loop over stimuli
+    ylim([-0.5 2]);
+    xlim([0 14]);
+    subName=responseStruct.metaData.subjectName;
+    strrep(subName, '_', ' ')
+    title(responseStruct.metaData.subjectName,'Interpreter', 'none'); axis square;
+    xlabel('Time [secs]'); ylabel('% BOLD change');
+    set(gca,'Xtick',0:1:14)
+    set(gca,'FontSize',8);
     hold off
 end % loop over subjects
 
 % Add the average across subjects
 subplot(nSubjects+1,1,nSubjects+1);
+hold on
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
         dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;
     end
     meanResponse=nanmean(dataMatrix);
-    semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
-    plot(meanResponse);
-    ylim([-0.5 1]);
-    hold on
+    plot(timebase/1000,meanResponse);
 end % loop over stimuli
+ylim([-0.5 2]);
+xlim([0 14]);
+title('mean across subject'); axis square;
+xlabel('Time [secs]'); ylabel('% BOLD change');
+set(gca,'Xtick',0:1:14)
+set(gca,'FontSize',6);
 
 end % function

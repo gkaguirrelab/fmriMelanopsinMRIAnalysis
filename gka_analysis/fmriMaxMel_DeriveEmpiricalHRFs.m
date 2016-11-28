@@ -1,4 +1,4 @@
-function [responseStructCellArray] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles)
+function [responseStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles)
 % function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
 %
 
@@ -62,10 +62,12 @@ for pp=1:nPackets
 end % loop over packets
 
 
-% obtain the mean and SEM of the HRF response across all measures for each
-% subject
+% Obtain the mean and SEM of the HRF response across all measures for each
+% subject and place this in the responseStructCellArray that will be
+% returned. Also, make a plot of the HRFs and return a plotHandle
 
-figure
+plotHandle=figure();
+set(plotHandle,'PaperSize',[4,11])
 responseStructCellArray=[];
 for ss=1:nSubjects
     subplot(nSubjects+1,1,ss);
@@ -81,24 +83,37 @@ for ss=1:nSubjects
     responseStruct.metaData.numberEvents=runCount;
     responseStruct.metaData.units='%change';
     responseStructCellArray{ss}=responseStruct;
-    plot(meanResponse,'Color',[1 0 0]);
+    plot(timebase/1000,meanResponse,'Color',[1 0 0]);
     hold on
-    plot(meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
-    plot(meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
+    plot(timebase/1000,meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
+    plot(timebase/1000,meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
+    ylim([-0.5 2]);
+    xlim([0 14]);
+    title(responseStruct.metaData.subjectName,'Interpreter', 'none'); axis square;
+    xlabel('Time [secs]'); ylabel('% BOLD change');
+        set(gca,'Xtick',0:1:14)
+
+set(gca,'FontSize',6); 
 end % loop over subjects
 
 % Add the average across subjects
 subplot(nSubjects+1,1,nSubjects+1);
 dataMatrix=[];
 for ss=1:nSubjects
-    dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;
+    dataMatrix(ss,:)=responseStructCellArray{ss}.values;
 end
 meanResponse=nanmean(dataMatrix);
 semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
-plot(meanResponse);
-plot(meanResponse,'Color',[1 0 0]);
+plot(timebase/1000,meanResponse,'Color',[1 0 0]);
 hold on
-plot(meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
-plot(meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
-
+plot(timebase/1000,meanResponse+semResponse,'Color',[0.5 0.5 0.5]);
+plot(timebase/1000,meanResponse-semResponse,'Color',[0.5 0.5 0.5]);
+ylim([-0.5 2]);
+xlim([0 14]);
+title('mean across subject'); axis square;
+xlabel('Time [secs]'); ylabel('% BOLD change');
+    set(gca,'Xtick',0:1:14)
+set(gca,'FontSize',6); 
+fmriMaxMel_suptitle(plotHandle,'HRFs for each subject');
+set(gca,'FontSize',6); 
 end % function
