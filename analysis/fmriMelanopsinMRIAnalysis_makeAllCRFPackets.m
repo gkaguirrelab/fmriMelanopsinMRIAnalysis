@@ -25,13 +25,20 @@ for ecc = 1:NEccRanges
     clear packetCellArray;
     eccRange = [eccRangeStart(ecc) eccRangeEnd(ecc)];
     whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
+    whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
     for dd = 1:length(whichDataSets)
         whichDataSet = whichDataSets{dd};
         switch whichDataSet
             case 'MaxMel400Pct'
-                
+                subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
+                sessionIDs = {'032416' '032516' '033116' '040616'};
+                boldIds = {[1:11] [1:11] [1:12] [1:12]};
+                finalPacketCellArrayIdx = {[1] [2] [3] [4]};
             case 'MaxLMS400Pct'
-            
+                subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
+                sessionIDs = {'040716' '033016' '040116' '040816'};
+                boldIds = {[1:10] [1:12] [1:12] [1:12]};
+                finalPacketCellArrayIdx = {[1] [2] [3] [4]};
             case 'SplatterControlCRF'
                 subjIDs = {'HERO_asb1' 'HERO_aso1' 'HERO_gka1' 'HERO_mxs1'};
                 sessionIDs = {'051016' '042916' '050616' '050916'};
