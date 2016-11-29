@@ -93,8 +93,11 @@ if strcmp(kernelCacheBehavior,'make')
 end % make HRFs
 
 
-%% Obtain the average evoked responses and model the neural duration
+%% Evoked response analysis
 if strcmp(meanEvokedResponseBehavior,'make')
+
+    % Obtain the average evoked response for each stimulus type / contrast
+    % level by subject and averaged across subjects. Save these plots.
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']);
     [LMS_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs.pdf');
@@ -121,7 +124,10 @@ if strcmp(meanEvokedResponseBehavior,'make')
     set(plotHandle,'Renderer','painters');
     print(plotHandle, plotFileName, '-dpdf', '-fillpage');
     close(plotHandle);
-    
+
+    % Plot the mean and SEM (across subjects) of the response to the
+    % largest contrast stimulus
+    responseStruct.metaData.subjectName
     
     % Load the kernelStructCellArray
     kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
