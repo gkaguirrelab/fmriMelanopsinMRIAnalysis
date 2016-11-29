@@ -82,12 +82,11 @@ for ss=1:nSubjects
     end % loop over stimuli
     ylim([-0.5 2]);
     xlim([0 14]);
-    subName=responseStruct.metaData.subjectName;
-    strrep(subName, '_', ' ')
     title(responseStruct.metaData.subjectName,'Interpreter', 'none'); axis square;
     xlabel('Time [secs]'); ylabel('% BOLD change');
-    set(gca,'Xtick',0:1:14)
-    set(gca,'FontSize',8);
+    set(gca,'Xtick',0:2:14);
+    set(gca,'FontSize',6);
+    box off;
     hold off
 end % loop over subjects
 
@@ -106,7 +105,7 @@ ylim([-0.5 2]);
 xlim([0 14]);
 title('mean across subject'); axis square;
 xlabel('Time [secs]'); ylabel('% BOLD change');
-set(gca,'Xtick',0:1:14)
+set(gca,'Xtick',0:2:14)
 set(gca,'FontSize',6);
-
+box off;
 end % function

@@ -39,7 +39,7 @@ for pp=1:nPackets
                 % attention event is the last stimulusType
                 nStimuli=length(unique(thePacket.stimulus.metaData.stimTypes));
                 stimIndex=nStimuli;
-                                
+                
                 % Convert response.values to % change units
                 signal=thePacket.response.values;
                 signal=(signal-nanmean(signal))/nanmean(signal);
@@ -91,9 +91,9 @@ for ss=1:nSubjects
     xlim([0 14]);
     title(responseStruct.metaData.subjectName,'Interpreter', 'none'); axis square;
     xlabel('Time [secs]'); ylabel('% BOLD change');
-        set(gca,'Xtick',0:1:14)
-
-set(gca,'FontSize',6); 
+    set(gca,'Xtick',0:2:14)
+    set(gca,'FontSize',6);
+    box off;
 end % loop over subjects
 
 % Add the average across subjects
@@ -112,8 +112,9 @@ ylim([-0.5 2]);
 xlim([0 14]);
 title('mean across subject'); axis square;
 xlabel('Time [secs]'); ylabel('% BOLD change');
-    set(gca,'Xtick',0:1:14)
-set(gca,'FontSize',6); 
+set(gca,'Xtick',0:2:14)
+set(gca,'FontSize',6);
 fmriMaxMel_suptitle(plotHandle,'HRFs for each subject');
-set(gca,'FontSize',6); 
+set(gca,'FontSize',6);
+box off;
 end % function
