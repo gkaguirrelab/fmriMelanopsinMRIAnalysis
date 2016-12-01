@@ -66,6 +66,8 @@ if strcmp(kernelCacheBehavior,'make')
     
     % Save the plot of the HRFs
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'EmpiricalHRFs.pdf');
+    fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '- Empirical HRFs']);
+    set(gca,'FontSize',6); 
     set(plotHandle,'Renderer','painters');
     print(plotHandle, plotFileName, '-dpdf', '-fillpage');
     close(plotHandle);
@@ -96,38 +98,68 @@ end % make HRFs
 %% Evoked response analysis
 if strcmp(meanEvokedResponseBehavior,'make')
 
+    % Calculate the SubjectScalar, which accounts for variation in the
+    % amplitude of the BOLD fMRI response across subjects
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    load(kernelStructCellArrayFileName);
+    for ss=1:length(kernelStructCellArray)
+      subjectScaler(ss)=max(kernelStructCellArray{ss}.values);
+    end
+    subjectScaler=subjectScaler./mean(subjectScaler);
+    
     % Obtain the average evoked response for each stimulus type / contrast
     % level by subject and averaged across subjects. Save these plots.
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']);
-    [LMS_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
-    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs.pdf');
-    fmriMaxMel_suptitle(plotHandle,'LMS CRFs');
+    [LMS_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
+
+    % save plots
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs_bySubject.pdf');
+    fmriMaxMel_suptitle(plotHandleBySubject,[RegionLabels{stimulatedRegion} '- LMS CRFs']);
     set(gca,'FontSize',6); 
-    set(plotHandle,'Renderer','painters');
-    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-    close(plotHandle);
+    set(plotHandleBySubject,'Renderer','painters');
+    print(plotHandleBySubject, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleBySubject);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs_byStimulus.pdf');
+    fmriMaxMel_suptitle(plotHandleByStimulus,[RegionLabels{stimulatedRegion} '- LMS CRFs']);
+    set(gca,'FontSize',6); 
+    set(plotHandleByStimulus,'Renderer','painters');
+    print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleByStimulus);
+    
     
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']);
-    [Mel_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
-    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs.pdf');
-    fmriMaxMel_suptitle(plotHandle,'Mel CRFs');
+    [Mel_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
+
+    % save plots
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs_bySubject.pdf');
+    fmriMaxMel_suptitle(plotHandleBySubject,[RegionLabels{stimulatedRegion} '- Mel CRFs']);
     set(gca,'FontSize',6); 
-    set(plotHandle,'Renderer','painters');
-    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-    close(plotHandle);
+    set(plotHandleBySubject,'Renderer','painters');
+    print(plotHandleBySubject, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleBySubject);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs_byStimulus.pdf');
+    fmriMaxMel_suptitle(plotHandleByStimulus,[RegionLabels{stimulatedRegion} '- MelS CRFs']);
+    set(gca,'FontSize',6); 
+    set(plotHandleByStimulus,'Renderer','painters');
+    print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleByStimulus);
         
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{3}{stimulatedRegion} '.mat']);
-    [Splatter_responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
-    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splatter_CRFs.pdf');
-    fmriMaxMel_suptitle(plotHandle,'Splatter CRFs');
-    set(gca,'FontSize',6); 
-    set(plotHandle,'Renderer','painters');
-    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-    close(plotHandle);
+    [Splatter_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
 
-    % Plot the mean and SEM (across subjects) of the response to the
-    % largest contrast stimulus
-    responseStruct.metaData.subjectName
+    % save plots
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splat_CRFs_bySubject.pdf');
+    fmriMaxMel_suptitle(plotHandleBySubject,[RegionLabels{stimulatedRegion} '- Splat CRFs']);
+    set(gca,'FontSize',6); 
+    set(plotHandleBySubject,'Renderer','painters');
+    print(plotHandleBySubject, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleBySubject);
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splat_CRFs_byStimulus.pdf');
+    fmriMaxMel_suptitle(plotHandleByStimulus,[RegionLabels{stimulatedRegion} '- Splat CRFs']);
+    set(gca,'FontSize',6); 
+    set(plotHandleByStimulus,'Renderer','painters');
+    print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandleByStimulus);
     
     % Load the kernelStructCellArray
     kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);

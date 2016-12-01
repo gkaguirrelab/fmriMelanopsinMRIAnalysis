@@ -69,8 +69,9 @@ end % loop over packets
 plotHandle=figure();
 set(gcf, 'PaperSize', [8.5 11]);
 for ss=1:nSubjects+1
-        subPlotHandle{ss}=subplot(nSubjects+1,1,ss);
+    subPlotHandle{ss}=subplot(nSubjects+1,1,ss);
 end
+hold on
 
 responseStructCellArray=[];
 for ss=1:nSubjects
@@ -88,7 +89,7 @@ for ss=1:nSubjects
     responseStructCellArray{ss}=responseStruct;
     
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, [1 0 0], [responseStruct.metaData.subjectName ' ±SEM trials']);
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [responseStruct.metaData.subjectName ' ±SEM runs']);
     
 end % loop over subjects
 
@@ -101,6 +102,6 @@ meanResponse=nanmean(dataMatrix);
 semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
 
 % plot the mean response and error
-fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, semResponse, [1 0 0], [responseStruct.metaData.subjectName ' ±SEM trials']);
+fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', 'mean ±SEM subjects');
 
 end % function

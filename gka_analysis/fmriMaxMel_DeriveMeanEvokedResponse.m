@@ -1,4 +1,4 @@
-function [responseStructCellArray, plotHandle] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile)
+function [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler)
 % function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
 %
 
@@ -56,15 +56,17 @@ end % loop over subjects
 
 
 
-
-% obtain the mean and SEM of the response across all measures for each
+% obtain the mean across all measures for each
 % subject / stimulus
-plotHandle=figure();
-set(plotHandle,'PaperSize',[4,11])
+plotHandleBySubject=figure();
+set(gcf, 'PaperSize', [8.5 11]);
+for ss=1:nSubjects+1
+    subPlotHandle{ss}=subplot(nSubjects+1,1,ss);
+end
+hold on
+
 responseStructCellArray=[];
 for ss=1:nSubjects
-    subplot(nSubjects+1,1,ss);
-    hold on
     for ii=1:nStimuli
         subjectMatrix=squeeze(responseMatrix(ii,ss,:,:));
         runCount=sum(~isnan(subjectMatrix(:,1)));
@@ -78,34 +80,50 @@ for ss=1:nSubjects
         responseStruct.metaData.numberEvents=runCount;
         responseStruct.metaData.units='%change';
         responseStructCellArray{ss,ii}=responseStruct;
-        plot(timebase/1000,meanResponse);
+        
+        % plot the mean response and error
+        lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1)];
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', responseStruct.metaData.subjectName);
+        
     end % loop over stimuli
-    ylim([-0.5 2]);
-    xlim([0 14]);
-    title(responseStruct.metaData.subjectName,'Interpreter', 'none'); axis square;
-    xlabel('Time [secs]'); ylabel('% BOLD change');
-    set(gca,'Xtick',0:2:14);
-    set(gca,'FontSize',6);
-    box off;
-    hold off
 end % loop over subjects
 
 % Add the average across subjects
-subplot(nSubjects+1,1,nSubjects+1);
-hold on
+
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
-        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values .* subjectScaler(ss);
     end
     meanResponse=nanmean(dataMatrix);
-    plot(timebase/1000,meanResponse);
+    % plot the mean response and error
+        lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1)];
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', 'subject mean (with subject scaler)');
 end % loop over stimuli
-ylim([-0.5 2]);
-xlim([0 14]);
-title('mean across subject'); axis square;
-xlabel('Time [secs]'); ylabel('% BOLD change');
-set(gca,'Xtick',0:2:14)
-set(gca,'FontSize',6);
-box off;
+hold off
+
+
+% obtain the mean and SEM of the response subjects for each stimulus
+plotHandleByStimulus=figure();
+set(gcf, 'PaperSize', [8.5 11]);
+for ii=1:nStimuli
+    subPlotHandle{ii}=subplot(nStimuli,1,ii);
+end
+hold on
+
+for ii=1:nStimuli
+    dataMatrix=[];
+    for ss=1:nSubjects
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values .* subjectScaler(ss);
+    end
+    meanResponse=nanmean(dataMatrix);
+    semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
+    % plot the mean response and error
+        lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) 0 0];
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ii}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' (with subjectScaler) ± SEM subjects']);
+end % loop over stimuli
+hold off
+
+
+
 end % function
