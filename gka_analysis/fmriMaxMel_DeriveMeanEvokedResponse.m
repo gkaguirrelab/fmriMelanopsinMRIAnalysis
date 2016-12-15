@@ -93,21 +93,21 @@ for ss=1:nSubjects
         fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', responseStruct.metaData.subjectName);
     end % loop over stimuli
     
-    % Obtain the amplitude of the average response to all stimuli for a
-    % given subject    
-    subjectScaler(ss)=max(mean(acrossStimResponse));
     
 end % loop over subjects
 
+% The subjectScaler is an array of HRF amplitudes, one for each subject.
+% We adjust these to have a mean of unity, and then use this to scale
+% responses from each subject prior to calculating the across-subject
+% evoked response average
 subjectScaler=subjectScaler ./ mean(subjectScaler);
-subjectScaler
 
 % Add the average across subjects
 
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
-        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;% ./ subjectScaler(ss);
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values ./ subjectScaler(ss);
     end
     meanResponse=nanmean(dataMatrix);
     % plot the mean response and error
@@ -128,7 +128,7 @@ hold on
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
-        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;% ./ subjectScaler(ss);
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values ./ subjectScaler(ss);
     end
     meanResponse=nanmean(dataMatrix);
     semResponse=nanstd(dataMatrix)/sqrt(nSubjects);

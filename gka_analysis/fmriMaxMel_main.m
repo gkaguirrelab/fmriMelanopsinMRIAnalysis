@@ -9,7 +9,7 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='skip';
+kernelCacheBehavior='load';
 meanEvokedResponseBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
@@ -18,7 +18,7 @@ ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','RodControlScotopic','RodCont
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 stimulatedRegion=2; % The primary region of analysis
 
-kernelStructCellArrayHash='9b003a07f79e59b5ee02b1afb48c7ccc';
+kernelStructCellArrayHash='36ef975e07435afe54992b1c40c7e2e2';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -73,9 +73,14 @@ if strcmp(kernelCacheBehavior,'make')
     close(plotHandle);
     
     % Loop across subjects and save the HRF for each subject
+    % Also calculate a subjectScaler to adjust other response amplitudes
+    % based upon HRF amplitude
     for ss=1:length(kernelStructCellArray)
         kernelStruct=kernelStructCellArray{ss};
         kernelStruct.metaData.notes=notes;
+
+        % calculate and save the amplitude of response
+        subjectScaler(ss)=max(kernelStruct.values);
         
         % calculate the hex MD5 hash for the hrfKernelStructCellArray
         kernelStructHash = DataHash(kernelStruct);
@@ -94,14 +99,26 @@ if strcmp(kernelCacheBehavior,'make')
     
 end % make HRFs
 
+% Load the kernelStructCellArray
 
+if strcmp(kernelCacheBehavior,'load')
+    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+    load(kernelStructCellArrayFileName);
+    
+    % Loop across subjects and  calculate a subjectScaler to adjust other response amplitudes
+    % based upon HRF amplitude
+    for ss=1:length(kernelStructCellArray)
+        subjectScaler(ss)=max(kernelStruct.values);
+    end
+end
+    
 %% Evoked response analysis
 if strcmp(meanEvokedResponseBehavior,'make')
     
     % Obtain the average evoked response for each stimulus type / contrast
     % level by subject and averaged across subjects. Save these plots.
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']);
-    [LMS_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    [LMS_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs_bySubject.pdf');
@@ -119,7 +136,7 @@ if strcmp(meanEvokedResponseBehavior,'make')
     
     
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']);
-    [Mel_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    [Mel_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs_bySubject.pdf');
@@ -136,7 +153,7 @@ if strcmp(meanEvokedResponseBehavior,'make')
     close(plotHandleByStimulus);
         
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{3}{stimulatedRegion} '.mat']);
-    [Splatter_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
+    [Splatter_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splat_CRFs_bySubject.pdf');
