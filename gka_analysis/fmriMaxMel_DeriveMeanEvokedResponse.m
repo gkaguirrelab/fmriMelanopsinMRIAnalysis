@@ -65,14 +65,21 @@ for ss=1:nSubjects+1
 end
 hold on
 
+% While we are looping over stimuli and subjects, obtain the average
+% response across stimuli for each subject. This is then used to adjust the
+% amplitude of the data from each subject prior to averaging.
+
 responseStructCellArray=[];
 for ss=1:nSubjects
+    
+    acrossStimResponse=[];
+    
     for ii=1:nStimuli
         subjectMatrix=squeeze(responseMatrix(ii,ss,:,:));
         runCount=sum(~isnan(subjectMatrix(:,1)));
         meanResponse=squeeze(nanmean(subjectMatrix))*100;
         meanResponse=meanResponse-meanResponse(1);
-        semResponse=squeeze(nanmean(subjectMatrix))*100/sqrt(runCount);
+        semResponse=squeeze(nanstd(subjectMatrix))*100/sqrt(runCount);
         responseStruct.timebase=timebase;
         responseStruct.values=meanResponse;
         responseStruct.sem=semResponse;
@@ -80,30 +87,37 @@ for ss=1:nSubjects
         responseStruct.metaData.numberEvents=runCount;
         responseStruct.metaData.units='%change';
         responseStructCellArray{ss,ii}=responseStruct;
-        
+        acrossStimResponse(ii,:)=meanResponse;
         % plot the mean response and error
         lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1)];
         fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', responseStruct.metaData.subjectName);
-        
     end % loop over stimuli
+    
+    % Obtain the amplitude of the average response to all stimuli for a
+    % given subject    
+    subjectScaler(ss)=max(mean(acrossStimResponse));
+    
 end % loop over subjects
+
+subjectScaler=subjectScaler ./ mean(subjectScaler);
+subjectScaler
 
 % Add the average across subjects
 
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
-        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values .* subjectScaler(ss);
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;% ./ subjectScaler(ss);
     end
     meanResponse=nanmean(dataMatrix);
     % plot the mean response and error
-        lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1)];
-        fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', 'subject mean (with subject scaler)');
+    lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1) (1+nStimuli-ii)/(nStimuli+1)];
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, [], 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', 'subject mean (with subject scaler)');
 end % loop over stimuli
 hold off
 
 
-% obtain the mean and SEM of the response subjects for each stimulus
+% obtain the mean and SEM of the response across subjects for each stimulus
 plotHandleByStimulus=figure();
 set(gcf, 'PaperSize', [8.5 11]);
 for ii=1:nStimuli
@@ -114,13 +128,13 @@ hold on
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
-        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values .* subjectScaler(ss);
+        dataMatrix(ss,:)=responseStructCellArray{ss,ii}.values;% ./ subjectScaler(ss);
     end
     meanResponse=nanmean(dataMatrix);
-    semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
+    semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
     % plot the mean response and error
-        lineColorBase = [(1+nStimuli-ii)/(nStimuli+1) 0 0];
-        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ii}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' (with subjectScaler) ± SEM subjects']);
+    lineColorBase = [1 0 0];
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ii}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' (with subjectScaler) ± SEM subjects']);
 end % loop over stimuli
 hold off
 

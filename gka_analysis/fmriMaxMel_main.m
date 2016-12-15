@@ -9,7 +9,7 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='make';
+kernelCacheBehavior='skip';
 meanEvokedResponseBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
@@ -97,20 +97,11 @@ end % make HRFs
 
 %% Evoked response analysis
 if strcmp(meanEvokedResponseBehavior,'make')
-
-    % Calculate the SubjectScalar, which accounts for variation in the
-    % amplitude of the BOLD fMRI response across subjects
-    kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-    load(kernelStructCellArrayFileName);
-    for ss=1:length(kernelStructCellArray)
-      subjectScaler(ss)=max(kernelStructCellArray{ss}.values);
-    end
-    subjectScaler=subjectScaler./mean(subjectScaler);
     
     % Obtain the average evoked response for each stimulus type / contrast
     % level by subject and averaged across subjects. Save these plots.
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{1} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{1}{stimulatedRegion} '.mat']);
-    [LMS_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
+    [LMS_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'LMS_CRFs_bySubject.pdf');
@@ -128,7 +119,7 @@ if strcmp(meanEvokedResponseBehavior,'make')
     
     
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']);
-    [Mel_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
+    [Mel_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Mel_CRFs_bySubject.pdf');
@@ -145,7 +136,7 @@ if strcmp(meanEvokedResponseBehavior,'make')
     close(plotHandleByStimulus);
         
     packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{3} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{3}{stimulatedRegion} '.mat']);
-    [Splatter_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler);
+    [Splatter_responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile);
 
     % save plots
     plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'Splat_CRFs_bySubject.pdf');

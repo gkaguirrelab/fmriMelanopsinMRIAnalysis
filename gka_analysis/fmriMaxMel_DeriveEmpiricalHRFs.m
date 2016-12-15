@@ -79,7 +79,7 @@ for ss=1:nSubjects
     runCount=sum(sum(~isnan(subjectMatrix(:,:,1))));
     meanResponse=squeeze(nanmean(nanmean(subjectMatrix)))*100;
     meanResponse=meanResponse-meanResponse(1);
-    semResponse=squeeze(nanmean(nanmean(subjectMatrix)))*100/sqrt(runCount);
+    semResponse=squeeze(nanstd(nanmean(subjectMatrix)))*100/sqrt(runCount);
     responseStruct.timebase=timebase;
     responseStruct.values=meanResponse';
     responseStruct.sem=semResponse';
@@ -99,7 +99,7 @@ for ss=1:nSubjects
     dataMatrix(ss,:)=responseStructCellArray{ss}.values;
 end
 meanResponse=nanmean(dataMatrix);
-semResponse=nanmean(dataMatrix)/sqrt(nSubjects);
+semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
 
 % plot the mean response and error
 fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', 'mean ±SEM subjects');
