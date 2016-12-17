@@ -108,6 +108,7 @@ if strcmp(kernelCacheBehavior,'load')
     % Loop across subjects and  calculate a subjectScaler to adjust other response amplitudes
     % based upon HRF amplitude
     for ss=1:length(kernelStructCellArray)
+        kernelStruct=kernelStructCellArray{ss};
         subjectScaler(ss)=max(kernelStruct.values);
     end
 end
