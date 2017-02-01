@@ -10,6 +10,7 @@ tfeHandle = tfeIAMP('verbosity',verbosity);
 % Set some parameters for the evoked response derivation
 msecsToModel=14000;
 numFourierComponents=14;
+TRmsecs=800;
 
 % Loads into memory the variable packetCellArray and kernelStructCellArray
 load(packetFile);
@@ -24,16 +25,16 @@ nRuns=size(packetCellArray,2);
 nStimuli=length(unique(packetCellArray{1,1}.stimulus.metaData.stimTypes));
 
 % Create a carry-over matrix that will hold results from each subject
-theResponseMatrix=nan(nStimuli,nStimuli,nRuns*2);
-theCountMatrix=zeros(nStimuli,nStimuli);
+acrossSubMatrix=zeros(nStimuli,nStimuli,nSubjects);
 
 for ss=1:nSubjects
-    
+
+    theResponseMatrix=zeros(nStimuli,nStimuli);
+    theCountMatrix=zeros(nStimuli,nStimuli);
+
     for rr=1:nRuns
         thePacket=packetCellArray{ss,rr};
-        
-        rr
-        
+                
         if rr==1
             subjectMetaData{ss}=thePacket.metaData;
         end
@@ -44,9 +45,21 @@ for ss=1:nSubjects
             signal=(signal-nanmean(signal))/nanmean(signal);
             thePacket.response.values=signal;
             
-            % add the kernel
-            thePacket.kernel = prepareHRFKernel(kernelStructCellArray{ss});
+            % grab the subject hrf and prepare it as a kernel
+            hrfKernelStruct=kernelStructCellArray{ss};
+            check = diff(thePacket.response.timebase);
+            responseDeltaT = check(1);
+            nSamples = ceil((hrfKernelStruct.timebase(end)-hrfKernelStruct.timebase(1))/responseDeltaT);
+            newKernelTimebase = hrfKernelStruct.timebase(1):responseDeltaT:(hrfKernelStruct.timebase(1)+nSamples*responseDeltaT);
+            hrfKernelStruct = tfeHandle.resampleTimebase(hrfKernelStruct,newKernelTimebase);
+            thePacket.kernel=prepareHRFKernel(hrfKernelStruct);
             
+            % downsample the stimulus values to 100 ms deltaT to speed things up
+            totalResponseDuration=TRmsecs * ...
+                length(thePacket.response.values);
+            newStimulusTimebase=linspace(0,totalResponseDuration-100,totalResponseDuration/100);
+            thePacket.stimulus=tfeHandle.resampleTimebase(thePacket.stimulus,newStimulusTimebase);
+                        
             % identify the number of stimulus instances in this packet
             stimTypes=thePacket.stimulus.metaData.stimTypes;
             defaultParamsInfo.nInstances=length(stimTypes);
@@ -74,16 +87,12 @@ for ss=1:nSubjects
                         
         end % check for not empty packet
     end % loop over runs
-    
-    badCells=find(theCountMatrix==0);
-    if ~isempty(badCells)
-        error('There is a bad cell with no values in this carry over matrix');
-    end
-    
-    theResponseMatrix=theResponseMatrix./theCountMatrix;
+        
+    acrossSubMatrix(:,:,ss)=theResponseMatrix./theCountMatrix;
     
 end % loop over subjects
 
-
+meanResponseMatrix=nanmean(acrossSubMatrix,3);
+semResponseMatrix=nanstd(acrossSubMatrix,1,3)/sqrt(nSubjects);
 
 end % function

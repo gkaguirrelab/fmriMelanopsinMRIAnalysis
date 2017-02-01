@@ -112,7 +112,11 @@ if strcmp(kernelCacheBehavior,'load')
         subjectScaler(ss)=max(kernelStruct.values);
     end
 end
-    
+
+packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{2} '_' RegionLabels{stimulatedRegion} '_' PacketHashArray{2}{stimulatedRegion} '.mat']);
+[responseMatrix] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelStructCellArrayFileName);
+
+
 %% Evoked response analysis
 if strcmp(meanEvokedResponseBehavior,'make')
     
