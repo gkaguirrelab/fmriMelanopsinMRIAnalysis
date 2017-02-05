@@ -1,5 +1,5 @@
-function [responseMatrix] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelFile)
-% function [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, subjectScaler)
+function [meanResponseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelFile)
+% function [responseMatrix] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelFile)
 %
 
 verbosity='none';
@@ -94,5 +94,9 @@ end % loop over subjects
 
 meanResponseMatrix=nanmean(acrossSubMatrix,3);
 semResponseMatrix=nanstd(acrossSubMatrix,1,3)/sqrt(nSubjects);
+
+plotHandle=figure();
+set(gcf, 'PaperSize', [8.5 11]);
+imagesc(meanResponseMatrix);
 
 end % function
