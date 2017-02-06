@@ -49,7 +49,7 @@ end % loop over instances of this stimulusType
     eventTimesArray, ...
     msecsToModel, numFourierComponents );
 
-% build the attentionEventPacket for fitting
+% build the stimulusEventPacket for fitting
 stimulusEventPacket.stimulus=stimulusStruct;
 stimulusEventPacket.response.timebase=thePacket.response.timebase;
 stimulusEventPacket.response.values=thePacket.response.values;
@@ -73,12 +73,6 @@ responseStruct.timebase=fourierSetStructure.timebase;
 % Multiply the amplitude values of the parameter fit by the elements of the
 % Fourier Set
 responseStruct.values=(fourierSetStructure.values'*paramsFit.paramMainMatrix)';
-
-% Down-sample the kernelStruct to the resolution of the model
-%modelResolution=msecsToModel/numFourierComponents;
-%newTimebase=linspace(0,msecsToModel-modelResolution,msecsToModel/modelResolution);
-%responseStruct=temporalFit.resampleTimebase(responseStruct,newTimebase);
-
 
 % close the temporalFit object
 clear temporalFit
