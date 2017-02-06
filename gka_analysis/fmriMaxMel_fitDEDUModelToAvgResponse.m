@@ -1,5 +1,5 @@
-function [durationArray, plotHandle] = fmriMaxMel_fitDEDUModel(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx)
-% function [delayArray, plotHandle] = fmriMaxMel_fitDEDUModel(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx)
+function [durationArray, plotHandle] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx)
+% function [delayArray, plotHandle] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx)
 %
 
 verbosity='none';
