@@ -134,10 +134,10 @@ switch carryOverResponseBehavior
         fprintf('Skipping analysis of carry-over effects\n');
 end % switch for carryOverResponseBehavior
 
-        kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-        for experiment=1:3
- [xValFitStructure, plotHandle] = fmriMaxMel_fitDEDUModelToTimeSeries(packetFiles{experiment}, kernelStructCellArrayFileName);
-        end
+         kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+         for experiment=1:3
+  [xValFitStructure, plotHandle] = fmriMaxMel_fitDEDUModelToTimeSeries(packetFiles{experiment}, kernelStructCellArrayFileName);
+         end
  
 %% Make or load the average evoked responses
 switch meanEvokedResponseBehavior
