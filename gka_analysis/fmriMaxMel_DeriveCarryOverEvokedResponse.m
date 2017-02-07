@@ -97,6 +97,6 @@ semResponseMatrix=nanstd(acrossSubMatrix,1,3)/sqrt(nSubjects);
 
 plotHandle=figure();
 set(gcf, 'PaperSize', [8.5 11]);
-imagesc(meanResponseMatrix);
+imagesc(meanResponseMatrix(1:end-1,1:end-1));
 
 end % function
