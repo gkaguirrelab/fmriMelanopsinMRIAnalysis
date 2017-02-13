@@ -11,14 +11,14 @@ warning on;
 % Define cache behavior
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='load';
+meanEvokedResponseBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','RodControlScotopic','RodControlPhotopic'};
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
-kernelStructCellArrayHash='36ef975e07435afe54992b1c40c7e2e2';
+kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 
 meanEvokedHash='a53b1b4be4e29a3a8cf00d38f9397013';
 
@@ -52,7 +52,7 @@ dropboxAnalysisDir = ...
 
 dropBoxHEROkernelStructDir = ...
     fullfile('/Users', userName, ...
-    'Dropbox-Aguirre-Brainard-Lab/Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
+    '/Dropbox (Aguirre-Brainard Lab)/Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
 
 
 %% Pick a region and define the list of packet files
@@ -67,8 +67,8 @@ end
 switch kernelCacheBehavior
     case 'make'
         fprintf('Making the kernelStructCellArray\n');
-        
-        [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles);
+       
+        [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:3,:));
         notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF experiments';
         
         % Save the plot of the HRFs
@@ -134,10 +134,10 @@ switch carryOverResponseBehavior
         fprintf('Skipping analysis of carry-over effects\n');
 end % switch for carryOverResponseBehavior
 
-%         kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-%         for experiment=1:3
-%  [xValFitStructure, plotHandle] = fmriMaxMel_fitDEDUModelToTimeSeries(packetFiles{experiment}, kernelStructCellArrayFileName);
-%         end
+%          kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+%          for experiment=1:3
+%   [xValFitStructure, plotHandle] = fmriMaxMel_fitDEDUModelToTimeSeries(packetFiles{experiment}, kernelStructCellArrayFileName);
+%          end
  
 %% Make or load the average evoked responses
 switch meanEvokedResponseBehavior
@@ -145,7 +145,7 @@ switch meanEvokedResponseBehavior
         fprintf('Obtaining mean evoked responses\n');
         for experiment=1:3
             % Derive mean evoked response
-            [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
+            [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
             
             % save plot x subject
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_CRFs_bySubject.pdf']);
@@ -162,6 +162,14 @@ switch meanEvokedResponseBehavior
             set(plotHandleByStimulus,'Renderer','painters');
             print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
             close(plotHandleByStimulus);
+            
+             % save time-series plots
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_FourierFitsToTimeSeriesBySubject.pdf']);
+            fmriMaxMel_suptitle(plotHandleFitsBySubject,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - Time series fits']);
+            set(gca,'FontSize',6);
+            set(plotHandleFitsBySubject,'Renderer','painters');
+            print(plotHandleFitsBySubject, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandleFitsBySubject);
             
             % store the responseStructCellArray
             meanEvokedResponsesCellArray{experiment}=responseStructCellArray;

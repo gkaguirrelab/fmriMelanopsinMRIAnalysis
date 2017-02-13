@@ -2,11 +2,11 @@ function [responseStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(
 % function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
 %
 
-verbosity='none';
+verbosity='full';
 
 % Set some parameters for the HRF derivation
-msecsToModel=14000;
-numFourierComponents=14;
+msecsToModel=16000;
+numFourierComponents=16;
 
 % Since the number of runs can vary across subjects / experiments, I'll
 % hard code the max number here. It is not harmful for this value to be

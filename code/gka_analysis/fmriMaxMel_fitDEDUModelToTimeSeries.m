@@ -25,7 +25,7 @@ if strcmp(verbosity,'full')
 end
 
 % Construct the model object to be used for resampling and fitting
-tfeHandle = tfeIAMP('verbosity','none');
+tfeHandle = tfeDEDU('verbosity','none');
 
 % Get the dimensions of the data
 nSubjects=size(packetCellArray,1);
@@ -86,7 +86,7 @@ end
 for ss=1:nSubjects
         
         % Identify the set of packets for this subject
-        subPacketCellArray=packetCellArray(ss,:);
+        subPacketCellArray=packetCellArray(ss,1);
 
         % Remove any empty packets
         goodPacketIdx=find(~cellfun(@isempty,subPacketCellArray));
@@ -96,17 +96,18 @@ for ss=1:nSubjects
         thePacket=tfeHandle.concatenatePackets(subPacketCellArray);
         
         % Combine the instances
-        thePacket.stimulus = combineStimInstances( thePacket.stimulus );
+%        thePacket.stimulus = combineStimInstances( thePacket.stimulus );
 
         % Mean center the stimulus values
         thePacket.stimulus = meanCenterStimStruct( thePacket.stimulus );
         
         defaultParamsInfo.nInstances=size(thePacket.stimulus.values,1);
 
-        
+        thePacket.kernel=[];
             [paramsFit,fVal,modelResponseStruct] = ...
         tfeHandle.fitResponse(thePacket,...
-        'defaultParamsInfo', defaultParamsInfo);, ...
+        'defaultParamsInfo', defaultParamsInfo);%, ...
+%            'searchMethod','linearRegression');
 %        'DiffMinChange',0.001);
 
     
