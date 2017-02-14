@@ -29,7 +29,7 @@ set(gcf, 'PaperSize', [8.5 11]);
 for ss=1:nSubjects
     
     if strcmp(verbosity,'full')
-        fprintf(['\tFitting Fourier model to obtain mean response for subject' strtrim(num2str(ss)) '\n']);
+        fprintf(['\tFitting Fourier model to obtain mean response for subject ' strtrim(num2str(ss)) '\n']);
     end
     
     for rr=1:nRuns
@@ -119,6 +119,7 @@ for ss=1:nSubjects
         eventResponseStruct.timebase=timebase;
         eventResponseStruct.values=meanResponse;
         eventResponseStruct.sem=semResponse;
+        eventResponseStruct.runs=subjectMatrix;
         eventResponseStruct.metaData.subjectName=subjectMetaData{ss}.subjectName;
         eventResponseStruct.metaData.numberEvents=runCount;
         eventResponseStruct.metaData.units='%change';
