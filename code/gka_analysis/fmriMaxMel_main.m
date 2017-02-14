@@ -11,7 +11,7 @@ warning on;
 % Define cache behavior
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='make';
+meanEvokedResponseBehavior='load';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
@@ -20,7 +20,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 
-meanEvokedHash='a53b1b4be4e29a3a8cf00d38f9397013';
+meanEvokedHash='c20b9ff808438e4462328a199c16a340';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
