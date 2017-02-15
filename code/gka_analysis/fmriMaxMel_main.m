@@ -20,8 +20,8 @@ ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','RodControlScotopic','RodCont
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
-
 meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
+deduFitsHash='abf7e5070063fa043f51bc36b7c0da10';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -188,31 +188,25 @@ end % switch on meanEvokedResponseBehavior
 switch fitDEDUModelBehavior
     
     case 'make'
-        expt_stimulus=[1 5; 1 4; 2 5];
-        
-        for ss=1:size(expt_stimulus,1)
-            exptIdx=expt_stimulus(ss,1); stimulusIdx=expt_stimulus(ss,2);
-            [durationArray, plotHandle] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx);
-            
-            % Save plot
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{exptIdx} '_Stim_' strtrim(num2str(stimulusIdx)) '_DurationModelFit_bySubject.pdf']);
-            fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{exptIdx} '-' '_Stim_' strtrim(num2str(stimulusIdx)) ' - DurationModelFitbySubject']);
+        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);        
+        % Save plots
+        for dd=1:length(plotHandles)
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{dd} '_DurationModelFit_bySubject.pdf']);
+            fmriMaxMel_suptitle(plotHandles{dd},[RegionLabels{stimulatedRegion} '-' ExptLabels{dd} ' - DurationModelFitbySubject']);
             set(gca,'FontSize',6);
-            set(plotHandle,'Renderer','painters');
-            print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandle);
-            
-            acrossConditionsDurationArray(ss,:)=mean(durationArray);
-            acrossConditionsDurationSEMArray(ss,:)=std(durationArray);
+            set(plotHandles{dd},'Renderer','painters');
+            print(plotHandles{dd}, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandles{dd});
         end
-        
-        figure
-        plotSymbols={'-xr','-*g','-sb','-^k'};
-        for ss=1:size(acrossConditionsDurationArray,2)
-            errorbar(acrossConditionsDurationArray(:,ss),acrossConditionsDurationSEMArray(:,ss),plotSymbols{ss});
-            hold on
-        end
-        hold off
+        % Save the mean and SEM durations
+        deduFitsHash = DataHash([meanDurations, semDurations, meanAmplitudes, semAmplitudes]);
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+        save(deduFileName,'meanDurations','semDurations','meanAmplitudes','semAmplitudes','-v7.3');
+        fprintf(['Saved the DEDU model fits with hash ID ' deduFitsHash '\n']);
+    case 'load'
+        fprintf('Loading DEDU model fits\n');
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+        load(deduFileName);
     otherwise
         fprintf('Skipping analysis of delay model\n');
 end
