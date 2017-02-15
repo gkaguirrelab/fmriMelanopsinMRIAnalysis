@@ -22,4 +22,3 @@ fprintf('* Running fmriMelanopsinMRIAnalysisLocalHook...');
 projectDir = fullfile(tbLocateProject('fmriMelanopsinMRIAnalysis'));
 addpath(genpath(projectDir));
 setpref('fmriMelanopsinMRIAnalysis', 'projectDir', projectDir);
-cd(projectDir);
