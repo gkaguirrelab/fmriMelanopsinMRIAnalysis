@@ -25,12 +25,10 @@ for ss=1:nSubjects
     thePacket.stimulus.timebase=0:stimulusDeltaT:totalDuration-stimulusDeltaT;
     thePacket.stimulus.values=thePacket.stimulus.timebase*0;
     thePacket.stimulus.values(1) = 1;
-    thePacket.stimulus.metaData.stimLabels={'meanResponse'};
-    thePacket.stimulus.metaData.stimTypes=[1];
-    thePacket.metaData=[];
-    
+    thePacket.metaData=thePacket.response.metaData;
+
     % Prepare the set of run responses
-    runResponses=thePacket.response.runs;
+    runResponses=thePacket.response.runs*100;
     
     % Prep the run by run responses
     goodRuns= find(~isnan(runResponses(:,1)));
@@ -38,7 +36,7 @@ for ss=1:nSubjects
     meanInitialValue=mean(runResponses(:,1));
     runResponses=runResponses-meanInitialValue;
     nRuns=size(runResponses,1);
-
+    
     defaultParamsInfo.nInstances=1;
     % Obtain the fit for the mean response and plot this
     [paramsFit,fVal,modelResponseStruct] = ...
@@ -46,25 +44,26 @@ for ss=1:nSubjects
         'defaultParamsInfo', defaultParamsInfo,...
         'DiffMinChange',0.01);
 
-    subplot(4,1,ss)
-    tfeHandle.plot(thePacket.response,'NewWindow',false,'DisplayName','Data');
+    tmpHandle=subplot(4,1,ss);
     hold on
-    tfeHandle.plot(modelResponseStruct,'NewWindow',false,'Color',[.5 .5 .5],'DisplayName','Fit');
+    fmriMaxMel_PlotEvokedResponse( tmpHandle, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', thePacket.metaData.subjectName);
+    fmriMaxMel_PlotEvokedResponse( tmpHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', thePacket.metaData.subjectName);
     hold off
-    
+
     % Bootstrap-resample the run-by-run data to create different mean
     % responses and fit these. Retain the duration parameter
     for bb=1:100
-      runIdx=randsample(1:nRuns,nRuns,true);
-      resampleMean=mean(runResponses(runIdx,:));
-      thePacket.response.values=resampleMean;
-          [paramsFit,~,~] = ...
-        tfeHandle.fitResponse(thePacket,...
-        'defaultParamsInfo', defaultParamsInfo,...
-        'DiffMinChange',0.01);
-    durationBoots(bb,ss)=paramsFit.paramMainMatrix(2);
+        runIdx=randsample(1:nRuns,nRuns,true);
+        resampleMean=mean(runResponses(runIdx,:));
+        thePacket.response.values=resampleMean;
+        [paramsFit,~,~] = ...
+            tfeHandle.fitResponse(thePacket,...
+            'defaultParamsInfo', defaultParamsInfo,...
+            'DiffMinChange',0.01);
+        durationArray(bb,ss)=paramsFit.paramMainMatrix(2);
     end
-        
+
+
 end
 
 clear tfeHandle

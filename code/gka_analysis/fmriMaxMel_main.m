@@ -12,6 +12,7 @@ warning on;
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
 meanEvokedResponseBehavior='load';
+fitDEDUModelBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
@@ -67,7 +68,7 @@ end
 switch kernelCacheBehavior
     case 'make'
         fprintf('Making the kernelStructCellArray\n');
-       
+        
         [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:3,:));
         notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF experiments';
         
@@ -134,11 +135,6 @@ switch carryOverResponseBehavior
         fprintf('Skipping analysis of carry-over effects\n');
 end % switch for carryOverResponseBehavior
 
-%          kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-%          for experiment=1:3
-%   [xValFitStructure, plotHandle] = fmriMaxMel_fitDEDUModelToTimeSeries(packetFiles{experiment}, kernelStructCellArrayFileName);
-%          end
- 
 %% Make or load the average evoked responses
 switch meanEvokedResponseBehavior
     case 'make'
@@ -163,7 +159,7 @@ switch meanEvokedResponseBehavior
             print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
             close(plotHandleByStimulus);
             
-             % save time-series plots
+            % save time-series plots
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_FourierFitsToTimeSeriesBySubject.pdf']);
             fmriMaxMel_suptitle(plotHandleFitsBySubject,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - Time series fits']);
             set(gca,'FontSize',6);
@@ -189,31 +185,37 @@ end % switch on meanEvokedResponseBehavior
 
 
 %% Fit the duration model for the 400% Mel and LMS, and the 200% LMS
-expt_stimulus=[1 5; 1 4; 2 5];
-
-for ss=1:size(expt_stimulus,1)
-    exptIdx=expt_stimulus(ss,1); stimulusIdx=expt_stimulus(ss,2);
-    [durationArray, plotHandle] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx);
+switch fitDEDUModelBehavior
     
-    % Save plot
-    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{exptIdx} '_Stim_' strtrim(num2str(stimulusIdx)) '_DurationModelFit_bySubject.pdf']);
-    fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{exptIdx} '-' '_Stim_' strtrim(num2str(stimulusIdx)) ' - DurationModelFitbySubject']);
-    set(gca,'FontSize',6);
-    set(plotHandle,'Renderer','painters');
-    print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-    close(plotHandle);
-    
-    acrossConditionsDurationArray(ss,:)=durationArray;
+    case 'make'
+        expt_stimulus=[1 5; 1 4; 2 5];
+        
+        for ss=1:size(expt_stimulus,1)
+            exptIdx=expt_stimulus(ss,1); stimulusIdx=expt_stimulus(ss,2);
+            [durationArray, plotHandle] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, exptIdx, stimulusIdx);
+            
+            % Save plot
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{exptIdx} '_Stim_' strtrim(num2str(stimulusIdx)) '_DurationModelFit_bySubject.pdf']);
+            fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{exptIdx} '-' '_Stim_' strtrim(num2str(stimulusIdx)) ' - DurationModelFitbySubject']);
+            set(gca,'FontSize',6);
+            set(plotHandle,'Renderer','painters');
+            print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandle);
+            
+            acrossConditionsDurationArray(ss,:)=mean(durationArray);
+            acrossConditionsDurationSEMArray(ss,:)=std(durationArray);
+        end
+        
+        figure
+        plotSymbols={'-xr','-*g','-sb','-^k'};
+        for ss=1:size(acrossConditionsDurationArray,2)
+            errorbar(acrossConditionsDurationArray(:,ss),acrossConditionsDurationSEMArray(:,ss),plotSymbols{ss});
+            hold on
+        end
+        hold off
+    otherwise
+        fprintf('Skipping analysis of delay model\n');
 end
-
-figure
-plotSymbols={'-xb','-*b','-sb','-^b'};
-for ss=1:size(acrossConditionsDurationArray,2)
-    plot(acrossConditionsDurationArray(:,ss),plotSymbols{ss});
-    hold on
-end
-hold off
-
 
 %
 %
