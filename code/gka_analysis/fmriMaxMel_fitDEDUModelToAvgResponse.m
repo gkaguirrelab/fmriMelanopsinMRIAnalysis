@@ -16,7 +16,6 @@ nSubjects=size(kernelStructCellArray,2);
 meanDurations=zeros(nDirections,nContrasts,nSubjects);
 semDurations=zeros(nDirections,nContrasts,nSubjects);
 
-plotHandle=figure();
 for dd=1:nDirections
     fprintf(['Direction ' strtrim(num2str(dd)) '\n']);
     plotHandles{dd}=figure();
@@ -24,7 +23,7 @@ for dd=1:nDirections
         fprintf(['\tContrast ' strtrim(num2str(cc)) '\n']);
         for ss=1:nSubjects
             fprintf(['\t\tSubject ' strtrim(num2str(ss)) '\n']);
-            
+            subPlotHandle=subplot(nContrasts,nSubjects,ss+((cc-1)*nSubjects));
             clear thePacket
             
             % Build a packet with a mean response and an impulse stimulus
@@ -47,19 +46,7 @@ for dd=1:nDirections
             meanInitialValue=mean(runResponses(:,1));
             runResponses=runResponses-meanInitialValue;
             nRuns=size(runResponses,1);
-            
             defaultParamsInfo.nInstances=1;
-            % Obtain the fit for the mean response and plot this
-            [paramsFit,fVal,modelResponseStruct] = ...
-                tfeHandle.fitResponse(thePacket,...
-                'defaultParamsInfo', defaultParamsInfo,...
-                'DiffMinChange',0.01);
-            
-            tmpHandle=subplot(nContrasts,nSubjects,ss+((cc-1)*nSubjects));
-            hold on
-            fmriMaxMel_PlotEvokedResponse( tmpHandle, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-            fmriMaxMel_PlotEvokedResponse( tmpHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-            hold off
             
             % Bootstrap-resample the run-by-run data to create different mean
             % responses and fit these. Retain the duration parameter
@@ -78,6 +65,29 @@ for dd=1:nDirections
             semAmplitudes(dd,cc,ss)=std(amplitudeArray);
             meanDurations(dd,cc,ss)=mean(durationArray);
             semDurations(dd,cc,ss)=std(durationArray);
+            
+%             % Add to the plot the ±SEM of the fits
+%             whips=[ [1,1];[-1,-1];[1,-1];[-1,1]];
+%             for rr=1:4
+%                 paramsFit.paramMainMatrix(1)=meanAmplitudes(dd,cc,ss) + ...
+%                     whips(rr,1)*semAmplitudes(dd,cc,ss);
+%                 paramsFit.paramMainMatrix(2)=meanDurations(dd,cc,ss) + ...
+%                     whips(rr,2)*semDurations(dd,cc,ss);
+%                 modelResponseStruct = tfeHandle.computeResponse(paramsFit,thePacket.stimulus,thePacket.kernel);
+%                 fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 .8 .8], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+%                 responseRangeMatrix(rr,:)=modelResponseStruct.values;
+%             end
+            
+            % Plot the mean response and mean fit
+            [paramsFit,fVal,modelResponseStruct] = ...
+                tfeHandle.fitResponse(thePacket,...
+                'defaultParamsInfo', defaultParamsInfo,...
+                'DiffMinChange',0.01,...
+                'errorType','1-r2');
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            text(2,1.5,['r2 = ' sprintf('%0.2f',1-fVal)],'FontSize',6)
+            hold off
             
         end % subjects
     end % contrasts
