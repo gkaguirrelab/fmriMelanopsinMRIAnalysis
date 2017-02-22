@@ -1,4 +1,4 @@
-function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray)
+function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray)
 %
 
 verbosity='none';
@@ -28,13 +28,17 @@ for dd=1:nDirections
             
             % Build a packet with a mean response and an impulse stimulus
             thePacket.response = meanEvokedResponsesCellArray{dd}{ss,cc};
-            thePacket.kernel = prepareHRFKernel(kernelStructCellArray{ss});
+            thePacket.kernel = kernelStructCellArray{ss};
+            thePacket.kernel.values = thePacket.kernel.values - thePacket.kernel.values(1);
+            thePacket.kernel = normalizeKernelAmplitude( thePacket.kernel );
             check=diff(thePacket.response.timebase);
             responseDeltaT=check(1);
             totalDuration=max(thePacket.response.timebase)+responseDeltaT;
             thePacket.stimulus.timebase=0:stimulusDeltaT:totalDuration-stimulusDeltaT;
             thePacket.stimulus.values=thePacket.stimulus.timebase*0;
             thePacket.stimulus.values(1) = 1;
+            thePacket.stimulus.metaData.stimLabels={'event'};
+            thePacket.stimulus.metaData.stimTypes=[1];
             thePacket.metaData=thePacket.response.metaData;
             
             % Prepare the set of run responses
@@ -57,7 +61,8 @@ for dd=1:nDirections
                 [paramsFit,~,~] = ...
                     tfeHandle.fitResponse(thePacket,...
                     'defaultParamsInfo', defaultParamsInfo,...
-                    'DiffMinChange',0.01);
+                    'DiffMinChange',0.01,...
+                    'errorType','1-r2');
                 amplitudeArray(bb)=paramsFit.paramMainMatrix(1);
                 durationArray(bb)=paramsFit.paramMainMatrix(2);
             end
@@ -66,17 +71,20 @@ for dd=1:nDirections
             meanDurations(dd,cc,ss)=mean(durationArray);
             semDurations(dd,cc,ss)=std(durationArray);
             
-%             % Add to the plot the ±SEM of the fits
-%             whips=[ [1,1];[-1,-1];[1,-1];[-1,1]];
-%             for rr=1:4
-%                 paramsFit.paramMainMatrix(1)=meanAmplitudes(dd,cc,ss) + ...
-%                     whips(rr,1)*semAmplitudes(dd,cc,ss);
-%                 paramsFit.paramMainMatrix(2)=meanDurations(dd,cc,ss) + ...
-%                     whips(rr,2)*semDurations(dd,cc,ss);
-%                 modelResponseStruct = tfeHandle.computeResponse(paramsFit,thePacket.stimulus,thePacket.kernel);
-%                 fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 .8 .8], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-%                 responseRangeMatrix(rr,:)=modelResponseStruct.values;
-%             end
+            % Calculate the LOO fVal for the DEDU model
+            for rr=1:nRuns
+                packetCellArray{rr}=thePacket;
+                packetCellArray{rr}.response.values=runResponses(rr,:);
+            end
+            [ xValFitStructure, ~, ~ ] = ...
+                crossValidateFits( packetCellArray, tfeHandle, ...
+                'defaultParamsInfo', defaultParamsInfo,...
+                'DiffMinChange',0.01,...
+                'errorType','1-r2',...
+                'partitionMethod','splitHalf',...
+                'aggregateMethod','median');
+            
+            xValFVals(dd,cc,ss)=1-median(xValFitStructure.testfVals);
             
             % Plot the mean response and mean fit
             [paramsFit,fVal,modelResponseStruct] = ...
@@ -86,8 +94,9 @@ for dd=1:nDirections
                 'errorType','1-r2');
             fmriMaxMel_PlotEvokedResponse( subPlotHandle, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
             fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-            text(2,1.5,['r2 = ' sprintf('%0.2f',1-fVal)],'FontSize',6)
+            text(2,1.5,['r2 (xval) = ' sprintf('%0.2f',1-fVal) ' (' sprintf('%0.2f',xValFVals(dd,cc,ss)) ')'],'FontSize',6)
             hold off
+                        
             
         end % subjects
     end % contrasts

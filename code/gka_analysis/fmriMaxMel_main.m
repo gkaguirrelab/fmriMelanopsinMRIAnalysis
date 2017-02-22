@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
-deduFitsHash='399482fb50adca097598cf6211ee43ef';
+deduFitsHash='2d7682a412856f387d29d06b1d1e3a41';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -184,11 +184,11 @@ switch meanEvokedResponseBehavior
 end % switch on meanEvokedResponseBehavior
 
 
-%% Fit the duration model for the 400% Mel and LMS, and the 200% LMS
+%% Fit the duration model
 switch fitDEDUModelBehavior
     
     case 'make'
-        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);        
+        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);
         % Save plots
         for dd=1:length(plotHandles)
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{dd} '_DurationModelFit_bySubject.pdf']);
@@ -199,19 +199,22 @@ switch fitDEDUModelBehavior
             close(plotHandles{dd});
         end
         % Save the mean and SEM durations
-        deduFitsHash = DataHash([meanDurations, semDurations, meanAmplitudes, semAmplitudes]);
+        deduFitsHash = DataHash([meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals]);
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
-        save(deduFileName,'meanDurations','semDurations','meanAmplitudes','semAmplitudes','-v7.3');
+        save(deduFileName,'meanDurations','semDurations','meanAmplitudes','semAmplitudes','xValFVals','-v7.3');
         fprintf(['Saved the DEDU model fits with hash ID ' deduFitsHash '\n']);
+        % plot the results
+        fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
     case 'load'
         fprintf('Loading DEDU model fits\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
+        % plot the results
+        fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
     otherwise
         fprintf('Skipping analysis of delay model\n');
 end
 
-fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations)
 
 
 %
