@@ -209,8 +209,14 @@ switch fitDEDUModelBehavior
         fprintf('Loading DEDU model fits\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
-        % plot the results
-        fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
+        % plot and save the results
+        [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
+        for pp=1:length(plotHandles)
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
+            set(plotHandles{pp},'Renderer','painters');
+            print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandles{pp});
+        end
     otherwise
         fprintf('Skipping analysis of delay model\n');
 end

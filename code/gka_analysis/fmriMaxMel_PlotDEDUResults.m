@@ -44,8 +44,7 @@ pbaspect([1 1 1])
 xlabel('log contrast'); ylabel('% BOLD change [subject scaled]');
 box('off');
 
-
-figure
+plotHandles{2}=figure;
 hold on
 for dd=1:2
     for ss=1:4
