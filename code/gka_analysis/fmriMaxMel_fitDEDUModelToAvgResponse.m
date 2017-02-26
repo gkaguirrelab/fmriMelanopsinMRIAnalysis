@@ -1,4 +1,4 @@
-function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray)
+function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, subjectScaler)
 %
 
 verbosity='none';
@@ -52,12 +52,20 @@ for dd=1:nDirections
             nRuns=size(runResponses,1);
             defaultParamsInfo.nInstances=1;
             
+            % Adjust the amplitude of the responses for this subject by the
+            % subjectScaler value for this subject
+            thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
+            
             % Bootstrap-resample the run-by-run data to create different mean
             % responses and fit these. Retain the duration parameter
             for bb=1:100
                 runIdx=randsample(1:nRuns,nRuns,true);
                 resampleMean=mean(runResponses(runIdx,:));
                 thePacket.response.values=resampleMean;
+                % Adjust the amplitude of the responses by the
+                % subjectScaler
+                thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
+                % Perform the fit and record the params
                 [paramsFit,~,~] = ...
                     tfeHandle.fitResponse(thePacket,...
                     'defaultParamsInfo', defaultParamsInfo,...
@@ -75,6 +83,10 @@ for dd=1:nDirections
             for rr=1:nRuns
                 packetCellArray{rr}=thePacket;
                 packetCellArray{rr}.response.values=runResponses(rr,:);
+                % Adjust the amplitude of the responses by the
+                % subjectScaler
+                packetCellArray{rr}.response.values = ...
+                    packetCellArray{rr}.response.values ./ subjectScaler(ss);
             end
             [ xValFitStructure, ~, ~ ] = ...
                 crossValidateFits( packetCellArray, tfeHandle, ...
@@ -82,11 +94,16 @@ for dd=1:nDirections
                 'DiffMinChange',0.01,...
                 'errorType','1-r2',...
                 'partitionMethod','splitHalf',...
+                'maxPartitions',500,...
                 'aggregateMethod','median');
             
             xValFVals(dd,cc,ss)=1-median(xValFitStructure.testfVals);
             
             % Plot the mean response and mean fit
+            thePacket.response = meanEvokedResponsesCellArray{dd}{ss,cc};
+            % Adjust the amplitude of the responses by the subjectScaler
+            thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
+            
             [paramsFit,fVal,modelResponseStruct] = ...
                 tfeHandle.fitResponse(thePacket,...
                 'defaultParamsInfo', defaultParamsInfo,...
@@ -96,7 +113,7 @@ for dd=1:nDirections
             fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
             text(2,1.5,['r2 (xval) = ' sprintf('%0.2f',1-fVal) ' (' sprintf('%0.2f',xValFVals(dd,cc,ss)) ')'],'FontSize',6)
             hold off
-                        
+            
             
         end % subjects
     end % contrasts
