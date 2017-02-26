@@ -1,13 +1,14 @@
-function [ ] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
+function [plotHandles] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+fitThresh=0.125;
 
 maxSEMDuration=max(semDurations(:));
 symbolBySubject={'o','s','^','p'};
 contrastLevels=[25,50,100,200,400];
 
-figure
+plotHandles{1}=figure;
 hold on
 for dd=1:2
     for ss=1:4
@@ -15,13 +16,13 @@ for dd=1:2
         semAmps=semAmplitudes(dd,:,ss);
         switch dd
             case 1
-                faceColor=[1,0,0];
+                faceColor=[.8,.8,.8];
             case 2
-                faceColor=[0,0,1];
+                faceColor=[0.4,0.4,1];
         end
         plot(log(contrastLevels),amps,symbolBySubject{ss},...
-            'MarkerSize', 10,...
-            'MarkerEdgeColor', 'none', ...
+            'MarkerSize', 15,...
+            'MarkerEdgeColor', [0.5, 0.5, 0.5], ...
             'MarkerFaceColor', faceColor);
     end
 end
@@ -30,13 +31,20 @@ for dd=1:2
     medianAmps=median(squeeze(meanAmplitudes(dd,:,:)),2);
     switch dd
         case 1
-            faceColor=[1,0,0];
+            faceColor=[.8,.8,.8];
         case 2
-            faceColor=[0,0,1];
+            faceColor=[0.4,0.4,1];
     end
     plot(log(contrastLevels),medianAmps,'-k');
 end
 
+% Clean up the labels and axes
+title(plotHandles{1},'Amplitude x Contrast','Interpreter', 'none');
+pbaspect(plotHandle,[p.Results.xAxisAspect 1 1])
+xlabel(plotHandle,'Time [secs]'); ylabel(plotHandle,'% BOLD change');
+set(plotHandle,'Xtick',0:p.Results.xTick:maxTime)
+set(plotHandle,'FontSize',6);
+box(plotHandle,'off');
 
 
 figure
@@ -44,7 +52,7 @@ hold on
 for dd=1:2
     for ss=1:4
         for cc=1:5
-            if xValFVals(dd,cc,ss)>=0.15
+            if xValFVals(dd,cc,ss)>=fitThresh
                 amp=meanAmplitudes(dd,cc,ss);
                 dur=meanDurations(dd,cc,ss);
                 semDur=semDurations(dd,cc,ss);
@@ -52,37 +60,72 @@ for dd=1:2
                 fade=semDur/maxSEMDuration;
                 switch dd
                     case 1
-                        faceColor=[1,fade,fade];
+                        faceColor=[0.8,0.8,0.8];
                     case 2
-                        faceColor=[fade,fade,1];
+                        faceColor=[0.4,0.4,1];
                 end
                 MarkerSize=ceil(15*(1.01-semDur/maxSEMDuration));
                 errorbar(dur,amp,semAmp,'-.k',...
                     'MarkerSize', MarkerSize,...
-                    'MarkerEdgeColor', 'none', ...
+                    'MarkerEdgeColor', [0.5 0.5 0.5], ...
                     'MarkerFaceColor', 'none');
                 errorbar(dur,amp,semDur,'-.k','horizontal',...
                     'MarkerSize', MarkerSize,...
-                    'MarkerEdgeColor', 'none', ...
+                    'MarkerEdgeColor', [0.5 0.5 0.5], ...
                     'MarkerFaceColor', 'none');
                 plot(dur,amp,symbolBySubject{ss},...
                     'MarkerSize', MarkerSize,...
-                    'MarkerEdgeColor', 'none', ...
+                    'MarkerEdgeColor', [0.5 0.5 0.5], ...
                     'MarkerFaceColor', faceColor);
             end
         end
     end
 end
 
-pointsIdx=find(xValFVals(1,:,:)>=0.15);
-durs=meanDurations(1,:,:);
-amps=meanAmplitudes(1,:,:);
-confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+% Add a median slope to each cloud of points
 
-pointsIdx=find(xValFVals(2,:,:)>=0.15);
-durs=meanDurations(2,:,:);
-amps=meanAmplitudes(2,:,:);
-confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+fVals=xValFVals(1,:,:);
+    amps=meanAmplitudes(1,:,:);
+    durs=meanDurations(1,:,:);
+    idx=find(fVals>=fitThresh);    
+    lmsData=[durs(idx),amps(idx)];
+    lmsWeights=fVals(idx);
+    lmsLabels=cell(length(idx),1);
+    lmsLabels(:)=cellstr('lms');
+fVals=xValFVals(2,:,:);
+    amps=meanAmplitudes(2,:,:);
+    durs=meanDurations(2,:,:);
+    idx=find(fVals>=fitThresh);
+    melData=[durs(idx),amps(idx)];
+    melWeights=fVals(idx);
+    melLabels=cell(length(idx),1);
+    melLabels(:)=cellstr('mel');
+    
+    labels=[lmsLabels;melLabels];
+    data=[lmsData;melData];
+    data=array2table(data);
+    data=[data,labels];
+    data.Properties.VariableNames{1}='dur';
+    data.Properties.VariableNames{2}='amp';
+    data.Properties.VariableNames{3}='direction';
+
+    
+    weights=[lmsWeights;melWeights];
+    MdlLinear = fitcdiscr(data,'direction','PredictorNames',{'dur','amp'},'ClassNames',{'lms','mel'},'Weights',weights);
+K = MdlLinear.Coeffs(1,2).Const;
+L = MdlLinear.Coeffs(1,2).Linear;
+f = @(x) (K + L(1)*x) / (-1* L(2));
+fplot(f,[1 4]);
+
+% pointsIdx=find(xValFVals(1,:,:)>=0.15);
+% durs=meanDurations(1,:,:);
+% amps=meanAmplitudes(1,:,:);
+% confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+% 
+% pointsIdx=find(xValFVals(2,:,:)>=0.15);
+% durs=meanDurations(2,:,:);
+% amps=meanAmplitudes(2,:,:);
+% confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
 
 end % function
 
