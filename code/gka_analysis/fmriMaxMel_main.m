@@ -12,7 +12,7 @@ warning on;
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
 meanEvokedResponseBehavior='load';
-fitDEDUModelBehavior='load';
+fitDEDUModelBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
-deduFitsHash='2d7682a412856f387d29d06b1d1e3a41';
+deduFitsHash='419a63a413f25f1ecdb6990d0fdbe036';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -188,7 +188,7 @@ end % switch on meanEvokedResponseBehavior
 switch fitDEDUModelBehavior
     
     case 'make'
-        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);
+        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, subjectScaler);
         % Save plots
         for dd=1:length(plotHandles)
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{dd} '_DurationModelFit_bySubject.pdf']);
