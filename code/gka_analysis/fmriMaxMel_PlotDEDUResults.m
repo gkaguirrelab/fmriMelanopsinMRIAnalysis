@@ -20,7 +20,7 @@ for dd=1:2
             case 2
                 faceColor=[0.4,0.4,1];
         end
-        plot(log(contrastLevels),amps,symbolBySubject{ss},...
+        plot(log10(contrastLevels),amps,symbolBySubject{ss},...
             'MarkerSize', 15,...
             'MarkerEdgeColor', [0.5, 0.5, 0.5], ...
             'MarkerFaceColor', faceColor);
@@ -35,7 +35,7 @@ for dd=1:2
         case 2
             faceColor=[0.4,0.4,1];
     end
-    plot(log(contrastLevels),medianAmps,'-k');
+    plot(log10(contrastLevels),medianAmps,'-k');
 end
 
 % Clean up the labels and axes
