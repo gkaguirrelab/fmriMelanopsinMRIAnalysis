@@ -2,7 +2,7 @@ function [plotHandles] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDuratio
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-fitThresh=0.125;
+fitThresh=0.15;
 
 maxSEMDuration=max(semDurations(:));
 symbolBySubject={'o','s','^','p'};
@@ -39,12 +39,10 @@ for dd=1:2
 end
 
 % Clean up the labels and axes
-title(plotHandles{1},'Amplitude x Contrast','Interpreter', 'none');
-pbaspect(plotHandle,[p.Results.xAxisAspect 1 1])
-xlabel(plotHandle,'Time [secs]'); ylabel(plotHandle,'% BOLD change');
-set(plotHandle,'Xtick',0:p.Results.xTick:maxTime)
-set(plotHandle,'FontSize',6);
-box(plotHandle,'off');
+title('Amplitude x Contrast','Interpreter', 'none');
+pbaspect([1 1 1])
+xlabel('log contrast'); ylabel('% BOLD change [subject scaled]');
+box('off');
 
 
 figure
@@ -82,50 +80,57 @@ for dd=1:2
     end
 end
 
-% Add a median slope to each cloud of points
+% Clean up the labels and axes
+title('Duration x Amplitude','Interpreter', 'none');
+pbaspect([1 1 1])
+xlabel('Duration [secs]'); ylabel('% BOLD change [subject scaled]');
+box('off');
 
-fVals=xValFVals(1,:,:);
-    amps=meanAmplitudes(1,:,:);
-    durs=meanDurations(1,:,:);
-    idx=find(fVals>=fitThresh);    
-    lmsData=[durs(idx),amps(idx)];
-    lmsWeights=fVals(idx);
-    lmsLabels=cell(length(idx),1);
-    lmsLabels(:)=cellstr('lms');
-fVals=xValFVals(2,:,:);
-    amps=meanAmplitudes(2,:,:);
-    durs=meanDurations(2,:,:);
-    idx=find(fVals>=fitThresh);
-    melData=[durs(idx),amps(idx)];
-    melWeights=fVals(idx);
-    melLabels=cell(length(idx),1);
-    melLabels(:)=cellstr('mel');
-    
-    labels=[lmsLabels;melLabels];
-    data=[lmsData;melData];
-    data=array2table(data);
-    data=[data,labels];
-    data.Properties.VariableNames{1}='dur';
-    data.Properties.VariableNames{2}='amp';
-    data.Properties.VariableNames{3}='direction';
 
-    
-    weights=[lmsWeights;melWeights];
-    MdlLinear = fitcdiscr(data,'direction','PredictorNames',{'dur','amp'},'ClassNames',{'lms','mel'},'Weights',weights);
-K = MdlLinear.Coeffs(1,2).Const;
-L = MdlLinear.Coeffs(1,2).Linear;
-f = @(x) (K + L(1)*x) / (-1* L(2));
-fplot(f,[1 4]);
-
-% pointsIdx=find(xValFVals(1,:,:)>=0.15);
-% durs=meanDurations(1,:,:);
-% amps=meanAmplitudes(1,:,:);
-% confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+% Build a classifier
 % 
-% pointsIdx=find(xValFVals(2,:,:)>=0.15);
-% durs=meanDurations(2,:,:);
-% amps=meanAmplitudes(2,:,:);
-% confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+% fVals=xValFVals(1,:,:);
+%     amps=meanAmplitudes(1,:,:);
+%     durs=meanDurations(1,:,:);
+%     idx=find(fVals>=fitThresh);    
+%     lmsData=[durs(idx),amps(idx)];
+%     lmsWeights=fVals(idx);
+%     lmsLabels=cell(length(idx),1);
+%     lmsLabels(:)=cellstr('lms');
+% fVals=xValFVals(2,:,:);
+%     amps=meanAmplitudes(2,:,:);
+%     durs=meanDurations(2,:,:);
+%     idx=find(fVals>=fitThresh);
+%     melData=[durs(idx),amps(idx)];
+%     melWeights=fVals(idx);
+%     melLabels=cell(length(idx),1);
+%     melLabels(:)=cellstr('mel');
+%     
+%     labels=[lmsLabels;melLabels];
+%     data=[lmsData;melData];
+%     data=array2table(data);
+%     data=[data,labels];
+%     data.Properties.VariableNames{1}='dur';
+%     data.Properties.VariableNames{2}='amp';
+%     data.Properties.VariableNames{3}='direction';
+% 
+%     
+%     weights=[lmsWeights;melWeights];
+%     MdlLinear = fitcdiscr(data,'direction','PredictorNames',{'dur','amp'},'ClassNames',{'lms','mel'},'Weights',weights);
+% K = MdlLinear.Coeffs(1,2).Const;
+% L = MdlLinear.Coeffs(1,2).Linear;
+% f = @(x) (K + L(1)*x) / (-1* L(2));
+% fplot(f,[1 4]);
+
+pointsIdx=find(xValFVals(1,:,:)>=fitThresh);
+durs=meanDurations(1,:,:);
+amps=meanAmplitudes(1,:,:);
+confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
+
+pointsIdx=find(xValFVals(2,:,:)>=fitThresh);
+durs=meanDurations(2,:,:);
+amps=meanAmplitudes(2,:,:);
+confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
 
 end % function
 

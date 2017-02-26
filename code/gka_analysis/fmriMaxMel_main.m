@@ -12,7 +12,7 @@ warning on;
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
 meanEvokedResponseBehavior='load';
-fitDEDUModelBehavior='make';
+fitDEDUModelBehavior='load';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
-deduFitsHash='419a63a413f25f1ecdb6990d0fdbe036';
+deduFitsHash='f057e77b207890a8687ab80ef24cde3d';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
