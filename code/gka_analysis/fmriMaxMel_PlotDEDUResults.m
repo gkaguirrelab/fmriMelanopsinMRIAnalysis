@@ -2,7 +2,7 @@ function [plotHandles] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDuratio
 %
 % Plot the results of the DEDU model
 
-fitThresh=0.01;
+fitThresh=-1;
 
 maxSEMDuration=max(semDurations(:));
 symbolBySubject={'o','s','^','p'};
@@ -76,11 +76,23 @@ for dd=1:3
     medianAmps=median(squeeze(meanAmplitudes(dd,:,:)),2);
             switch dd
             case 1
-    plot(a,log10(contrastLevels(2:length(amps)+1)),medianAmps,'-k');
+                xvals=log10(contrastLevels(2:length(amps)+1));
+                yvals=medianAmps;
+cs = spline(xvals,[0 yvals' 0]);
+                xxvals=min(xvals):0.01:max(xvals);
+plot(a,xxvals,ppval(cs,xxvals),'-k');
             case 2
-    plot(a,log10(contrastLevels(2:length(amps)+1)),medianAmps,'-k');
+                xvals=log10(contrastLevels(2:length(amps)+1));
+                yvals=medianAmps;
+cs = spline(xvals,yvals);
+                xxvals=min(xvals):0.01:max(xvals);
+plot(a,xxvals,ppval(cs,xxvals),'-b');
             case 3
-    plot(a,log10(contrastLevels(2:length(amps)+1)*4),medianAmps,'-k');
+                xvals=log10(contrastLevels(2:length(amps)+1)*4);
+                yvals=medianAmps;
+cs = spline(xvals,[0 yvals' 0]);
+                xxvals=min(xvals):0.01:max(xvals);
+plot(a,xxvals,ppval(cs,xxvals),'-r');
             end
 end
 
@@ -91,6 +103,14 @@ end
 plotHandles{2}=figure;
 hold on
 for dd=1:3
+    subplot(1,3,dd);
+    hold on
+    % Clean up the labels and axes
+    pbaspect([1 1 1])
+xlabel('Duration [secs]'); ylabel('% BOLD change [subject scaled]');
+ylim([-.25 1]);
+xlim([-1 8]);
+box('off');
     for ss=1:4
         nContrasts=nContrastsByDirection(dd);
         for cc=1:nContrasts
@@ -108,7 +128,7 @@ for dd=1:3
                     case 3
                         faceColor=[1,0.4,0.4];
                 end
-                MarkerSize=ceil(15*(1.01-semDur/maxSEMDuration));
+                MarkerSize=ceil(5*(1.01-semDur/maxSEMDuration));
                 errorbar(dur,amp,semAmp,'-.k',...
                     'MarkerSize', MarkerSize,...
                     'MarkerEdgeColor', [0.5 0.5 0.5], ...
@@ -129,13 +149,10 @@ for dd=1:3
     durs=meanDurations(dd,:,:);
     amps=meanAmplitudes(dd,:,:);
     confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5,faceColor);
+
 end % loop over directions
 
-% Clean up the labels and axes
-title('Duration x Amplitude','Interpreter', 'none');
-pbaspect([1 1 1])
-xlabel('Duration [secs]'); ylabel('% BOLD change [subject scaled]');
-box('off');
+
 
 end % function
 
