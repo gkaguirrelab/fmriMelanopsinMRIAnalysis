@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
 meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
-deduFitsHash='f057e77b207890a8687ab80ef24cde3d';
+deduFitsHash='9b1d3b9dad14496e1d7695efa0d6f059';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -203,8 +203,14 @@ switch fitDEDUModelBehavior
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         save(deduFileName,'meanDurations','semDurations','meanAmplitudes','semAmplitudes','xValFVals','-v7.3');
         fprintf(['Saved the DEDU model fits with hash ID ' deduFitsHash '\n']);
-        % plot the results
-        fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
+        % plot and save the results
+        [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
+        for pp=1:length(plotHandles)
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
+            set(plotHandles{pp},'Renderer','painters');
+            print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandles{pp});
+        end
     case 'load'
         fprintf('Loading DEDU model fits\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);

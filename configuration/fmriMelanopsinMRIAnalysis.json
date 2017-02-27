@@ -51,17 +51,17 @@
 		"update": "",
 		"url": "https:\/\/github.com\/gkaguirrelab\/temporalFittingEngine.git"
 	},
- 	{
-		"flavor": "",
-		"hook": "",
-		"importance": "",
-		"localHookTemplate": "",
-		"name": "shadedErrorBar",
-		"pathPlacement": "append",
-		"subfolder": "",
-		"toolboxRoot": "",
-		"type": "git",
-		"update": "",
-		"url": "https:\/\/github.com\/raacampbell\/shadedErrorBar.git"
-	}
+{
+"flavor": "zip",
+"hook": "",
+"importance": "",
+"localHookTemplate": "",
+"name": "TheilSen",
+"pathPlacement": "append",
+"subfolder": "",
+"toolboxRoot": "",
+"type": "webget",
+"update": "never",
+"url": "https://www.mathworks.com/matlabcentral/mlc-downloads/downloads/submissions/48294/versions/4/download/zip"
+}
 ]

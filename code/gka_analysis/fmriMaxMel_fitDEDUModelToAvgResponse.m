@@ -9,21 +9,22 @@ stimulusDeltaT=1; % time resolution of the stimulus model, in msecs
 tfeHandle = tfeDEDU('verbosity',verbosity);
 
 % Get the dimensions of the data
-nDirections=2; % just the LMS and Mel stimuli
-nContrasts=5; % the number of contrast levels
+nDirections=3; % just the LMS and Mel stimuli
+nContrastsByDirection=[5,5,4]; % the number of contrast levels for each direction
 nSubjects=size(kernelStructCellArray,2);
 
-meanDurations=zeros(nDirections,nContrasts,nSubjects);
-semDurations=zeros(nDirections,nContrasts,nSubjects);
+meanDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);
+semDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);
 
 for dd=1:nDirections
     fprintf(['Direction ' strtrim(num2str(dd)) '\n']);
     plotHandles{dd}=figure();
+    nContrasts=nContrastsByDirection(dd);
     for cc=1:nContrasts
         fprintf(['\tContrast ' strtrim(num2str(cc)) '\n']);
         for ss=1:nSubjects
             fprintf(['\t\tSubject ' strtrim(num2str(ss)) '\n']);
-            subPlotHandle=subplot(nContrasts,nSubjects,ss+((cc-1)*nSubjects));
+            subPlotHandle=subplot(max(nContrastsByDirection),nSubjects,ss+((cc-1)*nSubjects));
             clear thePacket
             
             % Build a packet with a mean response and an impulse stimulus

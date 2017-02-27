@@ -1,54 +1,99 @@
 function [plotHandles] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%
+% Plot the results of the DEDU model
 
-fitThresh=0.15;
+fitThresh=0.01;
 
 maxSEMDuration=max(semDurations(:));
 symbolBySubject={'o','s','^','p'};
-contrastLevels=[25,50,100,200,400];
+contrastLevels=[12.5,25,50,100,200,400,800];
+contrastLabels={'','25','50','100','200','400',''};
+splatterLabels={'','','',[char(188) 'x'], [char(189) 'x'],'1x','2x'};
+nContrastsByDirection=[5,5,4]; % the number of contrast levels for each direction
+
+%% Plot a contrast response amplitude plot
 
 plotHandles{1}=figure;
+
+% Set up the labels and axes
+
+% axis for splatter
+b=axes('Position',[.1 .1 .8 1e-12]);
+set(b,'Units','normalized');
+set(b,'Color','none');
+
+% axis for contrast
+a=axes('Position',[.1 .1 .8 .7]);
+set(a,'Units','normalized');
+
+% set limits and labels
+set(a,'xlim',[min(log10(contrastLevels)) max(log10(contrastLevels))]);
+set(b,'xlim',[min(log10(contrastLevels)) max(log10(contrastLevels))]);
+xlabel(a,'contrast')
+xlabel(b,'splatter')
+title(a,'Amplitude x Contrast','Interpreter', 'none');
+
+xticks(a,log10(contrastLevels));
+xticks(b,log10(contrastLevels));
+xticklabels(a,contrastLabels);
+xticklabels(b,splatterLabels);
+ylabel(a,'% BOLD change [subject scaled]');
+box(a,'off');
+pbaspect(a,[1 1 1])
+
+hline=refline(a,0,0);
+set(hline,'Color','k','LineStyle','--');
+
 hold on
-for dd=1:2
+for dd=1:3
     for ss=1:4
         amps=meanAmplitudes(dd,:,ss);
         semAmps=semAmplitudes(dd,:,ss);
         switch dd
             case 1
                 faceColor=[.8,.8,.8];
-            case 2
-                faceColor=[0.4,0.4,1];
-        end
-        plot(log10(contrastLevels),amps,symbolBySubject{ss},...
+        plot(a,log10(contrastLevels(2:length(amps)+1)),amps,symbolBySubject{ss},...
             'MarkerSize', 15,...
             'MarkerEdgeColor', [0.5, 0.5, 0.5], ...
             'MarkerFaceColor', faceColor);
+            case 2
+                faceColor=[0.4,0.4,1];
+        plot(a,log10(contrastLevels(2:length(amps)+1)),amps,symbolBySubject{ss},...
+            'MarkerSize', 15,...
+            'MarkerEdgeColor', [0.5, 0.5, 0.5], ...
+            'MarkerFaceColor', faceColor);
+            case 3
+                faceColor=[1,0.4,0.4];
+        plot(a,log10(contrastLevels(2:length(amps)+1)*4),amps,symbolBySubject{ss},...
+            'MarkerSize', 10,...
+            'MarkerEdgeColor', [0.5, 0.5, 0.5], ...
+            'MarkerFaceColor', faceColor);
+        end
     end
 end
 
-for dd=1:2
+for dd=1:3
     medianAmps=median(squeeze(meanAmplitudes(dd,:,:)),2);
-    switch dd
-        case 1
-            faceColor=[.8,.8,.8];
-        case 2
-            faceColor=[0.4,0.4,1];
-    end
-    plot(log10(contrastLevels),medianAmps,'-k');
+            switch dd
+            case 1
+    plot(a,log10(contrastLevels(2:length(amps)+1)),medianAmps,'-k');
+            case 2
+    plot(a,log10(contrastLevels(2:length(amps)+1)),medianAmps,'-k');
+            case 3
+    plot(a,log10(contrastLevels(2:length(amps)+1)*4),medianAmps,'-k');
+            end
 end
 
-% Clean up the labels and axes
-title('Amplitude x Contrast','Interpreter', 'none');
-pbaspect([1 1 1])
-xlabel('log contrast'); ylabel('% BOLD change [subject scaled]');
-box('off');
+
+
+%% Plot duration vs. amplitude in the DEDU model
 
 plotHandles{2}=figure;
 hold on
-for dd=1:2
+for dd=1:3
     for ss=1:4
-        for cc=1:5
+        nContrasts=nContrastsByDirection(dd);
+        for cc=1:nContrasts
             if xValFVals(dd,cc,ss)>=fitThresh
                 amp=meanAmplitudes(dd,cc,ss);
                 dur=meanDurations(dd,cc,ss);
@@ -60,6 +105,8 @@ for dd=1:2
                         faceColor=[0.8,0.8,0.8];
                     case 2
                         faceColor=[0.4,0.4,1];
+                    case 3
+                        faceColor=[1,0.4,0.4];
                 end
                 MarkerSize=ceil(15*(1.01-semDur/maxSEMDuration));
                 errorbar(dur,amp,semAmp,'-.k',...
@@ -74,10 +121,15 @@ for dd=1:2
                     'MarkerSize', MarkerSize,...
                     'MarkerEdgeColor', [0.5 0.5 0.5], ...
                     'MarkerFaceColor', faceColor);
-            end
-        end
-    end
-end
+            end % if there are points to plot
+        end % loop over contrasts
+    end % loop over subjects
+    % Add an ellipses
+    pointsIdx=find(xValFVals(dd,:,:)>=fitThresh);
+    durs=meanDurations(dd,:,:);
+    amps=meanAmplitudes(dd,:,:);
+    confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5,faceColor);
+end % loop over directions
 
 % Clean up the labels and axes
 title('Duration x Amplitude','Interpreter', 'none');
@@ -85,66 +137,10 @@ pbaspect([1 1 1])
 xlabel('Duration [secs]'); ylabel('% BOLD change [subject scaled]');
 box('off');
 
-
-% Build a classifier
-% 
-% fVals=xValFVals(1,:,:);
-%     amps=meanAmplitudes(1,:,:);
-%     durs=meanDurations(1,:,:);
-%     idx=find(fVals>=fitThresh);    
-%     lmsData=[durs(idx),amps(idx)];
-%     lmsWeights=fVals(idx);
-%     lmsLabels=cell(length(idx),1);
-%     lmsLabels(:)=cellstr('lms');
-% fVals=xValFVals(2,:,:);
-%     amps=meanAmplitudes(2,:,:);
-%     durs=meanDurations(2,:,:);
-%     idx=find(fVals>=fitThresh);
-%     melData=[durs(idx),amps(idx)];
-%     melWeights=fVals(idx);
-%     melLabels=cell(length(idx),1);
-%     melLabels(:)=cellstr('mel');
-%     
-%     labels=[lmsLabels;melLabels];
-%     data=[lmsData;melData];
-%     data=array2table(data);
-%     data=[data,labels];
-%     data.Properties.VariableNames{1}='dur';
-%     data.Properties.VariableNames{2}='amp';
-%     data.Properties.VariableNames{3}='direction';
-% 
-%     
-%     weights=[lmsWeights;melWeights];
-%     MdlLinear = fitcdiscr(data,'direction','PredictorNames',{'dur','amp'},'ClassNames',{'lms','mel'},'Weights',weights);
-% K = MdlLinear.Coeffs(1,2).Const;
-% L = MdlLinear.Coeffs(1,2).Linear;
-% f = @(x) (K + L(1)*x) / (-1* L(2));
-% fplot(f,[1 4]);
-
-pointsIdx=find(xValFVals(1,:,:)>=fitThresh);
-durs=meanDurations(1,:,:);
-amps=meanAmplitudes(1,:,:);
-confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
-
-pointsIdx=find(xValFVals(2,:,:)>=fitThresh);
-durs=meanDurations(2,:,:);
-amps=meanAmplitudes(2,:,:);
-confellipse2([durs(pointsIdx) amps(pointsIdx) ],0.5);
-
 end % function
 
-function b = Theil_Sen_Regress(x,y)
 
-N=length(x);
-
-Comb = combnk(1:N,2);
-
-theil=diff(y(Comb),1,2)./diff(x(Comb),1,2);
-b=median(theil);
-
-end
-
-function hh = confellipse2(xy,conf)
+function hh = confellipse2(xy,conf,lineColor)
 %CONFELLIPSE2 Draws a confidence ellipse.
 % CONFELLIPSE2(XY,CONF) draws a confidence ellipse on the current axes
 % which is calculated from the n-by-2 matrix XY and encloses the
@@ -178,7 +174,7 @@ ab = diag(sqrt(k*lat));
 exy = [cos(th),sin(th)]*ab*pc' + repmat(mxy,numPts,1);
 
 % Add ellipse to current plot
-h = line(exy(:,1),exy(:,2),'Clipping','off');
+h = line(exy(:,1),exy(:,2),'Clipping','off','Color',lineColor);
 if nargout > 0
     hh = h;
 end
