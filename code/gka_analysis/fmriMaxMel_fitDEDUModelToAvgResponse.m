@@ -9,8 +9,8 @@ stimulusDeltaT=1; % time resolution of the stimulus model, in msecs
 tfeHandle = tfeDEDU('verbosity',verbosity);
 
 % Get the dimensions of the data
-nDirections=3; % just the LMS and Mel stimuli
-nContrastsByDirection=[5,5,4]; % the number of contrast levels for each direction
+nDirections=5; % just the LMS and Mel stimuli
+nContrastsByDirection=[5,5,4,1,1]; % the number of contrast levels for each direction
 nSubjects=size(kernelStructCellArray,2);
 
 meanDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);

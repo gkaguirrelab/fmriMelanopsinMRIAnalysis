@@ -52,7 +52,9 @@ for ss=1:nSubjects
             nSamples = ceil((hrfKernelStruct.timebase(end)-hrfKernelStruct.timebase(1))/responseDeltaT);
             newKernelTimebase = hrfKernelStruct.timebase(1):responseDeltaT:(hrfKernelStruct.timebase(1)+nSamples*responseDeltaT);
             hrfKernelStruct = tfeHandle.resampleTimebase(hrfKernelStruct,newKernelTimebase);
-            thePacket.kernel=prepareHRFKernel(hrfKernelStruct);
+            hrfKernelStruct.values = hrfKernelStruct.values - hrfKernelStruct.values(1);
+            hrfKernelStruct = normalizeKernelAmplitude( hrfKernelStruct );
+            thePacket.kernel = hrfKernelStruct;
             
             % downsample the stimulus values to 100 ms deltaT to speed things up
             totalResponseDuration=TRmsecs * ...

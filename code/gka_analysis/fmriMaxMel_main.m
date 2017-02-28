@@ -16,12 +16,12 @@ fitDEDUModelBehavior='load';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
-ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','RodControlScotopic','RodControlPhotopic'};
+ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
-kernelStructCellArrayHash='d8946ffc4fa9c210dd2458bed3070a81';
-meanEvokedHash='7a590b91eb2c034160aa6201b471b34c';
-deduFitsHash='9b1d3b9dad14496e1d7695efa0d6f059';
+kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
+meanEvokedHash='7264a33d12d64065ca17b4efc4198951';
+deduFitsHash='e8b0159c8a96d91380469da0323d9df0';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -36,11 +36,19 @@ PacketHashArray{3,:}={'68d23863092a9195632cf210d7a90aa9',...
     'eb406441091b293e156eccf0954f26c3',...
     '501560902a291bcacd3b172c98df67ff'};
 
-PacketHashArray{4,:}={'6939bbf2b4a94099f7e4d8675050b938',...
+PacketHashArray{4,:}={'7183b32247e38e57d9f79837e356364b',...
+    'a45d3bad8efe3479556043e5aba548ad',...
+    '9620037cb005cab3e1a8c77d8fad065d'};
+
+PacketHashArray{5,:}={'69c04e554b19ad70d8df10e9f390c96a',...
+    '618e569cc7d15f0ba6be2efd13fc1bc8',...
+    'fccae2cbaac87497b217e67cfa1f7361'};
+
+PacketHashArray{6,:}={'6939bbf2b4a94099f7e4d8675050b938',...
     'c9e33fa8705bd06b4885b65420c63ddc',...
     '434a3800e449942c04e6e1a3989886c0'};
 
-PacketHashArray{5,:}={'2d4d7d6bdfadf61d51a45184bae7807c',...
+PacketHashArray{7,:}={'2d4d7d6bdfadf61d51a45184bae7807c',...
     '2da7196e692caf04c08751a96724ae92',...
     '62706c1a5756e6642fc866faa1860636'};
 
@@ -69,8 +77,8 @@ switch kernelCacheBehavior
     case 'make'
         fprintf('Making the kernelStructCellArray\n');
         
-        [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:3,:));
-        notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF experiments';
+        [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:5,:));
+        notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF, and the 400%LMS and 400%Mel experiments';
         
         % Save the plot of the HRFs
         plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'EmpiricalHRFs.pdf');
@@ -139,7 +147,7 @@ end % switch for carryOverResponseBehavior
 switch meanEvokedResponseBehavior
     case 'make'
         fprintf('Obtaining mean evoked responses\n');
-        for experiment=1:3
+        for experiment=1:5
             % Derive mean evoked response
             [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
             
