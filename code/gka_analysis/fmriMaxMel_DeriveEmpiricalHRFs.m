@@ -89,7 +89,7 @@ for ss=1:nSubjects
     responseStructCellArray{ss}=responseStruct;
     
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [responseStruct.metaData.subjectName ' ±SEM runs']);
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [responseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) ']']);
     
 end % loop over subjects
 
