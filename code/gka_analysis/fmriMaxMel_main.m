@@ -11,8 +11,8 @@ warning on;
 % Define cache behavior
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='load';
-fitDEDUModelBehavior='load';
+meanEvokedResponseBehavior='make';
+fitDEDUModelBehavior='make';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 
@@ -121,6 +121,7 @@ switch kernelCacheBehavior
         for ss=1:length(kernelStructCellArray)
             kernelStruct=kernelStructCellArray{ss};
             subjectScaler(ss)=max(kernelStruct.values);
+            subjectScaler=subjectScaler ./ mean(subjectScaler);
         end
     otherwise
         error('You must either make or load the kernelStructCellArray');
@@ -149,24 +150,19 @@ switch meanEvokedResponseBehavior
         fprintf('Obtaining mean evoked responses\n');
         for experiment=1:5
             % Derive mean evoked response
-            [responseStructCellArray, plotHandleBySubject, plotHandleByStimulus, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
+            [responseStructCellArray, plotHandleAverages, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
             
-            % save plot x subject
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_CRFs_bySubject.pdf']);
-            fmriMaxMel_suptitle(plotHandleBySubject,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
+            % save plot of response averages
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_TrialMeanResponses.pdf']);
+            fmriMaxMel_suptitle(plotHandleAverages,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
             set(gca,'FontSize',6);
-            set(plotHandleBySubject,'Renderer','painters');
-            print(plotHandleBySubject, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandleBySubject);
-            
-            % save plot x stimulus
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_CRFs_byStimulus.pdf']);
-            fmriMaxMel_suptitle(plotHandleByStimulus,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
-            set(gca,'FontSize',6);
-            set(plotHandleByStimulus,'Renderer','painters');
-            print(plotHandleByStimulus, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandleByStimulus);
-            
+            set(plotHandleAverages,'Renderer','painters');
+%set(gcf, 'PaperPosition', [0 0 8 4]);
+%set(gcf, 'PaperSize', [8 4]);
+saveas(gcf, [fileName '.pdf'], 'pdf');
+ %           print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandleAverages);
+
             % save time-series plots
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_FourierFitsToTimeSeriesBySubject.pdf']);
             fmriMaxMel_suptitle(plotHandleFitsBySubject,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - Time series fits']);
@@ -196,7 +192,7 @@ end % switch on meanEvokedResponseBehavior
 switch fitDEDUModelBehavior
     
     case 'make'
-        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, subjectScaler);
+        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);
         % Save plots
         for dd=1:length(plotHandles)
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{dd} '_DurationModelFit_bySubject.pdf']);
