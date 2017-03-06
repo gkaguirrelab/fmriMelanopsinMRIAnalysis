@@ -77,22 +77,22 @@ for dd=1:3
             switch dd
             case 1
                 xvals=log10(contrastLevels(2:length(amps)+1));
-                yvals=medianAmps;
-cs = spline(xvals,[0 yvals' 0]);
+                yvals=medianAmps';
+cs = polyfit(xvals,yvals, 3);
                 xxvals=min(xvals):0.01:max(xvals);
-plot(a,xxvals,ppval(cs,xxvals),'-k');
+plot(a,xxvals,polyval(cs,xxvals),'-k');
             case 2
                 xvals=log10(contrastLevels(2:length(amps)+1));
-                yvals=medianAmps;
-cs = spline(xvals,yvals);
+                yvals=medianAmps';
+cs = polyfit(xvals,yvals, 3);
                 xxvals=min(xvals):0.01:max(xvals);
-plot(a,xxvals,ppval(cs,xxvals),'-b');
+plot(a,xxvals,polyval(cs,xxvals),'-b');
             case 3
                 xvals=log10(contrastLevels(2:length(amps)+1)*4);
-                yvals=medianAmps;
-cs = spline(xvals,[0 yvals' 0]);
+                yvals=medianAmps';
+cs = polyfit(xvals,yvals, 3);
                 xxvals=min(xvals):0.01:max(xvals);
-plot(a,xxvals,ppval(cs,xxvals),'-r');
+plot(a,xxvals,polyval(cs,xxvals),'-r');
             end
 end
 

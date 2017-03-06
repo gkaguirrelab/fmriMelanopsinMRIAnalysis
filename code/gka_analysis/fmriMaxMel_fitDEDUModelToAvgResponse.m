@@ -1,4 +1,4 @@
-function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray, subjectScaler)
+function [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray)
 %
 
 verbosity='none';
@@ -52,20 +52,14 @@ for dd=1:nDirections
             runResponses=runResponses-meanInitialValue;
             nRuns=size(runResponses,1);
             defaultParamsInfo.nInstances=1;
-            
-            % Adjust the amplitude of the responses for this subject by the
-            % subjectScaler value for this subject
-            thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
-            
+                        
             % Bootstrap-resample the run-by-run data to create different mean
             % responses and fit these. Retain the duration parameter
             for bb=1:100
                 runIdx=randsample(1:nRuns,nRuns,true);
                 resampleMean=mean(runResponses(runIdx,:));
                 thePacket.response.values=resampleMean;
-                % Adjust the amplitude of the responses by the
-                % subjectScaler
-                thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
+
                 % Perform the fit and record the params
                 [paramsFit,~,~] = ...
                     tfeHandle.fitResponse(thePacket,...
@@ -87,7 +81,7 @@ for dd=1:nDirections
                 % Adjust the amplitude of the responses by the
                 % subjectScaler
                 packetCellArray{rr}.response.values = ...
-                    packetCellArray{rr}.response.values ./ subjectScaler(ss);
+                    packetCellArray{rr}.response.values;
             end
             [ xValFitStructure, ~, ~ ] = ...
                 crossValidateFits( packetCellArray, tfeHandle, ...
@@ -102,8 +96,6 @@ for dd=1:nDirections
             
             % Plot the mean response and mean fit
             thePacket.response = meanEvokedResponsesCellArray{dd}{ss,cc};
-            % Adjust the amplitude of the responses by the subjectScaler
-            thePacket.response.values = thePacket.response.values ./ subjectScaler(ss);
             
             [paramsFit,fVal,modelResponseStruct] = ...
                 tfeHandle.fitResponse(thePacket,...
