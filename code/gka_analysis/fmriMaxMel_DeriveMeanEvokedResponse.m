@@ -1,4 +1,4 @@
-function [responseStructCellArray, plotHandleAverages, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler)
+function [responseStructCellArray, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler)
 % function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
 %
 
@@ -37,9 +37,21 @@ nStimuli=length(unique(packetCellArray{1,1}.stimulus.metaData.stimTypes));
 % Assume that the attention event is the last stimulusType
 nStimuli=nStimuli-1;
 
-% Prepare to plot the time series data and the fit
-plotHandleFitsBySubject=figure();
+% Set all plots to have the same number of rows and columns, including a 
+% row for average responses, and a column for the Fourier fit to the raw 
+% time series
+nPlotRows = nSubjects+1;
+nPlotCols = max([nStimuli+1,6]);
+
+% Prepare to plot the evoked and fit responses by subject
+plotHandleAverages=figure();
 set(gcf, 'PaperSize', [8.5 11]);
+for ss=1:nPlotRows
+    for ii=1:nPlotCols
+        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols,(ss-1)*nPlotCols+ii);
+    end
+end
+hold on
 
 % Loop over subjects
 for ss=1:nSubjects
@@ -98,12 +110,11 @@ for ss=1:nSubjects
     totalDurMins = ((max(subjectTimebase)+deltaT)/1000)/60;
     
     % Plot the time-series data and fits for this subject
-    tmpHandle=subplot(nSubjects,1,ss);
-    fmriMaxMel_PlotEvokedResponse( tmpHandle, subjectTimebase, subjectDataSeries*100, [],...
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectDataSeries*100, [],...
         'ylim', [-2 2], 'lineColor', [.5 .5 .5],'lineWidth',.2,...
         'xTick',60,'xAxisAspect',1)
     hold on
-    fmriMaxMel_PlotEvokedResponse( tmpHandle, subjectTimebase, subjectFitSeries*100, [],...
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectFitSeries*100, [],...
         'ylim', [-2 2], 'lineColor', [1 0 0],'lineWidth',0.1,...
         'plotTitle', [subjectMetaData{ss}.subjectName ' r2= ' strtrim(num2str(mean(fVals))) ', ' num2str(totalDurMins) ' mins'],...
         'xTick',60,'xAxisAspect',1)
@@ -111,16 +122,6 @@ for ss=1:nSubjects
     
 end % loop over subjects
 
-
-% Prepare to plot the evoked and fit responses by subject
-plotHandleAverages=figure();
-set(gcf, 'PaperSize', [8.5 11]);
-for ss=1:nSubjects+1
-    for ii=1:nStimuli
-        subPlotHandle{ss,ii}=subplot(nSubjects+1,nStimuli,(ss-1)*nStimuli+ii);
-    end
-end
-hold on
 
 
 responseStructCellArray=[];
@@ -145,7 +146,7 @@ for ss=1:nSubjects
         responseStructCellArray{ss,ii}=eventResponseStruct;
         acrossStimResponse(ii,:)=meanResponse;
         % plot the mean response and error
-        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
     end % loop over stimuli
     
     
@@ -160,7 +161,7 @@ for ii=1:nStimuli
     meanResponse=nanmean(dataMatrix);
     semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1, ii}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nPlotRows, ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
 end % loop over stimuli
 hold off
 

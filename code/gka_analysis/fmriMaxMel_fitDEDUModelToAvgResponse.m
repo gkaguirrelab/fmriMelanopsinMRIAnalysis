@@ -13,18 +13,26 @@ nDirections=5; % just the LMS and Mel stimuli
 nContrastsByDirection=[5,5,4,1,1]; % the number of contrast levels for each direction
 nSubjects=size(kernelStructCellArray,2);
 
+nPlotCols = max([nStimuli,5]);
+
 meanDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);
 semDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);
 
 for dd=1:nDirections
     fprintf(['Direction ' strtrim(num2str(dd)) '\n']);
     plotHandles{dd}=figure();
+    set(gcf, 'PaperSize', [8.5 11]);
+    for ss=1:nSubjects+1
+        for ii=1:nPlotCols
+            subPlotHandle{ss,ii}=subplot(nSubjects+1,nPlotCols,(ss-1)*nPlotCols+ii);
+        end
+    end
+    hold on
     nContrasts=nContrastsByDirection(dd);
     for cc=1:nContrasts
         fprintf(['\tContrast ' strtrim(num2str(cc)) '\n']);
         for ss=1:nSubjects
             fprintf(['\t\tSubject ' strtrim(num2str(ss)) '\n']);
-            subPlotHandle=subplot(max(nContrastsByDirection),nSubjects,ss+((cc-1)*nSubjects));
             clear thePacket
             
             % Build a packet with a mean response and an impulse stimulus
@@ -102,8 +110,8 @@ for dd=1:nDirections
                 'defaultParamsInfo', defaultParamsInfo,...
                 'DiffMinChange',0.01,...
                 'errorType','1-r2');
-            fmriMaxMel_PlotEvokedResponse( subPlotHandle, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-            fmriMaxMel_PlotEvokedResponse( subPlotHandle, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
             if xValFVals(dd,cc,ss) < 0
                 text(2,1.5,['r2 (xval) = ' sprintf('%0.2f',1-fVal) ' (' sprintf('%0.2f',xValFVals(dd,cc,ss)) ')'],'FontSize',6,'Color','red')
             else

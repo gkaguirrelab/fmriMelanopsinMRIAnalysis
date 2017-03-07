@@ -150,7 +150,7 @@ switch meanEvokedResponseBehavior
         fprintf('Obtaining mean evoked responses\n');
         for experiment=1:5
             % Derive mean evoked response
-            [responseStructCellArray, plotHandleAverages, plotHandleFitsBySubject] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
+            [responseStructCellArray, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
             
             % save plot of response averages
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_TrialMeanResponses.pdf']);
@@ -159,14 +159,6 @@ switch meanEvokedResponseBehavior
             set(plotHandleAverages,'Renderer','painters');
             print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
             close(plotHandleAverages);
-
-            % save time-series plots
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_FourierFitsToTimeSeriesBySubject.pdf']);
-            fmriMaxMel_suptitle(plotHandleFitsBySubject,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - Time series fits']);
-            set(gca,'FontSize',6);
-            set(plotHandleFitsBySubject,'Renderer','painters');
-            print(plotHandleFitsBySubject, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandleFitsBySubject);
             
             % store the responseStructCellArray
             meanEvokedResponsesCellArray{experiment}=responseStructCellArray;
