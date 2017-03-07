@@ -25,10 +25,9 @@ hold(plotHandle,'on');
 
 % Plot error bounds if this was passed
 if ~isempty(errorResponse)
-    lineSpecOptions={'Color',p.Results.lineColor};
-    axes(plotHandle);
-    shadedErrorBar(timebase/1000,meanResponse,errorResponse,lineSpecOptions,1);
-%   plot(plotHandle,timebase/1000,meanResponse-errorResponse,'Color',p.Results.lineColor*.25);
+   errorLineColor=(([1 1 1]-p.Results.lineColor)*.5)+p.Results.lineColor;
+   plot(plotHandle,timebase/1000,meanResponse+errorResponse,'Color',errorLineColor);
+   plot(plotHandle,timebase/1000,meanResponse-errorResponse,'Color',errorLineColor);
 end
 
 % Calculate deltaT so we can know what the limit of our axes should be

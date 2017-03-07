@@ -157,10 +157,7 @@ switch meanEvokedResponseBehavior
             fmriMaxMel_suptitle(plotHandleAverages,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
             set(gca,'FontSize',6);
             set(plotHandleAverages,'Renderer','painters');
-%set(gcf, 'PaperPosition', [0 0 8 4]);
-%set(gcf, 'PaperSize', [8 4]);
-saveas(gcf, [fileName '.pdf'], 'pdf');
- %           print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
+            print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
             close(plotHandleAverages);
 
             % save time-series plots
