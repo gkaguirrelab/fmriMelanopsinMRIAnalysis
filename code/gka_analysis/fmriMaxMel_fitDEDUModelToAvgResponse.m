@@ -13,7 +13,7 @@ nDirections=5; % just the LMS and Mel stimuli
 nContrastsByDirection=[5,5,4,1,1]; % the number of contrast levels for each direction
 nSubjects=size(kernelStructCellArray,2);
 
-nPlotCols = max([nStimuli,5]);
+nPlotCols = max([nContrastsByDirection,5]);
 
 meanDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);
 semDurations=zeros(nDirections,max(nContrastsByDirection),nSubjects);

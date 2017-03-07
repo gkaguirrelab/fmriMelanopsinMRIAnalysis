@@ -106,6 +106,7 @@ switch kernelCacheBehavior
             save(kernelStructFileName,'kernelStruct','-v7.3');
             fprintf(['Saved a kernelStruct with hash ID ' kernelStructHash '\n']);
         end
+        subjectScaler=subjectScaler ./ mean(subjectScaler);
         % Save the set of HRFs for all subjects for ease of use later
         kernelStructCellArrayHash = DataHash(kernelStructCellArray);
         kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
@@ -121,8 +122,8 @@ switch kernelCacheBehavior
         for ss=1:length(kernelStructCellArray)
             kernelStruct=kernelStructCellArray{ss};
             subjectScaler(ss)=max(kernelStruct.values);
-            subjectScaler=subjectScaler ./ mean(subjectScaler);
         end
+        subjectScaler=subjectScaler ./ mean(subjectScaler);
     otherwise
         error('You must either make or load the kernelStructCellArray');
 end % switch on kernelCacheBehavior
