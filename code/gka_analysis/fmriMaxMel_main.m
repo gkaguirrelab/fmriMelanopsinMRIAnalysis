@@ -20,8 +20,8 @@ ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct'
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
 kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
-meanEvokedHash='7264a33d12d64065ca17b4efc4198951';
-deduFitsHash='e8b0159c8a96d91380469da0323d9df0';
+meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
+deduFitsHash='1d42dc538c8ebeb7e8595be8a8406cca';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
