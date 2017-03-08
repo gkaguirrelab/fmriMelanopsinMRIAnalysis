@@ -14,6 +14,7 @@ p.addParameter('plotTitle','title here',@ischar);
 p.addParameter('ylim',[-0.5 2],@isnumeric);
 p.addParameter('xTick',2,@isnumeric);
 p.addParameter('xAxisAspect',1,@isnumeric);
+p.addParameter('yAxisAspect',1,@isnumeric);
 p.parse(plotHandle, timebase, meanResponse, errorResponse, varargin{:});
 
 % Detect and store current hold state
@@ -39,7 +40,7 @@ maxTime=(max(timebase)+deltaT)/1000;
 ylim(plotHandle,p.Results.ylim);
 xlim(plotHandle,[0 maxTime]);
 title(plotHandle,p.Results.plotTitle,'Interpreter', 'none');
-pbaspect(plotHandle,[p.Results.xAxisAspect 1 1])
+pbaspect(plotHandle,[p.Results.xAxisAspect p.Results.yAxisAspect 1])
 xlabel(plotHandle,'Time [secs]'); ylabel(plotHandle,'% BOLD change');
 set(plotHandle,'Xtick',0:p.Results.xTick:maxTime)
 set(plotHandle,'FontSize',6);

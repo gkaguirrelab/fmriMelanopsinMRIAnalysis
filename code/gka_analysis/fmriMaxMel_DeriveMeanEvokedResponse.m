@@ -38,7 +38,7 @@ nStimuli=length(unique(packetCellArray{1,1}.stimulus.metaData.stimTypes));
 nStimuli=nStimuli-1;
 
 % Set all plots to have the same number of rows and columns, including a 
-% row for average responses, and a column for the Fourier fit to the raw 
+% row for average responses, and 2 columns for the Fourier fit to the raw 
 % time series
 nPlotRows = nSubjects+1;
 nPlotCols = max([nStimuli+1,6]);
@@ -48,7 +48,11 @@ plotHandleAverages=figure();
 set(gcf, 'PaperSize', [8.5 11]);
 for ss=1:nPlotRows
     for ii=1:nPlotCols
-        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols,(ss-1)*nPlotCols+ii);
+        if ii==1
+        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,[(ss-1)*(nPlotCols+1)+1, (ss-1)*(nPlotCols+1)+2]);
+        else
+        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,(ss-1)*(nPlotCols+1)+ii+1);
+        end
     end
 end
 hold on
@@ -145,8 +149,8 @@ for ss=1:nSubjects
         eventResponseStruct.metaData.units='%change [subect scaler]';
         responseStructCellArray{ss,ii}=eventResponseStruct;
         acrossStimResponse(ii,:)=meanResponse;
-        % plot the mean response and error
-        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
+        % plot the across-run mean response and SEM (by run) error
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
     end % loop over stimuli
     
     
@@ -161,7 +165,7 @@ for ii=1:nStimuli
     meanResponse=nanmean(dataMatrix);
     semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nPlotRows, ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nPlotRows, ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1],'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
 end % loop over stimuli
 hold off
 

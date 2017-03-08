@@ -110,8 +110,8 @@ for dd=1:nDirections
                 'defaultParamsInfo', defaultParamsInfo,...
                 'DiffMinChange',0.01,...
                 'errorType','1-r2');
-            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2], 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
-            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, thePacket.response.timebase, thePacket.response.values, [], 'ylim', [-0.5 2],'xAxisAspect', 0.5, 'lineColor', [0 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
+            fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,cc}, modelResponseStruct.timebase, modelResponseStruct.values, [], 'ylim', [-0.5 2],'xAxisAspect', 0.5, 'lineColor', [1 0 0], 'plotTitle', [thePacket.metaData.subjectName ' - stim ' strtrim(num2str(cc))]);
             if xValFVals(dd,cc,ss) < 0
                 text(2,1.5,['r2 (xval) = ' sprintf('%0.2f',1-fVal) ' (' sprintf('%0.2f',xValFVals(dd,cc,ss)) ')'],'FontSize',6,'Color','red')
             else
