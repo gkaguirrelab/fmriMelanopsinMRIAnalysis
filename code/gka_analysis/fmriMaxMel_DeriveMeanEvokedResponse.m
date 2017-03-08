@@ -118,18 +118,16 @@ for ss=1:nSubjects
             end % check for first packet
         end % check for not empty packet
     end % loop over runs
-    
-    totalDurMins = ((max(subjectTimebase)+deltaT)/1000)/60;
-    
+        
     % Plot the time-series data and fits for this subject
     fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectDataSeries*100, [],...
-        'ylim', [-2 2], 'lineColor', [.5 .5 .5],'lineWidth',.2,...
-        'xTick',600,'xAxisAspect',1, 'xUnits', 'Time [mins]')
+        'ylim', [-3 3], 'lineColor', [.5 .5 .5],'lineWidth',.2,...
+        'xTick',10,'xAxisAspect',1, 'xUnits', 'Time [mins]')
     hold on
     fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectFitSeries*100, [],...
-        'ylim', [-2 2], 'lineColor', [1 0 0],'lineWidth',0.1,...
-        'plotTitle', [subjectMetaData{ss}.subjectName ' r2= ' strtrim(num2str(mean(fVals))) ', ' num2str(totalDurMins) ' mins'],...
-        'xTick',600,'xAxisAspect',1, 'xUnits', 'Time [mins]')
+        'ylim', [-3 3], 'lineColor', [1 0 0],'lineWidth',0.1,...
+        'plotTitle', [subjectMetaData{ss}.subjectName ' r2= ' strtrim(num2str(mean(fVals))) ],...
+        'xTick',10,'xAxisAspect',1, 'xUnits', 'Time [mins]')
     hold off
     
 end % loop over subjects
@@ -156,8 +154,8 @@ for ss=1:nSubjects
         responseStructCellArray{ss,ii}=eventResponseStruct;
         acrossStimResponse(ii,:)=meanResponse;
         % plot the across-run mean response and SEM (by run) error
-        % only show the plot axes for the first contrast level
-        if ii==1
+        % only show the plot axes for the first subject / first contrast level
+        if ii==1 && ss==1
             dataOnly=false;
         else
             dataOnly=true;
