@@ -1,5 +1,5 @@
-function [responseStructCellArray, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, subjectScaler)
-% function [packetCellArray] = fmriBDFM_DeriveHRFsForPacketCellArray(packetCellArray)
+function [responseStructCellArray, deduFitData, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, kernelStructCellArray, subjectScaler)
+% function [responseStructCellArray, deduFitData, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, kernelStructCellArray, subjectScaler)
 %
 
 verbosity='full';
@@ -7,6 +7,14 @@ verbosity='full';
 % Set some parameters for the evoked response derivation
 msecsToModel=16000;
 numFourierComponents=16;
+
+% Loop across subjects and  calculate a subjectScaler to adjust other response amplitudes
+% based upon HRF amplitude
+for ss=1:length(kernelStructCellArray)
+    kernelStruct=kernelStructCellArray{ss};
+    subjectScaler(ss)=max(kernelStruct.values);
+end
+subjectScaler=subjectScaler ./ mean(subjectScaler);
 
 % Loads into memory the variable packetCellArray
 load(packetFile);
@@ -37,8 +45,8 @@ nStimuli=length(unique(packetCellArray{1,1}.stimulus.metaData.stimTypes));
 % Assume that the attention event is the last stimulusType
 nStimuli=nStimuli-1;
 
-% Set all plots to have the same number of rows and columns, including a 
-% row for average responses, and 2 columns for the Fourier fit to the raw 
+% Set all plots to have the same number of rows and columns, including a
+% row for average responses, and 2 columns for the Fourier fit to the raw
 % time series
 nPlotRows = nSubjects+1;
 nPlotCols = max([nStimuli+1,6]);
@@ -49,9 +57,9 @@ set(gcf, 'PaperSize', [8.5 11]);
 for ss=1:nPlotRows
     for ii=1:nPlotCols
         if ii==1
-        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,[(ss-1)*(nPlotCols+1)+1, (ss-1)*(nPlotCols+1)+2]);
+            subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,[(ss-1)*(nPlotCols+1)+1, (ss-1)*(nPlotCols+1)+2]);
         else
-        subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,(ss-1)*(nPlotCols+1)+ii+1);
+            subPlotHandle{ss,ii}=subplot(nPlotRows,nPlotCols+1,(ss-1)*(nPlotCols+1)+ii+1);
         end
     end
 end
@@ -97,7 +105,7 @@ for ss=1:nSubjects
                 subjectMetaData{ss}=thePacket.metaData;
                 subjectDataSeries=thePacket.response.values;
                 subjectFitSeries=modelResponseStruct.values;
-                subjectTimebase=thePacket.response.timebase;                
+                subjectTimebase=thePacket.response.timebase;
                 check = diff(thePacket.response.timebase);
                 fVals(rr)=fVal;
                 deltaT = check(1);
@@ -116,17 +124,15 @@ for ss=1:nSubjects
     % Plot the time-series data and fits for this subject
     fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectDataSeries*100, [],...
         'ylim', [-2 2], 'lineColor', [.5 .5 .5],'lineWidth',.2,...
-        'xTick',60,'xAxisAspect',1)
+        'xTick',600,'xAxisAspect',1, 'xUnits', 'Time [mins]')
     hold on
     fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,1}, subjectTimebase, subjectFitSeries*100, [],...
         'ylim', [-2 2], 'lineColor', [1 0 0],'lineWidth',0.1,...
         'plotTitle', [subjectMetaData{ss}.subjectName ' r2= ' strtrim(num2str(mean(fVals))) ', ' num2str(totalDurMins) ' mins'],...
-        'xTick',60,'xAxisAspect',1)
+        'xTick',600,'xAxisAspect',1, 'xUnits', 'Time [mins]')
     hold off
     
 end % loop over subjects
-
-
 
 responseStructCellArray=[];
 for ss=1:nSubjects
@@ -150,13 +156,27 @@ for ss=1:nSubjects
         responseStructCellArray{ss,ii}=eventResponseStruct;
         acrossStimResponse(ii,:)=meanResponse;
         % plot the across-run mean response and SEM (by run) error
-        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1], 'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
+        % only show the plot axes for the first contrast level
+        if ii==1
+            dataOnly=false;
+        else
+            dataOnly=true;
+        end
+        fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss,ii+1}, timebase, meanResponse, semResponse, 'dataOnly', dataOnly, 'ylim', [-0.5 1], 'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', [eventResponseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) '] - w/subject scaler']);
+        % Perform the DEDU model fit, and plot this
+        [meanAmplitude, semAmplitude, meanDuration, semDuration, xValFVal] = ...
+            fmriMaxMel_fitDEDUModelToAvgResponse(eventResponseStruct, kernelStructCellArray{ss}, subPlotHandle{ss,ii+1});
+        deduFitData{ss,ii}.meanAmplitude= meanAmplitude;
+        deduFitData{ss,ii}.semAmplitude= semAmplitude;
+        deduFitData{ss,ii}.meanDuration= meanDuration;
+        deduFitData{ss,ii}.semDuration= semDuration;
+        deduFitData{ss,ii}.xValFVal= xValFVal;
     end % loop over stimuli
     
     
 end % loop over subjects
 
-% Calculate the average evoked response by stimulus and subject
+% Calculate the average evoked response across subjects
 for ii=1:nStimuli
     dataMatrix=[];
     for ss=1:nSubjects
@@ -165,7 +185,13 @@ for ii=1:nStimuli
     meanResponse=nanmean(dataMatrix);
     semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nPlotRows, ii+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 1],'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
+    % only show the plot axes for the first contrast level
+    if ii==1
+        dataOnly=false;
+    else
+        dataOnly=true;
+    end
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{nPlotRows, ii+1}, timebase, meanResponse, semResponse, 'dataOnly', dataOnly, 'ylim', [-0.5 1],'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', lineColorBase, 'plotTitle', ['stimulus ' num2str(ii) ' ± SEM subjects (w/subject scaler)']);
 end % loop over stimuli
 hold off
 

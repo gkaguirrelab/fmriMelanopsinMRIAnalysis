@@ -89,15 +89,10 @@ switch kernelCacheBehavior
         close(plotHandle);
         
         % Loop across subjects and save the HRF for each subject
-        % Also calculate a subjectScaler to adjust other response amplitudes
-        % based upon HRF amplitude
         for ss=1:length(kernelStructCellArray)
             kernelStruct=kernelStructCellArray{ss};
             kernelStruct.metaData.notes=notes;
-            
-            % calculate and save the amplitude of response
-            subjectScaler(ss)=max(kernelStruct.values);
-            
+                        
             % calculate the hex MD5 hash for the hrfKernelStructCellArray
             kernelStructHash = DataHash(kernelStruct);
             
@@ -106,7 +101,6 @@ switch kernelCacheBehavior
             save(kernelStructFileName,'kernelStruct','-v7.3');
             fprintf(['Saved a kernelStruct with hash ID ' kernelStructHash '\n']);
         end
-        subjectScaler=subjectScaler ./ mean(subjectScaler);
         % Save the set of HRFs for all subjects for ease of use later
         kernelStructCellArrayHash = DataHash(kernelStructCellArray);
         kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
@@ -117,13 +111,6 @@ switch kernelCacheBehavior
         % Load the kernelStructCellArray
         kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
         load(kernelStructCellArrayFileName);
-        % Loop across subjects and  calculate a subjectScaler to adjust other response amplitudes
-        % based upon HRF amplitude
-        for ss=1:length(kernelStructCellArray)
-            kernelStruct=kernelStructCellArray{ss};
-            subjectScaler(ss)=max(kernelStruct.values);
-        end
-        subjectScaler=subjectScaler ./ mean(subjectScaler);
     otherwise
         error('You must either make or load the kernelStructCellArray');
 end % switch on kernelCacheBehavior
@@ -145,14 +132,14 @@ switch carryOverResponseBehavior
         fprintf('Skipping analysis of carry-over effects\n');
 end % switch for carryOverResponseBehavior
 
-%% Make or load the average evoked responses
+%% Make or load the average evoked responses and perform DEDU fitting
 switch meanEvokedResponseBehavior
     case 'make'
         fprintf('Obtaining mean evoked responses\n');
         for experiment=1:5
             % Derive mean evoked response
-            [responseStructCellArray, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, subjectScaler);
-            
+            [responseStructCellArray, deduFitDataExperiment, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, kernelStructCellArray);
+            deduFitData{experiment}=deduFitDataExperiment;
             % save plot of response averages
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_TrialMeanResponses.pdf']);
             fmriMaxMel_suptitle(plotHandleAverages,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
@@ -169,57 +156,36 @@ switch meanEvokedResponseBehavior
         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
         save(meanEvokedFileName,'meanEvokedResponsesCellArray','-v7.3');
         fprintf(['Saved the meanEvokedResponsesCellArray with hash ID ' meanEvokedHash '\n']);
+        % Save the DEDU model fits
+        deduFitsHash = DataHash(meanEvokedResponsesCellArray);
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+        save(deduFileName,'deduFitData','-v7.3');
+        fprintf(['Saved the deduFitData with hash ID ' deduFitsHash '\n']);
+        
     case 'load'
         fprintf('Loading mean evoked responses\n');
         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
         load(meanEvokedFileName);
+        fprintf('Loading deduFitData\n');
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+        load(deduFileName);
+
     otherwise
         error('Need to either make or load the average responses');
 end % switch on meanEvokedResponseBehavior
 
 
-%% Fit the duration model
-switch fitDEDUModelBehavior
-    
-    case 'make'
-        [meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals, plotHandles] = fmriMaxMel_fitDEDUModelToAvgResponse(meanEvokedResponsesCellArray, kernelStructCellArray);
-        % Save plots
-        for dd=1:length(plotHandles)
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{dd} '_DurationModelFit_bySubject.pdf']);
-            fmriMaxMel_suptitle(plotHandles{dd},[RegionLabels{stimulatedRegion} '-' ExptLabels{dd} ' - DurationModelFitbySubject']);
-            set(gca,'FontSize',6);
-            set(plotHandles{dd},'Renderer','painters');
-            print(plotHandles{dd}, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandles{dd});
-        end
-        % Save the mean and SEM durations
-        deduFitsHash = DataHash([meanDurations, semDurations, meanAmplitudes, semAmplitudes, xValFVals]);
-        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
-        save(deduFileName,'meanDurations','semDurations','meanAmplitudes','semAmplitudes','xValFVals','-v7.3');
-        fprintf(['Saved the DEDU model fits with hash ID ' deduFitsHash '\n']);
-        % plot and save the results
-        [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
-        for pp=1:length(plotHandles)
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
-            set(plotHandles{pp},'Renderer','painters');
-            print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandles{pp});
-        end
-    case 'load'
-        fprintf('Loading DEDU model fits\n');
-        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
-        load(deduFileName);
-        % plot and save the results
-        [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
-        for pp=1:length(plotHandles)
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
-            set(plotHandles{pp},'Renderer','painters');
-            print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandles{pp});
-        end
-    otherwise
-        fprintf('Skipping analysis of delay model\n');
-end
+%         % plot and save the results
+%         [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
+%         for pp=1:length(plotHandles)
+%             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
+%             set(plotHandles{pp},'Renderer','painters');
+%             print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
+%             close(plotHandles{pp});
+%         end
+%     otherwise
+%         fprintf('Skipping analysis of delay model\n');
+% end
 
 
 
