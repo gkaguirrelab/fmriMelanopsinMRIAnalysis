@@ -9,7 +9,7 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='make';
+kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
 meanEvokedResponseBehavior='skip';
 rodScotopicControlBehavior='make';
@@ -114,6 +114,13 @@ switch kernelCacheBehavior
         error('You must either make or load the kernelStructCellArray');
 end % switch on kernelCacheBehavior
 
+% Save a demo plot of the DEDU model for one HRF
+[plotHandle] = fmriMaxMel_makeDEDUDemoPlot(kernelStructCellArray{3});
+plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleDEDUModelParamSpace.pdf');
+set(gca,'FontSize',6);
+set(plotHandle,'Renderer','painters');
+print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+close(plotHandle);
 
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
