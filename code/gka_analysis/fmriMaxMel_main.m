@@ -9,10 +9,9 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='load';
+kernelCacheBehavior='make';
 carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='make';
-fitDEDUModelBehavior='make';
+meanEvokedResponseBehavior='skip';
 rodScotopicControlBehavior='make';
 rodPhotopicControlBehavior='make';
 

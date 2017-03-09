@@ -89,7 +89,7 @@ for ss=1:nSubjects
     responseStructCellArray{ss}=responseStruct;
     
     % plot the mean response and error
-    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', [responseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) ']']);
+    fmriMaxMel_PlotEvokedResponse( subPlotHandle{ss}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', [1 0 0], 'plotTitle', [responseStruct.metaData.subjectName ' ±SEM runs [' num2str(runCount) ']']);
     
 end % loop over subjects
 
@@ -102,6 +102,6 @@ meanResponse=nanmean(dataMatrix);
 semResponse=nanstd(dataMatrix)/sqrt(nSubjects);
 
 % plot the mean response and error
-fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'lineColor', [1 0 0], 'plotTitle', 'mean ±SEM subjects');
+fmriMaxMel_PlotEvokedResponse( subPlotHandle{nSubjects+1}, timebase, meanResponse, semResponse, 'ylim', [-0.5 2], 'xAxisAspect', 1, 'yAxisAspect', 2, 'lineColor', [1 0 0], 'plotTitle', 'mean ±SEM subjects');
 
 end % function

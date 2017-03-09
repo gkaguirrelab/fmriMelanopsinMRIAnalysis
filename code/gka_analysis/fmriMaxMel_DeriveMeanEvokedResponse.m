@@ -155,7 +155,7 @@ for ss=1:nSubjects
         acrossStimResponse(ii,:)=meanResponse;
         % plot the across-run mean response and SEM (by run) error
         % only show the plot axes for the first subject / first contrast level
-        if ii==1 && ss==1
+        if ii==1
             dataOnly=false;
         else
             dataOnly=true;
