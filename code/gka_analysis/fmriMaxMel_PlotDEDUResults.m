@@ -1,10 +1,9 @@
-function [plotHandles] = fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals)
+function [plotHandles] = fmriMaxMel_PlotDEDUResults( deduFitData)
 %
 % Plot the results of the DEDU model
 
 fitThresh=-1;
 
-maxSEMDuration=max(semDurations(:));
 symbolBySubject={'o','s','^','p'};
 contrastLevels=[12.5,25,50,100,200,400,800];
 contrastLabels={'','25','50','100','200','400',''};
@@ -47,7 +46,7 @@ set(hline,'Color','k','LineStyle','--');
 hold on
 for dd=1:3
     for ss=1:4
-        amps=meanAmplitudes(dd,:,ss);
+        amps=deduFitData{dd},:,ss);
         semAmps=semAmplitudes(dd,:,ss);
         switch dd
             case 1
