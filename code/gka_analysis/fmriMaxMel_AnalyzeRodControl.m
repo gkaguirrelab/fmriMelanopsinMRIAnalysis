@@ -25,6 +25,12 @@ if nStimuli~=3
     error('The rod control analysis expects three stimulus types');
 end
 
+stimLabelA = packetCellArray{1,1}.stimulus.metaData.stimLabels{2};
+stimLabelA = stimLabelA(23:34);
+stimLabelB = packetCellArray{1,1}.stimulus.metaData.stimLabels{3};
+stimLabelB = stimLabelB(23:34);
+
+
 % Set the plot to have a double-wide column for the time-series fit, and one
 % column with the resulting amplitude plot.
 nPlotRows = nSubjects;
@@ -113,14 +119,25 @@ for ss=1:nSubjects
     
     % Create a plot of the average response to the Mel and L?M modulations
     % against the background condition
-    melAmps=fitResults(ss,:,3)-fitResults(ss,:,1);
-    LminusMAmps=fitResults(ss,:,2)-fitResults(ss,:,1);
-    melMean=nanmean(melAmps);
-    melSEM=nanstd(melAmps)/sqrt(length(melAmps)-sum(isnan(melAmps)));
-    LminusMMean=nanmean(LminusMAmps);
-    LminusMSEM=nanstd(LminusMAmps)/sqrt(length(LminusMAmps)-sum(isnan(LminusMAmps)));
-    errorbar(subPlotHandle{ss,2},[1,2],[melMean LminusMMean],[melSEM LminusMSEM]);
-    
+    stimAAmps=fitResults(ss,:,2)-fitResults(ss,:,1);
+    stimBAmps=fitResults(ss,:,3)-fitResults(ss,:,1);
+    stimAMean=nanmean(stimAAmps);
+    stimASEM=nanstd(stimAAmps)/sqrt(length(stimAAmps)-sum(isnan(stimAAmps)));
+    stimBMean=nanmean(stimBAmps);
+    stimBSEM=nanstd(stimBAmps)/sqrt(length(stimBAmps)-sum(isnan(stimBAmps)));
+    errorbar(subPlotHandle{ss,2},[1 2],[stimAMean stimBMean]*100,[stimASEM stimBSEM]*100,'ro');
+    xlim(subPlotHandle{ss,2},[0 3]);
+    ylim(subPlotHandle{ss,2},[-0.5 1]);
+    pbaspect(subPlotHandle{ss,2},[1 1 1])
+    title(subPlotHandle{ss,2},'Mean ±SEM across runs','Interpreter', 'none');
+    ylabel(subPlotHandle{ss,2},'% BOLD change');
+    xlab={' ',stimLabelA,stimLabelB,''};
+    set(subPlotHandle{ss,2},'Xtick',[0:3])
+    set(subPlotHandle{ss,2},'XTickLabel',xlab);
+    set(subPlotHandle{ss,2},'FontSize',6);
+    box(subPlotHandle{ss,2},'off');
+    hline = refline(subPlotHandle{ss,2},[0 0]);
+    set(hline,'LineStyle',':')
 end % loop over subjects
 
 

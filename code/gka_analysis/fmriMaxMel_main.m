@@ -187,17 +187,20 @@ end
 end % switch on meanEvokedResponseBehavior
 
 
-
-% Anayze the rod control experiment
-        if strcmp(rodControlBehavior,'make')
-            [plotHandles]=fmriMaxMel_AnalyzeRodControl(packetFiles{7}, kernelStructCellArray);
-            % save plots
-%             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_TrialMeanResponses.pdf']);
-%             fmriMaxMel_suptitle(plotHandleAverages,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
-%             set(gca,'FontSize',6);
-%             set(plotHandleAverages,'Renderer','painters');
-%             print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
-%             close(plotHandleAverages);
-
-        end
+%% Anayze the rod control experiment
+if strcmp(rodControlBehavior,'make')
+    controlExptIDs=[6,7];
+    for ii=1:length(controlExptIDs)
+        
+        [plotHandle]=fmriMaxMel_AnalyzeRodControl(packetFiles{controlExptIDs(ii)}, kernelStructCellArray);
+        % save plots
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{controlExptIDs(ii)} '_Responses.pdf']);
+        fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{controlExptIDs(ii)} ' - Responses']);
+        set(gca,'FontSize',6);
+        set(plotHandle,'Renderer','painters');
+        print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+        close(plotHandle);
+    end
+    
+end
         
