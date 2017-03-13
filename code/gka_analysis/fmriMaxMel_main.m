@@ -12,8 +12,8 @@ warning on;
 kernelCacheBehavior='load';
 carryOverResponseBehavior='skip';
 meanEvokedResponseBehavior='skip';
-rodScotopicControlBehavior='make';
-rodPhotopicControlBehavior='make';
+rodControlBehavior='make';
+
 
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
@@ -114,13 +114,6 @@ switch kernelCacheBehavior
         error('You must either make or load the kernelStructCellArray');
 end % switch on kernelCacheBehavior
 
-% Save a demo plot of the DEDU model for one HRF
-[plotHandle] = fmriMaxMel_makeDEDUDemoPlot(kernelStructCellArray{3});
-plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleDEDUModelParamSpace.pdf');
-set(gca,'FontSize',6);
-set(plotHandle,'Renderer','painters');
-print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-close(plotHandle);
 
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
@@ -167,7 +160,21 @@ switch meanEvokedResponseBehavior
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         save(deduFileName,'deduFitData','-v7.3');
         fprintf(['Saved the deduFitData with hash ID ' deduFitsHash '\n']);
-        
+% Save a demo plot of the DEDU model for one HRF
+[plotHandle] = fmriMaxMel_makeDEDUDemoPlot(kernelStructCellArray{3});
+plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleDEDUModelParamSpace.pdf');
+set(gca,'FontSize',6);
+set(plotHandle,'Renderer','painters');
+print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+close(plotHandle);        
+% Make plots of the DEDU model fits
+[plotHandles]=fmriMaxMel_PlotDEDUResults( deduFitData);
+for pp=1:length(plotHandles)
+    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
+    set(plotHandles{pp},'Renderer','painters');
+    print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
+    close(plotHandles{pp});
+end
     case 'load'
         fprintf('Loading mean evoked responses\n');
         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
@@ -175,139 +182,22 @@ switch meanEvokedResponseBehavior
         fprintf('Loading deduFitData\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
-
     otherwise
-        error('Need to either make or load the average responses');
+        
 end % switch on meanEvokedResponseBehavior
 
 
-%         % plot and save the results
-%         [plotHandles]=fmriMaxMel_PlotDEDUResults( meanAmplitudes, meanDurations, semAmplitudes, semDurations, xValFVals);
-%         for pp=1:length(plotHandles)
-%             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
-%             set(plotHandles{pp},'Renderer','painters');
-%             print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
-%             close(plotHandles{pp});
-%         end
-%     otherwise
-%         fprintf('Skipping analysis of delay model\n');
-% end
 
+% Anayze the rod control experiment
+        if strcmp(rodControlBehavior,'make')
+            [plotHandles]=fmriMaxMel_AnalyzeRodControl(packetFiles{7}, kernelStructCellArray);
+            % save plots
+%             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_TrialMeanResponses.pdf']);
+%             fmriMaxMel_suptitle(plotHandleAverages,[RegionLabels{stimulatedRegion} '-' ExptLabels{experiment} ' - CRFs']);
+%             set(gca,'FontSize',6);
+%             set(plotHandleAverages,'Renderer','painters');
+%             print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
+%             close(plotHandleAverages);
 
-
-%
-%
-%         % Obtain the average evoked response for each subject and stimulus type
-%         if strcmp(rodScotopicControlBehavior,'make')
-%             packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{4} '_' RegionLabels{2} '_' PacketHashArray{4}{2} '.mat']);
-%             load(packetFile);
-%
-%             % Load the kernelStructCellArray
-%             kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-%             load(kernelStructCellArrayFileName);
-%
-%             % Measure the amplitude of responses for the rod control
-%             tfeHandle = tfeIAMP('verbosity','none');
-%
-%             % Convert response.values to % change units
-%             % Set the stimuli to have zero onsets
-%             for xx=1:size(packetCellArray,1)
-%                 for yy=1:size(packetCellArray,2)
-%                     signal=packetCellArray{xx,yy}.response.values;
-%                     signal=(signal-nanmean(signal))/nanmean(signal);
-%                     packetCellArray{xx,yy}.response.values=signal;
-%                     stimulus=packetCellArray{xx,yy}.stimulus.values;
-%                     stimulus=stimulus-min(min(stimulus));
-%                     packetCellArray{xx,yy}.stimulus.values=stimulus;
-%                 end
-%             end
-%
-%             kernelMapper=[1,3,4];
-%
-%             for ss=1:3
-%
-%                 thePacket=tfeHandle.concatenatePackets(packetCellArray(ss,:),'stimValueExtender',0);
-%                 thePacket.kernel = prepareHRFKernel(kernelStructCellArray{kernelMapper(ss)});
-%
-%                 % Downsample the stimulus to 100msec temporal resolution
-%                 msecsToModel=max(thePacket.stimulus.timebase)+1;
-%                 modelResolution=100;
-%                 newTimebase=linspace(0,msecsToModel-modelResolution,msecsToModel/modelResolution);
-%                 thePacket.stimulus=tfeHandle.resampleTimebase(thePacket.stimulus,newTimebase);
-%
-%                 defaultParamsInfo.nInstances=size(thePacket.stimulus.values,1);
-%                 [paramsFit,fVal,modelResponseStruct] = ...
-%                     tfeHandle.fitResponse(thePacket,...
-%                     'defaultParamsInfo',defaultParamsInfo);
-%
-%                 figure
-%                 tfeHandle.plot(thePacket.response,'NewWindow',false,'DisplayName','Data');
-%                 hold on
-%                 tfeHandle.plot(modelResponseStruct,'NewWindow',false,'Color',[.5 .5 .5],'DisplayName','Fit');
-%                 hold off
-%                 for ii=1:length(thePacket.stimulus.metaData.stimLabels)
-%                     meanResp=mean(paramsFit.paramMainMatrix( find(thePacket.stimulus.metaData.stimTypes==ii) ) );
-%                     fprintf([thePacket.stimulus.metaData.stimLabels{ii} '   ' num2str(meanResp*100) '\n']);
-%                 end % loop over stimuli
-%             end % loop over subjects
-%
-%         end  % run rod control analysis
-%
-%
-%         if strcmp(rodPhotopicControlBehavior,'make')
-%             packetFile=fullfile(dropboxAnalysisDir, 'packetCache', ['MelanopsinMR_' ExptLabels{5} '_' RegionLabels{2} '_' PacketHashArray{5}{2} '.mat']);
-%             load(packetFile);
-%
-%             % Load the kernelStructCellArray
-%             kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
-%             load(kernelStructCellArrayFileName);
-%
-%             % Measure the amplitude of responses for the rod control
-%             tfeHandle = tfeIAMP('verbosity','none');
-%
-%             % Convert response.values to % change units
-%             % Set the stimuli to have zero onsets
-%             for xx=1:size(packetCellArray,1)
-%                 for yy=1:size(packetCellArray,2)
-%                     if ~isempty(packetCellArray{xx,yy})
-%                         signal=packetCellArray{xx,yy}.response.values;
-%                         signal=(signal-nanmean(signal))/nanmean(signal);
-%                         packetCellArray{xx,yy}.response.values=signal;
-%                         stimulus=packetCellArray{xx,yy}.stimulus.values;
-%                         stimulus=stimulus-min(min(stimulus));
-%                         packetCellArray{xx,yy}.stimulus.values=stimulus;
-%                     end
-%                 end
-%             end
-%
-%             counter=[5,6,6];
-%
-%             for ss=1:3
-%
-%                 thePacket=tfeHandle.concatenatePackets(packetCellArray(ss,1:counter(ss)),'stimValueExtender',0);
-%                 thePacket.kernel = prepareHRFKernel(kernelStructCellArray{ss});
-%
-%                 % Downsample the stimulus to 100msec temporal resolution
-%                 msecsToModel=max(thePacket.stimulus.timebase)+1;
-%                 modelResolution=100;
-%                 newTimebase=linspace(0,msecsToModel-modelResolution,msecsToModel/modelResolution);
-%                 thePacket.stimulus=tfeHandle.resampleTimebase(thePacket.stimulus,newTimebase);
-%
-%                 defaultParamsInfo.nInstances=size(thePacket.stimulus.values,1);
-%                 [paramsFit,fVal,modelResponseStruct] = ...
-%                     tfeHandle.fitResponse(thePacket,...
-%                     'defaultParamsInfo',defaultParamsInfo,...
-%                     'searchMethod','linearRegression');
-%
-%                 figure
-%                 tfeHandle.plot(thePacket.response,'NewWindow',false,'DisplayName','Data');
-%                 hold on
-%                 tfeHandle.plot(modelResponseStruct,'NewWindow',false,'Color',[.5 .5 .5],'DisplayName','Fit');
-%                 hold off
-%                 for ii=1:length(thePacket.stimulus.metaData.stimLabels)
-%                     meanResp=mean(paramsFit.paramMainMatrix( find(thePacket.stimulus.metaData.stimTypes==ii) ) );
-%                     fprintf([thePacket.stimulus.metaData.stimLabels{ii} '   ' num2str(meanResp*100) '\n']);
-%                 end % loop over stimuli
-%             end % loop over subjects
-%
-%         end  % run rod control analysis
+        end
+        
