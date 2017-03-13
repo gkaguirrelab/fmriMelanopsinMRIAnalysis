@@ -1,4 +1,4 @@
-function [responseStructCellArray, deduFitData, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, kernelStructCellArray, subjectScaler)
+function [responseStructCellArray, deduFitData, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, kernelStructCellArray)
 % function [responseStructCellArray, deduFitData, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFile, kernelStructCellArray, subjectScaler)
 %
 
@@ -107,14 +107,14 @@ for ss=1:nSubjects
                 subjectFitSeries=modelResponseStruct.values;
                 subjectTimebase=thePacket.response.timebase;
                 check = diff(thePacket.response.timebase);
-                fVals(rr)=fVal;
+                fVals(rr)=1-fVal;
                 deltaT = check(1);
             else
                 subjectDataSeries=[subjectDataSeries thePacket.response.values];
                 subjectFitSeries=[subjectFitSeries modelResponseStruct.values];
                 nextTimePoint=max(subjectTimebase)+deltaT;
                 subjectTimebase=[subjectTimebase thePacket.response.timebase+nextTimePoint];
-                fVals(rr)=fVal;
+                fVals(rr)=1-fVal;
             end % check for first packet
         end % check for not empty packet
     end % loop over runs
