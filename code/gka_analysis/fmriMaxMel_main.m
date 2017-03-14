@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 % The set of hashes the define the data and results
 kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
 meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
-deduFitsHash='1d42dc538c8ebeb7e8595be8a8406cca';
+deduFitsHash='1eb5cdd902af5f8f33e1e71b82788004';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -215,4 +215,4 @@ switch rodControlBehavior
         end
     otherwise
         fprintf('Skipping rod control analysis');
-end
+end % switch on rodControlBehavior
