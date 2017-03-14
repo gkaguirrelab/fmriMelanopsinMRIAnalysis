@@ -3,6 +3,19 @@
 		"flavor": "",
 		"hook": "",
 		"importance": "",
+		"localHookTemplate": "configuration/fmriMelanopsinMRIAnalysisLocalHook",
+		"name": "fmriMelanopsinMRIAnalysis",
+		"pathPlacement": "append",
+		"subfolder": "code",
+		"toolboxRoot": "",
+		"type": "git",
+		"update": "",
+		"url": ""
+	},
+	{
+		"flavor": "",
+		"hook": "",
+		"importance": "",
 		"localHookTemplate": "",
 		"name": "MRklar",
 		"pathPlacement": "append",
@@ -37,5 +50,18 @@
 		"type": "git",
 		"update": "",
 		"url": "https:\/\/github.com\/gkaguirrelab\/temporalFittingEngine.git"
+	},
+	{
+		"flavor": "",
+		"hook": "",
+		"importance": "",
+		"localHookTemplate": "",
+		"name": "errbar",
+		"pathPlacement": "append",
+		"subfolder": "",
+		"toolboxRoot": "",
+		"type": "webget",
+		"update": "",
+		"url": "http:\/\/www.mathworks.com\/matlabcentral\/mlc-downloads\/downloads\/submissions\/50472\/versions\/3\/download\/zip"
 	}
 ]
