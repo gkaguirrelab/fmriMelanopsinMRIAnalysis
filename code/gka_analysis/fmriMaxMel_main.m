@@ -9,15 +9,16 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='load';
-carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='skip';
+kernelCacheBehavior='make';
+carryOverResponseBehavior='make';
+meanEvokedResponseBehavior='make';
 rodControlBehavior='make';
 
-
+% The components that define the different packetCache files
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};
 RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 
+% The set of hashes the define the data and results
 kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
 meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
 deduFitsHash='1d42dc538c8ebeb7e8595be8a8406cca';
@@ -63,7 +64,7 @@ dropBoxHEROkernelStructDir = ...
     '/Dropbox (Aguirre-Brainard Lab)/Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
 
 
-%% Pick a region and define the list of packet files
+%% Pick a region to analyze and define the list of packet files
 stimulatedRegion=2; % The primary region of analysis
 packetFiles=cell(length(ExptLabels),1);
 for ii=1:length(ExptLabels)
@@ -91,7 +92,7 @@ switch kernelCacheBehavior
         for ss=1:length(kernelStructCellArray)
             kernelStruct=kernelStructCellArray{ss};
             kernelStruct.metaData.notes=notes;
-                        
+            
             % calculate the hex MD5 hash for the hrfKernelStructCellArray
             kernelStructHash = DataHash(kernelStruct);
             
@@ -131,6 +132,7 @@ switch carryOverResponseBehavior
         fprintf('Skipping analysis of carry-over effects\n');
 end % switch for carryOverResponseBehavior
 
+
 %% Make or load the average evoked responses and perform DEDU fitting
 switch meanEvokedResponseBehavior
     case 'make'
@@ -145,8 +147,7 @@ switch meanEvokedResponseBehavior
             set(gca,'FontSize',6);
             set(plotHandleAverages,'Renderer','painters');
             print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandleAverages);
-            
+            close(plotHandleAverages);            
             % store the responseStructCellArray
             meanEvokedResponsesCellArray{experiment}=responseStructCellArray;
         end
@@ -156,25 +157,26 @@ switch meanEvokedResponseBehavior
         save(meanEvokedFileName,'meanEvokedResponsesCellArray','-v7.3');
         fprintf(['Saved the meanEvokedResponsesCellArray with hash ID ' meanEvokedHash '\n']);
         % Save the DEDU model fits
-        deduFitsHash = DataHash(meanEvokedResponsesCellArray);
+        deduFitsHash = DataHash(deduFitData);
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         save(deduFileName,'deduFitData','-v7.3');
         fprintf(['Saved the deduFitData with hash ID ' deduFitsHash '\n']);
-% Save a demo plot of the DEDU model for one HRF
-[plotHandle] = fmriMaxMel_makeDEDUDemoPlot(kernelStructCellArray{3});
-plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleDEDUModelParamSpace.pdf');
-set(gca,'FontSize',6);
-set(plotHandle,'Renderer','painters');
-print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-close(plotHandle);        
-% Make plots of the DEDU model fits
-[plotHandles]=fmriMaxMel_PlotDEDUResults( deduFitData);
-for pp=1:length(plotHandles)
-    plotFileName=fullfile(dropboxAnalysisDir, 'Figures', ['DEDU_FitResults_Fig_' num2str(pp) '.pdf']);
-    set(plotHandles{pp},'Renderer','painters');
-    print(plotHandles{pp}, plotFileName, '-dpdf', '-fillpage');
-    close(plotHandles{pp});
-end
+        % Create and save the CRF plots for the DEDU model amplitude
+        % responses
+        subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
+        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc);
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'CRFsFromDEDUFit.pdf');
+        set(figHandle,'Renderer','painters');
+        print(figHandle, plotFileName, '-dpdf', '-fillpage');
+        close(figHandle);
+        % Save a demo plot of the DEDU model for one HRF
+        [plotHandle] = fmriMaxMel_makeDEDUDemoPlot(kernelStructCellArray{3});
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleDEDUModelParamSpace.pdf');
+        set(gca,'FontSize',6);
+        set(plotHandle,'Renderer','painters');
+        print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+        close(plotHandle);
+        
     case 'load'
         fprintf('Loading mean evoked responses\n');
         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
@@ -182,25 +184,35 @@ end
         fprintf('Loading deduFitData\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
+        % Create and save the CRF plots for the DEDU model amplitude
+        % responses
+        subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
+        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc);
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'CRFsFromDEDUFit.pdf');
+        set(figHandle,'Renderer','painters');
+        print(figHandle, plotFileName, '-dpdf', '-fillpage');
+        close(figHandle);
     otherwise
-        
+        fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
 
 
 %% Anayze the rod control experiment
-if strcmp(rodControlBehavior,'make')
-    controlExptIDs=[6,7];
-    for ii=1:length(controlExptIDs)
-        
-        [plotHandle]=fmriMaxMel_AnalyzeRodControl(packetFiles{controlExptIDs(ii)}, kernelStructCellArray);
-        % save plots
-        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{controlExptIDs(ii)} '_Responses.pdf']);
-        fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{controlExptIDs(ii)} ' - Responses']);
-        set(gca,'FontSize',6);
-        set(plotHandle,'Renderer','painters');
-        print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-        close(plotHandle);
-    end
-    
+switch rodControlBehavior
+    case 'make'
+        fprintf('Analyzing rod control experiment\n');
+        controlExptIDs=[6,7];
+        for ii=1:length(controlExptIDs)
+            % conduct analysis
+            [plotHandle]=fmriMaxMel_AnalyzeRodControl(packetFiles{controlExptIDs(ii)}, kernelStructCellArray);
+            % save plot
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{controlExptIDs(ii)} '_Responses.pdf']);
+            fmriMaxMel_suptitle(plotHandle,[RegionLabels{stimulatedRegion} '-' ExptLabels{controlExptIDs(ii)} ' - Responses']);
+            set(gca,'FontSize',6);
+            set(plotHandle,'Renderer','painters');
+            print(plotHandle, plotFileName, '-dpdf', '-fillpage');
+            close(plotHandle);
+        end
+    otherwise
+        fprintf('Skipping rod control analysis');
 end
-        

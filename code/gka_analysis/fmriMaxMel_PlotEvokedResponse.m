@@ -59,7 +59,7 @@ title(plotHandle,p.Results.plotTitle,'Interpreter', 'none');
 pbaspect(plotHandle,[p.Results.xAxisAspect p.Results.yAxisAspect 1])
 xlabel(plotHandle,p.Results.xUnits); ylabel(plotHandle,'% BOLD change');
 set(plotHandle,'Xtick',0:p.Results.xTick:maxTime)
-set(plotHandle,'FontSize',6);
+set(plotHandle,'FontSize',8);
 box(plotHandle,'off');
 
 % Clear all chart junk if requested

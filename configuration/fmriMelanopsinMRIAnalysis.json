@@ -51,17 +51,17 @@
 		"update": "",
 		"url": "https:\/\/github.com\/gkaguirrelab\/temporalFittingEngine.git"
 	},
- 	{
+	{
 		"flavor": "",
 		"hook": "",
 		"importance": "",
 		"localHookTemplate": "",
-		"name": "shadedErrorBar",
+		"name": "errbar",
 		"pathPlacement": "append",
 		"subfolder": "",
 		"toolboxRoot": "",
-		"type": "git",
+		"type": "webget",
 		"update": "",
-		"url": "https:\/\/github.com\/raacampbell\/shadedErrorBar.git"
+		"url": "http:\/\/www.mathworks.com\/matlabcentral\/mlc-downloads\/downloads\/submissions\/50472\/versions\/3\/download\/zip"
 	}
 ]
