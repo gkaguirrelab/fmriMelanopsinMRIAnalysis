@@ -14,10 +14,10 @@ for ss=1:nSubjects
     subplotHandle=subplot(1,nSubjects,ss);
     
     % Plot the LMS CRF
-    means=cellfun(@(x) x.meanAmplitude, lmsCRFCells);
-    sems=cellfun(@(x) x.semAmplitude, lmsCRFCells);
-        sems=sems(ss,:);
-        means=means(ss,:);
+    meansLMS=cellfun(@(x) x.meanAmplitude, lmsCRFCells);
+    semsLMS=cellfun(@(x) x.semAmplitude, lmsCRFCells);
+        sems=semsLMS(ss,:);
+        means=meansLMS(ss,:);
     fmriMaxMel_PlotCRF( subplotHandle, [1, 2, 3, 4, 5], means, sems, ...
         'xTickLabels',contrastLabels,...
         'xlim',[0 7],...
@@ -28,10 +28,10 @@ for ss=1:nSubjects
     hold on
     
     % Plot the Mel CRF
-    means=cellfun(@(x) x.meanAmplitude, melCRFCells);
-    sems=cellfun(@(x) x.semAmplitude, melCRFCells);
-        means=means(ss,:);
-        sems=sems(ss,:);
+    meansMel=cellfun(@(x) x.meanAmplitude, melCRFCells);
+    semsMel=cellfun(@(x) x.semAmplitude, melCRFCells);
+        means=meansMel(ss,:);
+        sems=semsMel(ss,:);
     fmriMaxMel_PlotCRF( subplotHandle, [1, 2, 3, 4, 5], means, sems, ...
         'xTickLabels',contrastLabels,...
         'xlim',[0 7],...
@@ -41,10 +41,10 @@ for ss=1:nSubjects
         'plotTitle',subjectNameFunc(ss));
     
     % Plot the splatter CRF
-    means=cellfun(@(x) x.meanAmplitude, splatCRFCells);
-    sems=cellfun(@(x) x.semAmplitude, splatCRFCells);
-        means=means(ss,:);
-        sems=sems(ss,:);
+    meansSplat=cellfun(@(x) x.meanAmplitude, splatCRFCells);
+    semsSplat=cellfun(@(x) x.semAmplitude, splatCRFCells);
+        means=meansSplat(ss,:);
+        sems=semsSplat(ss,:);
     fmriMaxMel_PlotCRF( subplotHandle, [3, 4, 5, 6], means, sems, ...
         'xTickLabels',splatterLabels,...
         'xlim',[0 7],...
@@ -53,9 +53,22 @@ for ss=1:nSubjects
         'errorColor',[1 .5 .5],...
         'plotTitle',subjectNameFunc(ss),...
         'xLabel','splatter',...
-    'secondAxis',true);
+        'secondAxis',true);
     
-    
+    % Calculate the multiplier required to shift the splatter CRF to best
+    % fit the melanopsin CRF
+    interpMel=interp1(-3.4657:0.6931:-0.6931,meansMel(ss,:),-3.4657:0.6931/100:-0.6931);
+    interpMel=[interpMel nan(1,100)];
+    interpSplat=interp1(-2.0794:0.6931:0,meansSplat(ss,:),-2.0794:0.6931/100:0);
+    interpSplat=[nan(1,100) nan(1,100) interpSplat];
+    interpX=-3.4657:0.6931/100:0;
+    for shifter=1:600
+        r(shifter)=sqrt(nansum((interpMel-circshift(interpSplat,-1*shifter)).^2))/sum(~isnan((interpMel-circshift(interpSplat,-1*shifter))));
+    end
+    idx=find(r==min(r));
+    splatShift=1/exp(interpX(end-idx));
+    title(subplotHandle,[subjectNameFunc(ss) ' splat x' num2str(splatShift,'%.3g')],'Interpreter', 'none');
+
 end % subjects
 
 
