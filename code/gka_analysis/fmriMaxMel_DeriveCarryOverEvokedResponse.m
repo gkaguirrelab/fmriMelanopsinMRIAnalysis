@@ -1,4 +1,4 @@
-function [meanResponseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelFile)
+function [meanResponseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelStructCellArray)
 % function [responseMatrix] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFile, kernelFile)
 %
 
@@ -7,14 +7,20 @@ verbosity='none';
 % Construct the model object
 tfeHandle = tfeIAMP('verbosity',verbosity);
 
-% Set some parameters for the evoked response derivation
-msecsToModel=14000;
-numFourierComponents=14;
-TRmsecs=800;
+% Loop across subjects and  calculate a subjectScaler to adjust other response amplitudes
+% based upon HRF amplitude
+for ss=1:length(kernelStructCellArray)
+    kernelStruct=kernelStructCellArray{ss};
+    subjectScaler(ss)=max(kernelStruct.values);
+end
+subjectScaler=subjectScaler ./ mean(subjectScaler);
 
-% Loads into memory the variable packetCellArray and kernelStructCellArray
+
+% Set some parameters for the evoked response derivation
+%TRmsecs=800;
+
+% Loads into memory the variable packetCellArray
 load(packetFile);
-load(kernelFile);
 
 % Get the dimensions of the data
 nSubjects=size(packetCellArray,1);
@@ -44,23 +50,16 @@ for ss=1:nSubjects
             signal=thePacket.response.values;
             signal=(signal-nanmean(signal))/nanmean(signal);
             thePacket.response.values=signal;
-            
-            % grab the subject hrf and prepare it as a kernel
-            hrfKernelStruct=kernelStructCellArray{ss};
-            check = diff(thePacket.response.timebase);
-            responseDeltaT = check(1);
-            nSamples = ceil((hrfKernelStruct.timebase(end)-hrfKernelStruct.timebase(1))/responseDeltaT);
-            newKernelTimebase = hrfKernelStruct.timebase(1):responseDeltaT:(hrfKernelStruct.timebase(1)+nSamples*responseDeltaT);
-            hrfKernelStruct = tfeHandle.resampleTimebase(hrfKernelStruct,newKernelTimebase);
-            hrfKernelStruct.values = hrfKernelStruct.values - hrfKernelStruct.values(1);
-            hrfKernelStruct = normalizeKernelAmplitude( hrfKernelStruct );
-            thePacket.kernel = hrfKernelStruct;
+
+            thePacket.kernel = kernelStructCellArray{ss};
+thePacket.kernel.values = thePacket.kernel.values - thePacket.kernel.values(1);
+thePacket.kernel = normalizeKernelAmplitude( thePacket.kernel );
             
             % downsample the stimulus values to 100 ms deltaT to speed things up
-            totalResponseDuration=TRmsecs * ...
-                length(thePacket.response.values);
-            newStimulusTimebase=linspace(0,totalResponseDuration-100,totalResponseDuration/100);
-            thePacket.stimulus=tfeHandle.resampleTimebase(thePacket.stimulus,newStimulusTimebase);
+%             totalResponseDuration=TRmsecs * ...
+%                 length(thePacket.response.values);
+%             newStimulusTimebase=linspace(0,totalResponseDuration-100,totalResponseDuration/100);
+%             thePacket.stimulus=tfeHandle.resampleTimebase(thePacket.stimulus,newStimulusTimebase);
                         
             % identify the number of stimulus instances in this packet
             stimTypes=thePacket.stimulus.metaData.stimTypes;
@@ -70,7 +69,9 @@ for ss=1:nSubjects
             % for each trial
             [paramsFit,fVal,modelResponseStruct] = ...
                 tfeHandle.fitResponse(thePacket,...
-                'defaultParamsInfo', defaultParamsInfo);
+                'defaultParamsInfo', defaultParamsInfo,...
+                'errorType','1-r2',...
+                'searchMethod','linearRegression');
             
             % sort the values into the carry-over matrix            
             for jj=1:length(stimTypes)
@@ -80,9 +81,11 @@ for ss=1:nSubjects
                 else
                     priorStimulus=stimTypes(jj-1);
                 end
+                % Add the fit values into the response matrix, adjusting
+                % for the subjectScaler
                 theResponseMatrix(priorStimulus,currentStimulus)= ...
                     theResponseMatrix(priorStimulus,currentStimulus)+ ...
-                    paramsFit.paramMainMatrix(jj);
+                    paramsFit.paramMainMatrix(jj)/subjectScaler(ss);
                 theCountMatrix(priorStimulus,currentStimulus) = ...
                     theCountMatrix(priorStimulus,currentStimulus) +1;
             end % runt through stimTypes

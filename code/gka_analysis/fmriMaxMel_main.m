@@ -10,8 +10,8 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='load';
+carryOverResponseBehavior='make';
+meanEvokedResponseBehavior='skip';
 rodControlBehavior='skip';
 
 % The components that define the different packetCache files
@@ -123,7 +123,7 @@ switch carryOverResponseBehavior
         
         % Obtain the carry-over matrix for the LMS, Mel, and Splatter stimuli and save plot
         for experiment=1:3
-            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, kernelStructCellArrayFileName);
+            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, kernelStructCellArray);
             plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_MeanCarryOverMatrix.pdf']);
             saveas(plotHandle,plotFileName);
             close(plotHandle);
