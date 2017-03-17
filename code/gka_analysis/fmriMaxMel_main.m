@@ -10,8 +10,8 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
+meanEvokedResponseBehavior='load';
 carryOverResponseBehavior='make';
-meanEvokedResponseBehavior='skip';
 rodControlBehavior='skip';
 
 % The components that define the different packetCache files
@@ -116,22 +116,6 @@ switch kernelCacheBehavior
 end % switch on kernelCacheBehavior
 
 
-%% Conduct the carry-over response analysis
-switch carryOverResponseBehavior
-    case 'make'
-        fprintf('Analyzing carry-over effects\n');
-        
-        % Obtain the carry-over matrix for the LMS, Mel, and Splatter stimuli and save plot
-        for experiment=1:3
-            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, kernelStructCellArray);
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_MeanCarryOverMatrix.pdf']);
-            saveas(plotHandle,plotFileName);
-            close(plotHandle);
-        end % loop over stimuli
-    otherwise
-        fprintf('Skipping analysis of carry-over effects\n');
-end % switch for carryOverResponseBehavior
-
 
 %% Make or load the average evoked responses and perform DEDU fitting
 switch meanEvokedResponseBehavior
@@ -184,17 +168,26 @@ switch meanEvokedResponseBehavior
         fprintf('Loading deduFitData\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
-        % Create and save the CRF plots for the DEDU model amplitude
-        % responses
-        subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
-        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc);
-        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'CRFsFromDEDUFit.pdf');
-        set(figHandle,'Renderer','painters');
-        print(figHandle, plotFileName, '-dpdf', '-fillpage');
-        close(figHandle);
     otherwise
         fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
+
+
+%% Conduct the carry-over response analysis
+switch carryOverResponseBehavior
+    case 'make'
+        fprintf('Analyzing carry-over effects\n');
+        
+        % Obtain the carry-over matrix for the LMS, Mel, and Splatter stimuli and save plot
+        for experiment=1:3
+            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, deduFitData{experiment}, kernelStructCellArray);
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_CarryOverEffects.pdf']);
+            saveas(plotHandle,plotFileName);
+            close(plotHandle);
+        end % loop over stimuli
+    otherwise
+        fprintf('Skipping analysis of carry-over effects\n');
+end % switch for carryOverResponseBehavior
 
 
 %% Anayze the rod control experiment
