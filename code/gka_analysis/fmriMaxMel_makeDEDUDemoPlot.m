@@ -11,7 +11,7 @@ tfeHandle = tfeDEDU('verbosity',verbosity);
 
 % Prepare the kernel for convolution
 kernelStruct.values = kernelStruct.values - kernelStruct.values(1);
-kernelStruct = normalizeKernelAmplitude( kernelStruct );
+kernelStruct = normalizeKernelArea( kernelStruct );
 
 stimulusStruct=kernelStruct;
 stimulusStruct.values=stimulusStruct.values*0;

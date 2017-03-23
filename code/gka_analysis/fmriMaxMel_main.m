@@ -10,9 +10,9 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-carryOverResponseBehavior='skip';
-meanEvokedResponseBehavior='load';
-rodControlBehavior='skip';
+meanEvokedResponseBehavior='make';
+carryOverResponseBehavior='make';
+rodControlBehavior='make';
 
 % The components that define the different packetCache files
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};
@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 % The set of hashes the define the data and results
 kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
 meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
-deduFitsHash='1eb5cdd902af5f8f33e1e71b82788004';
+deduFitsHash='63f50ae25e4534e8afa3c5ddc80087b4';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -116,22 +116,6 @@ switch kernelCacheBehavior
 end % switch on kernelCacheBehavior
 
 
-%% Conduct the carry-over response analysis
-switch carryOverResponseBehavior
-    case 'make'
-        fprintf('Analyzing carry-over effects\n');
-        
-        % Obtain the carry-over matrix for the LMS, Mel, and Splatter stimuli and save plot
-        for experiment=1:3
-            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, kernelStructCellArrayFileName);
-            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_MeanCarryOverMatrix.pdf']);
-            saveas(plotHandle,plotFileName);
-            close(plotHandle);
-        end % loop over stimuli
-    otherwise
-        fprintf('Skipping analysis of carry-over effects\n');
-end % switch for carryOverResponseBehavior
-
 
 %% Make or load the average evoked responses and perform DEDU fitting
 switch meanEvokedResponseBehavior
@@ -184,17 +168,26 @@ switch meanEvokedResponseBehavior
         fprintf('Loading deduFitData\n');
         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
-        % Create and save the CRF plots for the DEDU model amplitude
-        % responses
-        subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
-        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc);
-        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'CRFsFromDEDUFit.pdf');
-        set(figHandle,'Renderer','painters');
-        print(figHandle, plotFileName, '-dpdf', '-fillpage');
-        close(figHandle);
     otherwise
         fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
+
+
+%% Conduct the carry-over response analysis
+switch carryOverResponseBehavior
+    case 'make'
+        fprintf('Analyzing carry-over effects\n');
+        
+        % Obtain the carry-over matrix for the LMS, Mel, and Splatter stimuli and save plot
+        for experiment=1:3
+            [responseMatrix, plotHandle] = fmriMaxMel_DeriveCarryOverEvokedResponse(packetFiles{experiment}, deduFitData{experiment}, kernelStructCellArray);
+            plotFileName=fullfile(dropboxAnalysisDir, 'Figures', [ExptLabels{experiment} '_CarryOverEffects.pdf']);
+            saveas(plotHandle,plotFileName);
+            close(plotHandle);
+        end % loop over stimuli
+    otherwise
+        fprintf('Skipping analysis of carry-over effects\n');
+end % switch for carryOverResponseBehavior
 
 
 %% Anayze the rod control experiment

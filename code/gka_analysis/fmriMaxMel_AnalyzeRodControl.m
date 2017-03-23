@@ -72,7 +72,7 @@ for ss=1:nSubjects
             % Add the HRF for this subject
             kernelStruct=kernelStructCellArray{ss};
             kernelStruct.values = kernelStruct.values - kernelStruct.values(1);
-            kernelStruct = normalizeKernelAmplitude( kernelStruct );
+            kernelStruct = normalizeKernelArea( kernelStruct );
             thePacket.kernel=kernelStruct;
 
             % fit the IAMP model
