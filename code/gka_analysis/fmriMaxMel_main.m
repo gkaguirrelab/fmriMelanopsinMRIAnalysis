@@ -10,9 +10,9 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='load';
+meanEvokedResponseBehavior='make';
 carryOverResponseBehavior='make';
-rodControlBehavior='skip';
+rodControlBehavior='make';
 
 % The components that define the different packetCache files
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};

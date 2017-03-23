@@ -65,7 +65,7 @@ for ss=1:nSubjects
             % Prepare the HRF kernel for this subject
             kernelStruct = kernelStructCellArray{ss};
             kernelStruct.values = kernelStruct.values - kernelStruct.values(1);
-            kernelStruct = normalizeKernelAmplitude( kernelStruct );
+            kernelStruct = normalizeKernelArea( kernelStruct );
             
             % Now loop through the stimulus instances and replace the
             % stimulus model with the DEDU HRF fit
