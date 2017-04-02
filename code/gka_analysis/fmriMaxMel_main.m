@@ -10,9 +10,9 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='make';
-carryOverResponseBehavior='make';
-rodControlBehavior='make';
+meanEvokedResponseBehavior='load';
+carryOverResponseBehavior='skip';
+rodControlBehavior='skip';
 
 % The components that define the different packetCache files
 ExptLabels={'LMSCRF','MelCRF','SplatterControlCRF','MaxLMS400Pct','MaxMel400Pct','RodControlScotopic','RodControlPhotopic'};
@@ -148,8 +148,14 @@ switch meanEvokedResponseBehavior
         % Create and save the CRF plots for the DEDU model amplitude
         % responses
         subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
-        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc);
-        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'CRFsFromDEDUFit.pdf');
+        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc, 'amplitude');
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'AmplitudeCRFsFromDEDUFit.pdf');
+        set(figHandle,'Renderer','painters');
+        print(figHandle, plotFileName, '-dpdf', '-fillpage');
+        close(figHandle);
+        subjectNameFunc=@(x) meanEvokedResponsesCellArray{1}{x,1}.metaData.subjectName;
+        [figHandle]=fmriMaxMel_makeCRFResultFigure( deduFitData, subjectNameFunc, 'duration');
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'DurationCRFsFromDEDUFit.pdf');
         set(figHandle,'Renderer','painters');
         print(figHandle, plotFileName, '-dpdf', '-fillpage');
         close(figHandle);
@@ -172,7 +178,7 @@ switch meanEvokedResponseBehavior
         fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
 
-
+        
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
     case 'make'

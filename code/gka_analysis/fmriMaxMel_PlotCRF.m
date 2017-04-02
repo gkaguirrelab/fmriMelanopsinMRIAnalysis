@@ -14,6 +14,7 @@ p.addParameter('errorColor',[0.5 0.5 0.5],@isnumeric);
 p.addParameter('lineWidth',0.5,@isnumeric);
 p.addParameter('plotTitle','title here',@ischar);
 p.addParameter('xLabel','contrast',@ischar);
+p.addParameter('yLabel','% BOLD change',@ischar);
 p.addParameter('xTickLabels',cellstr(num2str(xValues')),@iscell);
 p.addParameter('ylim',[-0.5 1],@isnumeric);
 p.addParameter('xlim',[0 length(xValues)+1],@isnumeric);
@@ -46,7 +47,7 @@ ylim(plotHandle,p.Results.ylim);
 xlim(plotHandle,p.Results.xlim);
 title(plotHandle,p.Results.plotTitle,'Interpreter', 'none');
 pbaspect(plotHandle,[p.Results.xAxisAspect p.Results.yAxisAspect 1])
-ylabel(plotHandle,'% BOLD change');
+ylabel(plotHandle,p.Results.yLabel);
 set(plotHandle,'FontSize',8);
 box(plotHandle,'off');
 
