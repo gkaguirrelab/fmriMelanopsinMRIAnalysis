@@ -21,7 +21,7 @@ RegionLabels={'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
 % The set of hashes the define the data and results
 kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
 meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
-deduFitsHash='63f50ae25e4534e8afa3c5ddc80087b4';
+deduFitsHash='13b945241e8b527afa7033cb96f08187';
 
 % Packet hash array ordered by ExptLabels then RegionLabels
 PacketHashArray{1,:}={'f383ad67a6dbd052d3b68e1a993f6b93',...
@@ -165,8 +165,7 @@ switch meanEvokedResponseBehavior
         set(gca,'FontSize',6);
         set(plotHandle,'Renderer','painters');
         print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-        close(plotHandle);
-        
+        close(plotHandle);        
     case 'load'
         fprintf('Loading mean evoked responses\n');
         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
@@ -178,7 +177,7 @@ switch meanEvokedResponseBehavior
         fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
 
-        
+
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
     case 'make'
