@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='load';
+meanEvokedResponseBehavior='make';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
@@ -121,7 +121,7 @@ end % switch on kernelCacheBehavior
 switch meanEvokedResponseBehavior
     case 'make'
         % Save a demo figure of Fourier fitting
-        [figHandle] = fmriMaxMel_makeFourierDemoPlot(packetFiles{2});
+        [figHandle] = fmriMaxMel_makeFourierDemoPlot(packetFiles);
         plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleFourierFit.pdf');
         set(figHandle,'Renderer','painters');
         print(figHandle, plotFileName, '-dpdf', '-fillpage');
