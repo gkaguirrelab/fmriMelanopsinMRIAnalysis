@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='make';
+meanEvokedResponseBehavior='load';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
