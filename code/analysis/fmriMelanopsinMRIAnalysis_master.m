@@ -3,9 +3,9 @@
 % % 9/26/2016     ms      Homogenized comments and script documentation.
 
 %% Define parameters that we need for the various components
-params.resultsDir =  '/data/jag/MELA/MelanopsinMR/results';
-params.logDir = '/data/jag/MELA/MelanopsinMR/logs';
-params.dataDir = '/data/jag/MELA/MelanopsinMR';
+params.resultsDir =  '/data/jag/MELA/RERUN_MelanopsinMR/results';
+params.logDir = '/data/jag/MELA/RERUN_MelanopsinMR/logs';
+params.dataDir = '/data/jag/MELA/RERUN_MelanopsinMR';
 params.anatTemplateDir = '/data/jag/MELA/anat_templates';
 
 %% Create preprocessing scripts
