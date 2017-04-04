@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='load';
+meanEvokedResponseBehavior='make';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
@@ -120,6 +120,14 @@ end % switch on kernelCacheBehavior
 %% Make or load the average evoked responses and perform DEDU fitting
 switch meanEvokedResponseBehavior
     case 'make'
+        % Save a demo figure of Fourier fitting
+        [figHandle] = fmriMaxMel_makeFourierDemoPlot(packetFiles{2});
+        plotFileName=fullfile(dropboxAnalysisDir, 'Figures', 'ExampleFourierFit.pdf');
+        set(figHandle,'Renderer','painters');
+        print(figHandle, plotFileName, '-dpdf', '-fillpage');
+        close(figHandle);
+        % Fit the Fourier model to obtain mean evoked responses for all
+        % data sets
         fprintf('Obtaining mean evoked responses\n');
         for experiment=1:5
             % Derive mean evoked response
@@ -176,6 +184,8 @@ switch meanEvokedResponseBehavior
     otherwise
         fprintf('Skipping analysis of mean evoked responses\n');        
 end % switch on meanEvokedResponseBehavior
+
+
 
 
 %% Conduct the carry-over response analysis

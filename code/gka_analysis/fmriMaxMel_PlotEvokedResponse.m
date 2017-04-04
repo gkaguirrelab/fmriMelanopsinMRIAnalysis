@@ -8,8 +8,10 @@ p.addRequired('plotHandle',@ishandle);
 p.addRequired('timebase',@isnumeric);
 p.addRequired('meanResponse',@isnumeric);
 p.addRequired('errorResponse',@isnumeric);
-p.addParameter('lineColor',[1 1 1],@isnumeric);
+p.addParameter('lineColor',[1 1 1],@(x)(isnumeric(x) | ischar(x)));
 p.addParameter('lineWidth',0.5,@isnumeric);
+p.addParameter('marker','none',@ischar);
+p.addParameter('markerFaceColor','none',@(x)(isnumeric(x) | ischar(x)));
 p.addParameter('plotTitle','title here',@ischar);
 p.addParameter('ylim',[-0.5 2],@isnumeric);
 p.addParameter('xTick',2,@isnumeric);
@@ -37,7 +39,11 @@ switch p.Results.xUnits
 end
 
 % Plot the primary function
-plot(plotHandle, timebase/timeDivisor,meanResponse,'Color',p.Results.lineColor,'LineWidth',p.Results.lineWidth);
+plot(plotHandle, timebase/timeDivisor,meanResponse, ...
+    'Color',p.Results.lineColor,...
+    'Marker',p.Results.marker,...
+    'MarkerFaceColor',p.Results.markerFaceColor,...
+    'LineWidth',p.Results.lineWidth);
 hold(plotHandle,'on');
 
 % Plot error bounds if this was passed
