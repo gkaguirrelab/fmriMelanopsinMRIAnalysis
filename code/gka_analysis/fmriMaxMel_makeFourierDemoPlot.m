@@ -5,7 +5,7 @@ function [figHandle] = fmriMaxMel_makeFourierDemoPlot(packetFiles)
 % Hard-code which experimnet, subject, and one run to model
 ee=1;
 ss=1;
-rr=5;
+rr=3;
 
 % Loads into memory the variable packetCellArray
 load(packetFiles{ee});
