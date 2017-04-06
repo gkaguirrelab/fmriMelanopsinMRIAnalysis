@@ -13,7 +13,7 @@
 		"url": ""
 	},
 	{
-		"flavor": "",
+		"flavor": "MaxMelPaper",
 		"hook": "",
 		"importance": "",
 		"localHookTemplate": "",
@@ -26,7 +26,7 @@
 		"url": "https:\/\/github.com\/gkaguirrelab\/MRklar.git"
 	},
 	{
-		"flavor": "",
+		"flavor": "MaxMelPaper",
 		"hook": "",
 		"importance": "",
 		"localHookTemplate": "",
