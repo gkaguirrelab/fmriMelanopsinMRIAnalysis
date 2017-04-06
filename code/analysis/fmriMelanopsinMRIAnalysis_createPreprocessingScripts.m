@@ -6,6 +6,8 @@ function fmriMelanopsinMRIAnalysis_createPreprocessingScripts(inputParams)
 % 9/26/2016     ms      Homogenized comments and function documentation.
 
 %% Set parameters common to all analyses
+params0.tbConfig = 'fmriMelanopsinMRIAnalysis';
+
 params0.reconall         = 0;
 params0.despike          = 1;
 params0.slicetiming      = 0;
