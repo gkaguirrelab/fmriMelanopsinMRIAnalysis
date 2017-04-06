@@ -240,7 +240,15 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% Rod Control
+% note that during these sessions was not acquired an MPRAGE run. We
+% therefore copy the DICOMS from the first MPRAGE acquired from each
+% subject.
+
 %% HERO_asb1 - 101916 - RodControl - Scotopic/Photopic
+% copy MPRAGE DICOM folder from first session
+folderToCopy            = fullfile(inputParams.dataDir, 'HERO_asb1/032416/DICOMS/Series_027_T1w_MPR/*');
+copyfile (folderToCopy,fullfile(inputParams.dataDir, 'HERO_asb1/101916/DICOMS/T1w_MPR_032416/'));
+
 params                  = params0;
 params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_asb1/101916');
 params.subjectName      = 'HERO_asb1_MaxMel';
@@ -251,6 +259,10 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_gka1 - 101916 - RodControl - Scotopic/Photopic (Photopic to be discarded)
+% copy MPRAGE DICOM folder from first session
+folderToCopy            = fullfile(inputParams.dataDir, 'HERO_gka1/033116/DICOMS/Series_023_T1w_MPR/*');
+copyfile (folderToCopy,fullfile(inputParams.dataDir, 'HERO_gka1/101916/DICOMS/T1w_MPR_033116/'));
+
 params                  = params0;
 params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_gka1/101916');
 params.subjectName      = 'HERO_gka1_MaxMel';
@@ -261,6 +273,10 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_gka1 - 102416 - RodControl ? Photopic
+% copy MPRAGE DICOM folder from first session
+folderToCopy            = fullfile(inputParams.dataDir, 'HERO_gka1/033116/DICOMS/Series_023_T1w_MPR/*');
+copyfile (folderToCopy,fullfile(inputParams.dataDir, 'HERO_gka1/102416/DICOMS/T1w_MPR_033116/'));
+
 params                  = params0;
 params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_gka1/102416');
 params.subjectName      = 'HERO_gka1_MaxMel';
@@ -271,6 +287,10 @@ params.numRuns          = 6; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_mxs1 - 101916 - RodControl - Scotopic/Photopic (Photopic to be discarded)
+% copy MPRAGE DICOM folder from first session
+folderToCopy            = fullfile(inputParams.dataDir, 'HERO_mxs1/040616/DICOMS/Series_027_T1w_MPR/*');
+copyfile (folderToCopy,fullfile(inputParams.dataDir, 'HERO_mxs1/101916/DICOMS/T1w_MPR_040616/'));
+
 params                  = params0;
 params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/101916');
 params.subjectName      = 'HERO_mxs1_MaxMel';
@@ -281,6 +301,10 @@ params.numRuns          = 12; % Number of BOLD runs
 create_preprocessing_scripts(params);
 
 %% HERO_mxs1 - 102416 - RodControl ? Photopic
+% copy MPRAGE DICOM folder from first session
+folderToCopy            = fullfile(inputParams.dataDir, 'HERO_mxs1/040616/DICOMS/Series_027_T1w_MPR/*');
+copyfile (folderToCopy,fullfile(inputParams.dataDir, 'HERO_mxs1/102416/DICOMS/T1w_MPR_040616/'));
+
 params                  = params0;
 params.sessionDir       = fullfile(inputParams.dataDir, 'HERO_mxs1/102416');
 params.subjectName      = 'HERO_mxs1_MaxMel';
