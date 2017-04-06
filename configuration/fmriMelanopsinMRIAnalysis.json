@@ -26,6 +26,19 @@
 		"url": "https:\/\/github.com\/gkaguirrelab\/MRklar.git"
 	},
 	{
+		"flavor": "",
+		"hook": "",
+		"importance": "",
+		"localHookTemplate": "",
+		"name": "MRlyze",
+		"pathPlacement": "append",
+		"subfolder": "Psychtoolbox",
+		"toolboxRoot": "",
+		"type": "git",
+		"update": "",
+		"url": "https:\/\/github.com\/Psychtoolbox-3\/Psychtoolbox-3.git"
+	},
+    {
 		"flavor": "MaxMelPaper",
 		"hook": "",
 		"importance": "",
