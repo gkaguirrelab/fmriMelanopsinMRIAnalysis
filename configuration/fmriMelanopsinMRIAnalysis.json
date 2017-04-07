@@ -32,7 +32,7 @@
 		"localHookTemplate": "",
 		"name": "Psychtoolbox",
 		"pathPlacement": "append",
-		"subfolder": "Psychtoolbox",
+		"subfolder": "",
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
