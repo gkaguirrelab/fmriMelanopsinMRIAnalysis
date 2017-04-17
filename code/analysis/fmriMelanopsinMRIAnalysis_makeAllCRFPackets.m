@@ -23,6 +23,7 @@ NEccRanges = 3;
 for ecc = 1:NEccRanges
     clear finalPacketCellArrays;
     clear packetCellArray;
+    clear finalPacketCellArrayIdx;
     eccRange = [eccRangeStart(ecc) eccRangeEnd(ecc)];
     whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
     whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
@@ -69,6 +70,7 @@ for ecc = 1:NEccRanges
         end
         packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
         packetCellArray = [];
+        packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
         packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
         if ~exist(packetSaveDir);
             mkdir(packetSaveDir);
@@ -136,7 +138,7 @@ for ecc = 1:NEccRanges
                 
                 %% Make the packet
                 params.packetType = '';
-                thePacket = makePacket(params);
+                thePacket = fmriMelanopsinMRIAnalysis_makePacket(params);
                 packetCellArray{ss, c} = thePacket;
                 c = c+1;
             end
@@ -157,5 +159,8 @@ for ecc = 1:NEccRanges
         packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_V1_' num2str(eccRange(1)) '_' num2str(eccRange(2)) 'deg_' packetCellArrayHash '.mat']);
         save(packetCacheFileName,'packetCellArray','-v7.3');
         fprintf(['Saved the packetCellArray with hash ID ' packetCellArrayHash '\n']);
+        clear finalPacketCellArrays;
+        clear packetCellArray;
+        clear finalPacketCellArrayIdx;
     end
 end
