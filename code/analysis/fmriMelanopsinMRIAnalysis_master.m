@@ -32,7 +32,6 @@ fmriMelanopsinMRIAnalysis_mergeMaps(params);
 %% Assemble V1 time series for the CRF data
 fmriMelanopsinMRIAnalysis_makeAllCRFPackets(params);
 
-
 %% Rod control data - Add the subject's HRF
 % Make this a function
 fmriMelanopsinMRIAnalysis_CopyHRFFiles(fullfile(params.dataDir, 'HERO_asb1', '051016'), fullfile(params.dataDir, 'HERO_asb1', '101916'));

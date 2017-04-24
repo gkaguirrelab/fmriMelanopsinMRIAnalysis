@@ -33,7 +33,7 @@ templateFiles = {fullfile(anatTemplateDir, 'eccen-template-2.5.sym.mgh') ...
     fullfile(anatTemplateDir, 'areas-template-2.5.sym.mgh')};
 
 % HERO_asb1
-subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_asb1');
+subjDir = fullfile(inputParams.dataDir, 'HERO_asb1');
 subjectName = 'HERO_asb1_MaxMel';
 project_template(fullfile(subjDir, '032416'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '040716'), subjectName, templateFiles);
@@ -43,7 +43,7 @@ project_template(fullfile(subjDir, '060816'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '101916'), subjectName, templateFiles);
 
 % HERO_aso1
-subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_aso1');
+subjDir = fullfile(inputParams.dataDir, 'HERO_aso1');
 subjectName = 'HERO_aso1_MaxMel';
 project_template(fullfile(subjDir, '032516'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '033016'), subjectName, templateFiles);
@@ -52,7 +52,7 @@ project_template(fullfile(subjDir, '053116'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '060116'), subjectName, templateFiles);
 
 % HERO_gka1
-subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_gka1');
+subjDir = fullfile(inputParams.dataDir, 'HERO_gka1');
 subjectName = 'HERO_gka1_MaxMel';
 project_template(fullfile(subjDir, '033116'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '040116'), subjectName, templateFiles);
@@ -63,7 +63,7 @@ project_template(fullfile(subjDir, '101916'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '102416'), subjectName, templateFiles);
 
 % HERO_mxs1
-subjDir = fullfile(inputParams.dataDir, 'MelanopsinMR', 'HERO_mxs1');
+subjDir = fullfile(inputParams.dataDir, 'HERO_mxs1');
 subjectName = 'HERO_mxs1_MaxMel';
 project_template(fullfile(subjDir, '040616'), subjectName, templateFiles);
 project_template(fullfile(subjDir, '040816'), subjectName, templateFiles);
