@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='make';
+meanEvokedResponseBehavior='skip';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
@@ -186,8 +186,6 @@ switch meanEvokedResponseBehavior
 end % switch on meanEvokedResponseBehavior
 
 
-
-
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
     case 'make'
@@ -224,3 +222,33 @@ switch rodControlBehavior
     otherwise
         fprintf('Skipping rod control analysis');
 end % switch on rodControlBehavior
+
+
+%% Save out surface map images for the MaxMel MaxLMS 400% experiments
+% need to change directories to get around spaces in DropBox dir name
+initialDir=pwd;
+cd(dropboxAnalysisDir);
+
+atlasDir=fullfile('maps','fsaverage_sym');
+
+% LMS maps
+dataFile=fullfile('maps','LMS400_pval_Fisher_Chisq.sym.nii.gz');
+figHandle=fmriMaxMel_threeViewSurfacePlot(atlasDir,dataFile,0,60,200);
+plotFileName=fullfile('Figures', 'GroupSurfaceMap_LMS400.pdf');
+set(gca,'FontSize',6);
+set(figHandle,'Renderer','painters');
+print(figHandle, plotFileName, '-dpdf', '-fillpage');
+close(figHandle);
+
+% Mel maps
+dataFile=fullfile('maps','Mel400_pval_Fisher_Chisq.sym.nii.gz');
+figHandle=fmriMaxMel_threeViewSurfacePlot(atlasDir,dataFile,0,60,200);
+plotFileName=fullfile('Figures', 'GroupSurfaceMap_Mel400.pdf');
+set(gca,'FontSize',6);
+set(figHandle,'Renderer','painters');
+print(figHandle, plotFileName, '-dpdf', '-fillpage');
+close(figHandle);
+
+% return to initial directory
+cd(initialDir);
+
