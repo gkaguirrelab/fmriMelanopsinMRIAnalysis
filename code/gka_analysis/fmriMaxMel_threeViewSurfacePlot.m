@@ -2,7 +2,7 @@ function [ figHandle ] = fmriMaxMel_threeViewSurfacePlot( atlasDir, dataFile, co
 
 surfaceFileName='lh.inflated';
 curvatureFileName='lh.curv';
-trans=0.85;
+trans=1;
 
 %% Load surface and curvature files
 [vert,face] = freesurfer_read_surf(fullfile(atlasDir,'surf',surfaceFileName));
@@ -24,8 +24,20 @@ brain.faces = face;
 brain.facevertexcdata = cmap_curv;
 
 %% Load map data file
-tmp = load_nifti(dataFile);
-srf = tmp.vol;
+if ischar(dataFile)
+    tmp = load_nifti(dataFile);
+    srf = tmp.vol;
+    figName=dataFile;
+end
+
+if isnumeric(dataFile)
+    if length(dataFile)==163842
+        srf=dataFile;
+    else
+        error('Passed surface file is not fsaverage_sym lh');
+    end
+    figName='unknown';
+end
 
 srf(srf<colorScaleThresh) = nan;
 
@@ -57,10 +69,9 @@ alpha_vals(~colorScaleThresh) = 0;
 figHandle=figure;
 
 %% Plot brain and surface map
-
 smp = brain;
 smp.facevertexcdata = cmap_vals;
-set(gcf,'name',dataFile);
+set(gcf,'name',figName);
 
 subplot(2,2,1); hold on
 view_angle = [90,0];
@@ -126,19 +137,21 @@ h_axes = axes('position', h_cb.Position, 'ylim', h_cb.Limits, 'color', 'none', '
 cbXLim=h_axes.XLim;
 
 % Lines for threshold, and some p-value levels
-line(cbXLim, colorScaleThresh*[1 1], 'color', 'white', 'parent', h_axes);
-text((2),colorScaleThresh,'threshold');
-
-line(cbXLim, round(vpa(chi2inv(1-1e-5,16)))*[1 1], 'color', 'white', 'parent', h_axes);
-text((2),round(vpa(chi2inv(1-1e-5,16))),'p=1e-5');
-
-line(cbXLim, round(vpa(chi2inv(1-1e-10,16)))*[1 1], 'color', 'white', 'parent', h_axes);
-text((2),round(vpa(chi2inv(1-1e-10,16))),'p=1e-10');
-
-line(cbXLim, round(vpa(chi2inv(1-1e-15,16)))*[1 1], 'color', 'white', 'parent', h_axes);
-text((2),round(vpa(chi2inv(1-1e-15,16))),'p=1e-15');
-
-
+if colorScaleHigh>100
+    line(cbXLim+2, colorScaleThresh*[1 1], 'color', 'white', 'parent', h_axes);
+    text(3,colorScaleThresh,'threshold');
+    
+    line(cbXLim+2, round(vpa(chi2inv(1-1e-5,16)))*[1 1], 'color', 'white', 'parent', h_axes);
+    text(3,double(vpa(chi2inv(1-1e-5,16))),'p=1e-5');
+    
+    line(cbXLim+2, round(vpa(chi2inv(1-1e-10,16)))*[1 1], 'color', 'white', 'parent', h_axes);
+    text(3,double(vpa(chi2inv(1-1e-10,16))),'p=1e-10');
+    
+    line(cbXLim+2, round(vpa(chi2inv(1-1e-15,16)))*[1 1], 'color', 'white', 'parent', h_axes);
+    text(3,double(vpa(chi2inv(1-1e-15,16))),'p=1e-15');
+    
+    text(3,colorScaleHigh,['max=' num2str(max(srf))]);
+end
 
 end % function
 
