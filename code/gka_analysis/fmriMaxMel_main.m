@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='load';
-meanEvokedResponseBehavior='make';
+meanEvokedResponseBehavior='skip';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
@@ -186,8 +186,6 @@ switch meanEvokedResponseBehavior
 end % switch on meanEvokedResponseBehavior
 
 
-
-
 %% Conduct the carry-over response analysis
 switch carryOverResponseBehavior
     case 'make'
@@ -224,3 +222,50 @@ switch rodControlBehavior
     otherwise
         fprintf('Skipping rod control analysis');
 end % switch on rodControlBehavior
+
+
+%% Save out surface map images for the MaxMel MaxLMS 400% experiments
+% need to change directories to get around spaces in DropBox dir name
+initialDir=pwd;
+cd(dropboxAnalysisDir);
+
+atlasDir=fullfile('maps','fsaverage_sym');
+
+% Set threshold for the map display as 0.05, Bonferroni corrected
+%  for the number of vertices, which is overly conservative given
+%  the spatial smoothness of the data.
+colorScaleThreshold=double(vpa(chi2inv(1-(0.05/163842),16)));
+
+% LMS maps
+dataFile=fullfile('maps','LMS400_pval_Fisher_Chisq.sym.nii.gz');
+figHandle=fmriMaxMel_threeViewSurfacePlot(atlasDir,dataFile,0,colorScaleThreshold,200);
+plotFileName=fullfile('Figures', 'GroupSurfaceMap_LMS400.pdf');
+print(figHandle, plotFileName, '-dpdf', '-r600', '-fillpage');
+close(figHandle);
+
+% Mel maps
+dataFile=fullfile('maps','Mel400_pval_Fisher_Chisq.sym.nii.gz');
+figHandle=fmriMaxMel_threeViewSurfacePlot(atlasDir,dataFile,0,colorScaleThreshold,200);
+plotFileName=fullfile('Figures', 'GroupSurfaceMap_Mel400.pdf');
+print(figHandle, plotFileName, '-dpdf', '-r600', '-fillpage');
+close(figHandle);
+
+% V1 ROI map
+eccRange=[5 25];
+retinoTemplateDir=fullfile('maps','retinoTemplate_v2.5');
+areas_srf = load_mgh(fullfile(retinoTemplateDir,'areas-template-2.5.sym.mgh'));
+eccen_srf = load_mgh(fullfile(retinoTemplateDir,'eccen-template-2.5.sym.mgh'));
+roiVertices = find(abs(areas_srf)==1 & ...
+    eccen_srf>eccRange(1) & eccen_srf<eccRange(2));
+srf=areas_srf;
+srf(:)=nan;
+srf(roiVertices)=0.5;
+figHandle=fmriMaxMel_threeViewSurfacePlot(atlasDir,srf,0,[],1);
+plotFileName=fullfile('Figures', 'GroupSurfaceMap_V1ROI.pdf');
+print(figHandle, plotFileName, '-dpdf', '-r600', '-fillpage');
+close(figHandle);
+
+
+% return to initial directory
+cd(initialDir);
+
