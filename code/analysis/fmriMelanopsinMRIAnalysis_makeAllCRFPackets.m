@@ -24,9 +24,10 @@ for ecc = 1:NEccRanges
     clear finalPacketCellArrays;
     clear packetCellArray;
     clear finalPacketCellArrayIdx;
+    clear boldIds;
     eccRange = [eccRangeStart(ecc) eccRangeEnd(ecc)];
     whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
-    whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
+%     whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
     for dd = 1:length(whichDataSets)
         whichDataSet = whichDataSets{dd};
         switch whichDataSet
@@ -162,5 +163,6 @@ for ecc = 1:NEccRanges
         clear finalPacketCellArrays;
         clear packetCellArray;
         clear finalPacketCellArrayIdx;
+        clear boldIds;
     end
 end
