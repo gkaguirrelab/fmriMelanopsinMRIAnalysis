@@ -89,7 +89,7 @@ params0                         = temporalFit.defaultParams();
 paramLockMatrix                 = [];
 defaultParamsInfo.nInstances    = 1;
 params.respValues               = zeros(size(flatVol(1, :)));
-thePacket0                      = makePacket(params);
+thePacket0                      = fmriMelanopsinMRIAnalysis_makePacket(params);
 
 % Convolve and resample the stimulus
 convolvedStimulus = temporalFit.applyKernel(thePacket0.stimulus,thePacket0.kernel);
