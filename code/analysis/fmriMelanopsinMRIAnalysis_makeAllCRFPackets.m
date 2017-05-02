@@ -70,8 +70,8 @@ for ecc = 1:NEccRanges
         end
         packetCellArrayTag = ['MelanopsinMR_' whichDataSet];
         packetCellArray = [];
-        packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
-        packetSaveDir = '/data/jag/MELA/MelanopsinMR/packets';
+        packetSaveDir = '/data/jag/MELA/RERUN_MelanopsinMR/packets';
+        packetSaveDir = '/data/jag/MELA/RERUN_MelanopsinMR/packets';
         if ~exist(packetSaveDir);
             mkdir(packetSaveDir);
         end;
