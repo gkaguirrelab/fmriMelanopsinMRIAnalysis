@@ -200,7 +200,7 @@ allHemis = [];
 for mm = 1 : length(maps)
     thisMap = fullfile(maps(mm).folder, maps(mm).name);
     thisHemi = load_nifti(thisMap);
-    allHemis = [allHemis, thisHemi.vol];
+    allHemis = [allHemis, abs(thisHemi.vol)];
 end
 avgMap = mean(allHemis,2);
 
@@ -217,7 +217,7 @@ maps = dir(fullfile(output_dir, '*LMS400_Fisher_zval.fsaverage_sym*'));
 for mm = 1 : length(maps)
     thisMap = fullfile(maps(mm).folder, maps(mm).name);
     thisHemi = load_nifti(thisMap);
-    allHemis = [allHemis,thisHemi.vol];
+    allHemis = [allHemis,abs(thisHemi.vol)];
 end
 avgMap = mean(allHemis,2);
 
