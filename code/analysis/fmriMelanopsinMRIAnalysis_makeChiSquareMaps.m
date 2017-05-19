@@ -1,4 +1,9 @@
-params.dataDir = '/data/jag/MELA/MelanopsinMR';
+function fmriMelanopsinMRIAnalysis_makeChiSquareMaps(params)
+
+% this function produces Chi Square maps.
+
+% required input
+%  params.dataDir = 'path/to/preprocessed/mri/data';
 
 
 %% HERO_asb1
