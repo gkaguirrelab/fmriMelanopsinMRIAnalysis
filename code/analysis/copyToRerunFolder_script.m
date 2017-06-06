@@ -2,7 +2,7 @@
 
 %% Set dirs
 fromDir = '/data/jag/MELA/MelanopsinMR';
-toDir = '/data/jag/MELA/RERUN_MelanopsinMR';
+toDir = '/Users/giulia/Desktop/fMRIdata';
 
 %% set what to copy
 
@@ -15,8 +15,7 @@ foldersToCopy = { ...
 
 %% HERO_asb1
 subjDir =  'HERO_asb1';
-% '032416' 
-sessDirs = {'040716' '051016' '060716' '060816' '101916'};
+sessDirs = {'032416' '040716' '051016' '060716' '060816' '101916'};
 for ss = 1:length(sessDirs)
     mkdir (fullfile(toDir,subjDir,sessDirs{ss}))
    for ff = 1:length(foldersToCopy)
