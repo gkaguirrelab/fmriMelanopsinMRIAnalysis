@@ -26,8 +26,8 @@ for ecc = 1:NEccRanges
     clear finalPacketCellArrayIdx;
     clear boldIds;
     eccRange = [eccRangeStart(ecc) eccRangeEnd(ecc)];
-    whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
-%     whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
+%     whichDataSets = {'RodControlPhotopic' 'RodControlScotopic' 'MelCRF' 'LMSCRF' 'SplatterControlCRF'};
+    whichDataSets = {'MaxMel400Pct' 'MaxLMS400Pct'};
     for dd = 1:length(whichDataSets)
         whichDataSet = whichDataSets{dd};
         switch whichDataSet
@@ -98,22 +98,32 @@ for ecc = 1:NEccRanges
                 
                 %%
                 fprintf('* <strong>Prepare anatomical template</strong>...');
-                eccFile             = fullfile(params.anatRefRun, 'mh.ecc.func.vol.nii.gz');
-                areasFile           = fullfile(params.anatRefRun, 'mh.areas.func.vol.nii.gz');
-                eccData             = load_nifti(eccFile);
-                areaData            = load_nifti(areasFile);
+                eccFile = fullfile(params.anatRefRun, 'mh.ecc.func.vol.nii.gz');
+                areasFile = fullfile(params.anatRefRun, 'mh.areas.func.vol.nii.gz');
+                eccData = load_nifti(eccFile);
+                areaData = load_nifti(areasFile);
                 DO_ECC = true;
                 
                 if DO_ECC
-                    ROI_V1              = find(abs(areaData.vol)==1 & ...
+                    ROI_V1 = find(abs(areaData.vol)==1 & ...
                         eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
-                    ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3) & ...
-                        eccData.vol>eccRange(1) & eccData.vol<eccRange(2));
+                    ROI_V2 = find(abs(areaData.vol)==2) & ...
+                        eccData.vol>eccRange(1) & eccData.vol<eccRange(2);
+                    ROI_V3 = find(abs(areaData.vol)==3) & ...
+                        eccData.vol>eccRange(1) & eccData.vol<eccRange(2);
+                    ROI_V4 = find(abs(areaData.vol)==4) & ...
+                        eccData.vol>eccRange(1) & eccData.vol<eccRange(2);
                 else
-                    ROI_V1              = find(abs(areaData.vol)==1);
-                    ROI_V2V3            = find((abs(areaData.vol)==2 | abs(areaData.vol)==3));
+                    ROI_V1 = find(abs(areaData.vol)==1);
+                    ROI_V2 = find(abs(areaData.vol)==2);
+                    ROI_V3 = find(abs(areaData.vol)==3);
+                    ROI_V4 = find(abs(areaData.vol)==4);
                 end
-                maskvol = ROI_V1;
+                
+%                 maskvol = ROI_V1; 
+                maskvol = ROI_V2; 
+%                 maskvol = ROI_V3;
+%                 maskvol = ROI_V4;
                 fprintf('\tDONE.\n');
                 
                 fprintf('* <strong>Loading response file</strong>...');
@@ -157,7 +167,7 @@ for ecc = 1:NEccRanges
         end
         packetCellArray = finalPacketCellArrays;
         packetCellArrayHash = DataHash(packetCellArray);
-        packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_V1_' num2str(eccRange(1)) '_' num2str(eccRange(2)) 'deg_' packetCellArrayHash '.mat']);
+        packetCacheFileName = fullfile(packetSaveDir, [packetCellArrayTag '_V2_' num2str(eccRange(1)) '_' num2str(eccRange(2)) 'deg_' packetCellArrayHash '.mat']);
         save(packetCacheFileName,'packetCellArray','-v7.3');
         fprintf(['Saved the packetCellArray with hash ID ' packetCellArrayHash '\n']);
         clear finalPacketCellArrays;
