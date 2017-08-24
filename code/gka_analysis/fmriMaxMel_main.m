@@ -10,7 +10,7 @@ warning on;
 
 % Define cache behavior
 kernelCacheBehavior='make';
-meanEvokedResponseBehavior='make';
+meanEvokedResponseBehavior='load';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
@@ -63,7 +63,7 @@ switch region
         
 %         % The set of hashes the define the data and results
 %         kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
-%         meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
+        meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
 %         deduFitsHash='13b945241e8b527afa7033cb96f08187';
         
         % Packet hash array ordered by ExptLabels then RegionLabels
@@ -82,7 +82,7 @@ switch region
         
 %         % The set of hashes the define the data and results
 %         kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
-%         meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
+        meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
 %         deduFitsHash='13b945241e8b527afa7033cb96f08187';
         
         % Packet hash array ordered by ExptLabels then RegionLabels
@@ -97,15 +97,23 @@ switch region
 end
 
 % Discover user name and find the Dropbox directory
-[~, userName] = system('whoami');
-userName = strtrim(userName);
+[~,hostname] = system('hostname');
+hostname = strtrim(lower(hostname));
+if strcmp(hostname,'melchior.uphs.upenn.edu') %melchior has some special dropbox folder settings
+    dropboxDir = '/Volumes/Bay_2_data/giulia/Dropbox-Aguirre-Brainard-Lab';
+else % other machines use the standard dropbox location
+    [~, userName] = system('whoami');
+    userName = strtrim(userName);
+    dropboxDir = ...
+        fullfile('/Users', userName, ...
+        '/Dropbox (Aguirre-Brainard Lab)');
+end
+
 dropboxAnalysisDir = ...
-    fullfile('/Users', userName, ...
-    '/Dropbox (Aguirre-Brainard Lab)/MELA_analysis/fmriMelanopsinMRIAnalysis/');
+    fullfile(dropboxDir, 'MELA_analysis/fmriMelanopsinMRIAnalysis/');
 
 dropBoxHEROkernelStructDir = ...
-    fullfile('/Users', userName, ...
-    '/Dropbox (Aguirre-Brainard Lab)/Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
+    fullfile(dropboxDir, 'Team Documents/Cross-Protocol Subjects/HERO_kernelStructCache/');
 
 
 %% Pick a region to analyze and define the list of packet files
@@ -121,13 +129,16 @@ switch kernelCacheBehavior
     case 'make'
         fprintf('Making the kernelStructCellArray\n');
         
-        [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:5,:));
+        
         switch region
             case 'V1'
+                [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:5,:));
                 notes='Average evoked response to attention events from 5-25 degree region of V1. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the LMS CRF, Mel CRF, and Splatter CRF, and the 400%LMS and 400%Mel experiments';
             case 'V2'
+                [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:2,:));
                 notes='Average evoked response to attention events from 5-25 degree region of V2. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the 400%LMS and 400%Mel experiments';
             case 'V3'
+                [kernelStructCellArray, plotHandle] = fmriMaxMel_DeriveEmpiricalHRFs(packetFiles(1:2,:));
                 notes='Average evoked response to attention events from 5-25 degree region of V3. Each event was a 500 msec dimming of the OneLight stimulus. Events taken from all runs of the 400%LMS and 400%Mel experiments';
         end
         % Save the plot of the HRFs
@@ -171,7 +182,7 @@ end % switch on kernelCacheBehavior
 switch meanEvokedResponseBehavior
     case 'make'
         fprintf('Obtaining mean evoked responses\n');
-        for experiment=1:5
+        for experiment=1:2
             % Derive mean evoked response
             [responseStructCellArray, deduFitDataExperiment, plotHandleAverages] = fmriMaxMel_DeriveMeanEvokedResponse(packetFiles{experiment}, kernelStructCellArray);
             deduFitData{experiment}=deduFitDataExperiment;
@@ -218,10 +229,12 @@ switch meanEvokedResponseBehavior
         close(plotHandle);        
     case 'load'
         fprintf('Loading mean evoked responses\n');
-        meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
+%         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
+        meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', ['V1_5_25deg_meanEvokedResponse_' meanEvokedHash '.mat']);
         load(meanEvokedFileName);
         fprintf('Loading deduFitData\n');
-        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+%         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', ['V1_5_25deg_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
     otherwise
         fprintf('Skipping analysis of mean evoked responses\n');        
