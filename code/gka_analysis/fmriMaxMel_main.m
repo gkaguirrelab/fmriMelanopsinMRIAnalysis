@@ -9,12 +9,12 @@ warning on;
 %% Hardcoded parameters of analysis
 
 % Define cache behavior
-kernelCacheBehavior='make';
-meanEvokedResponseBehavior='load';
+kernelCacheBehavior='load';
+meanEvokedResponseBehavior='make';
 carryOverResponseBehavior='skip';
 rodControlBehavior='skip';
 
-region = 'V2' ; % can be {'V1', 'V2', 'V3'};
+region = 'V3' ; % can be {'V1', 'V2', 'V3'};
 
 switch region
     case 'V1'
@@ -57,14 +57,16 @@ switch region
             '62706c1a5756e6642fc866faa1860636'};
         
     case 'V2'
-         % The components that define the different packetCache files
+        % The components that define the different packetCache files
         ExptLabels={'MaxLMS400Pct','MaxMel400Pct'};
         RegionLabels={'V2_0_1.5deg','V2_5_25deg','V2_40_60deg'};
         
-%         % The set of hashes the define the data and results
-%         kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
-        meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
-%         deduFitsHash='13b945241e8b527afa7033cb96f08187';
+        % The set of hashes the define the data and results
+        % NOTE: We use the V1 HRF for the analysis of V2 and V3
+        HRFRegionLabel =  {'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
+        kernelStructCellArrayHash='3b2efad04738f36c4fc200894259fd86';
+        meanEvokedHash='';
+        deduFitsHash='';
         
         % Packet hash array ordered by ExptLabels then RegionLabels
         PacketHashArray{1,:}={'03e81a74ee1eebdb26347f45e8646abc',...
@@ -76,14 +78,16 @@ switch region
             '4a928c80f6c3847bffe296e13a328e91'};
         
     case 'V3'
-         % The components that define the different packetCache files
+        % The components that define the different packetCache files
         ExptLabels={'MaxLMS400Pct','MaxMel400Pct'};
         RegionLabels={'V3_0_1.5deg','V3_5_25deg','V3_40_60deg'};
         
-%         % The set of hashes the define the data and results
-%         kernelStructCellArrayHash='1ba4a33ed4f33a37cc2c4e92957e1742';
-        meanEvokedHash='1d42dc538c8ebeb7e8595be8a8406cca';
-%         deduFitsHash='13b945241e8b527afa7033cb96f08187';
+        % The set of hashes the define the data and results
+        % NOTE: We use the V1 HRF for the analysis of V2 and V3
+        HRFRegionLabel =  {'V1_0_1.5deg','V1_5_25deg','V1_40_60deg'};
+        kernelStructCellArrayHash='3b2efad04738f36c4fc200894259fd86';
+        meanEvokedHash='';
+        deduFitsHash='';
         
         % Packet hash array ordered by ExptLabels then RegionLabels
         PacketHashArray{1,:}={'c2e57f1c14a394bde529031ec74d51da',...
@@ -170,7 +174,16 @@ switch kernelCacheBehavior
     case 'load'
         fprintf('Loading the kernelStructCellArray\n');
         % Load the kernelStructCellArray
-        kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+        switch region
+            case 'V1'
+                kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [RegionLabels{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+            case 'V2'
+                fprintf('Using the V1 HRF to analyze the V2 responses\n');
+                kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [HRFRegionLabel{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+            case 'V3'
+                fprintf('Using the V1 HRF to analyze the V3 responses\n');
+                kernelStructCellArrayFileName=fullfile(dropboxAnalysisDir,'kernelCache', [HRFRegionLabel{stimulatedRegion} '_hrf_' kernelStructCellArrayHash '.mat']);
+        end
         load(kernelStructCellArrayFileName);
     otherwise
         error('You must either make or load the kernelStructCellArray');
@@ -192,7 +205,7 @@ switch meanEvokedResponseBehavior
             set(gca,'FontSize',6);
             set(plotHandleAverages,'Renderer','painters');
             print(plotHandleAverages, plotFileName, '-dpdf', '-fillpage');
-            close(plotHandleAverages);            
+            close(plotHandleAverages);
             % store the responseStructCellArray
             meanEvokedResponsesCellArray{experiment}=responseStructCellArray;
         end
@@ -226,18 +239,16 @@ switch meanEvokedResponseBehavior
         set(gca,'FontSize',6);
         set(plotHandle,'Renderer','painters');
         print(plotHandle, plotFileName, '-dpdf', '-fillpage');
-        close(plotHandle);        
+        close(plotHandle);
     case 'load'
         fprintf('Loading mean evoked responses\n');
-%         meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
-        meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', ['V1_5_25deg_meanEvokedResponse_' meanEvokedHash '.mat']);
+        meanEvokedFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_meanEvokedResponse_' meanEvokedHash '.mat']);
         load(meanEvokedFileName);
         fprintf('Loading deduFitData\n');
-%         deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
-        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', ['V1_5_25deg_fitsDEDUModel_' deduFitsHash '.mat']);
+        deduFileName=fullfile(dropboxAnalysisDir,'analysisCache', [RegionLabels{stimulatedRegion} '_fitsDEDUModel_' deduFitsHash '.mat']);
         load(deduFileName);
     otherwise
-        fprintf('Skipping analysis of mean evoked responses\n');        
+        fprintf('Skipping analysis of mean evoked responses\n');
 end % switch on meanEvokedResponseBehavior
 
 
